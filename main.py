@@ -21,7 +21,7 @@ class Application(tk.Frame):
         self.quit.pack(side="bottom")
 
     def speak(self):
-        print("Clicked")
+        print("Changed")
         if self.said:
             self.say_hello["text"] = "hello"
         else:
