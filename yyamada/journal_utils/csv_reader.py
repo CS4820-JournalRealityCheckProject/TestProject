@@ -21,7 +21,6 @@ def read_file(file_name):
 
 def read_csv_create_journal(file_name):
     journal_list = []
-    i = 0
 
     with open(file_name + '.csv', 'r') as csv_file:
         reader = csv.DictReader(csv_file)
@@ -32,7 +31,6 @@ def read_csv_create_journal(file_name):
                         row['ManagedCoverageBegin'], row['ManagedCoverageEnd']
                         ))
 
-            i = i + 1
     print(journal_list[4])
     return journal_list
 
