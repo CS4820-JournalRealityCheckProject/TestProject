@@ -22,7 +22,7 @@ def read_file(file_name):
 def read_csv_create_journal(file_name):
     journal_list = []
 
-    with open(file_name + '.csv', 'r') as csv_file:
+    with open(file_name, 'r') as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
             journal_list.append(
@@ -31,12 +31,14 @@ def read_csv_create_journal(file_name):
                         row['ManagedCoverageBegin'], row['ManagedCoverageEnd']
                         ))
 
-    print(journal_list[4])
+    print(journal_list[0])
     return journal_list
 
 
+"""
 write_file('t1')
 read_file('t1')
 list = read_csv_create_journal('journals1')
 for i in list:
     print(i)
+"""

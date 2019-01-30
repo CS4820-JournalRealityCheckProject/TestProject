@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="22cd2133-6150-4eec-8413-058664b36888" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/scraping.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yyamada/crossref_utils/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yyamada/crossref_utils/crossref.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yyamada/screenscrape_utils/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yyamada/screenscrape_utils/screenscrape.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yyamada.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/yyamada/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/yyamada/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yyamada/journal_ui/main_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/yyamada/journal_ui/main_ui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yyamada/journal_utils/csv_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/yyamada/journal_utils/csv_reader.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,7 +22,7 @@
     <SUITE FILE_PATH="coverage/TestProject$calculator.coverage" NAME="calculator Coverage Results" MODIFIED="1548017978948" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/TestProject$scraping.coverage" NAME="scraping Coverage Results" MODIFIED="1548188389597" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/TestProject$main.coverage" NAME="main Coverage Results" MODIFIED="1548025175162" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/TestProject$ui.coverage" NAME="ui Coverage Results" MODIFIED="1548025157323" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/TestProject$ui.coverage" NAME="ui Coverage Results" MODIFIED="1548806765836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
@@ -28,10 +35,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scraping.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
+            <state relative-caret-position="195">
               <caret line="14" column="27" selection-start-line="14" selection-start-column="27" selection-end-line="14" selection-end-column="27" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
@@ -40,11 +47,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="28" selection-start-line="28" selection-end-line="28" />
+            <state relative-caret-position="75">
+              <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -77,9 +84,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="464" />
+    <option name="x" value="332" />
     <option name="y" value="22" />
-    <option name="width" value="980" />
+    <option name="width" value="948" />
     <option name="height" value="774" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -127,7 +134,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.scraping">
+  <component name="RunManager" selected="Python.ui">
     <configuration name="calculator" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="TestProject" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -218,9 +225,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.ui" />
         <item itemvalue="Python.scraping" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.ui" />
         <item itemvalue="Python.calculator" />
       </list>
     </recent_temporary>
@@ -242,6 +249,9 @@
       <workItem from="1548023009213" duration="3000" />
       <workItem from="1548025150192" duration="191000" />
       <workItem from="1548187099384" duration="1330000" />
+      <workItem from="1548806759754" duration="963000" />
+      <workItem from="1548870939021" duration="552000" />
+      <workItem from="1548872094632" duration="527000" />
     </task>
     <task id="LOCAL-00001" summary="0.0.0 (test) Test Project">
       <created>1547994932258</created>
@@ -254,18 +264,17 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7396000" />
+    <option name="totallyTimeSpent" value="9438000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="464" y="22" width="980" height="774" extended-state="0" />
-    <editor active="true" />
+    <frame x="332" y="22" width="948" height="774" extended-state="0" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.29357797" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5010661" side_tool="true" weight="0.50986344" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.5010661" side_tool="true" weight="0.04552352" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4980341" weight="0.400607" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -298,16 +307,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/calculator.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/adapters.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="118">
@@ -324,11 +323,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scraping.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
+        <state relative-caret-position="195">
           <caret line="14" column="27" selection-start-line="14" selection-start-column="27" selection-end-line="14" selection-end-column="27" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/calculator.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
         </state>
       </provider>
     </entry>

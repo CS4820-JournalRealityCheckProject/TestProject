@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../CS4820-Project/.idea/yyamada.iml" filepath="$PROJECT_DIR$/../CS4820-Project/.idea/yyamada.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/yyamada.iml" filepath="$PROJECT_DIR$/.idea/yyamada.iml" />
     </modules>
   </component>
 </project>
