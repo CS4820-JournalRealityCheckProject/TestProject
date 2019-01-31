@@ -42,5 +42,7 @@ def create_year_dict(self):
 def set_dict_year_true(self, year):
     self.year_dict[year] = True
 
-# journal = Journal()
-# journal.speak()
+
+if __name__ == '__main__':
+    journal = Journal()
+    journal.speak()

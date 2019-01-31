@@ -34,10 +34,10 @@ def read_csv_create_journal(file_name):
     print(journal_list[0])
     return journal_list
 
-"""
-write_file('t1')
-read_file('t1')
-list = read_csv_create_journal('journals1')
-for i in list:
-    print(i)
-"""
+
+if __name__ == '__main__':
+    write_file('t1')
+    read_file('t1')
+    list = read_csv_create_journal('journals1')
+    for i in list:
+        print(i)

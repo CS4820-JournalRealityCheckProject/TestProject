@@ -12,33 +12,33 @@ class MainUI(tk.Frame):
         self.create_widget()
 
     def create_widget(self):
-        self.topFrame = tk.Frame(self, width=500, height=500)
-        self.midFrame = tk.Frame(self, width=500, height=100)
-        self.bottomFrame = tk.Frame(self)
-        self.firstLabel = tk.Label(self, text="Journal Reality Checking")
+        self.top_frame = tk.Frame(self, width=500, height=500)
+        self.mid_frame = tk.Frame(self, width=500, height=100)
+        self.buttom_frame = tk.Frame(self)
+        self.first_label = tk.Label(self, text="Journal Reality Checking")
 
-        self.contentField = tk.Text(self.topFrame)
-        self.readyLabel = tk.Entry(self.midFrame)
+        self.content_field = tk.Text(self.top_frame)
+        self.ready_label = tk.Entry(self.mid_frame)
 
-        self.uploadButton = tk.Button(self.bottomFrame, text="Browse File", command=self.uploadFile)
-        self.searchButton = tk.Button(self.bottomFrame, text="Search Articles", command=self.searchArticle)
-        self.downloadButton = tk.Button(self.bottomFrame, text="Download", command=self.printMessage)
-        self.exitButton = tk.Button(self.bottomFrame, text="Exit", command=self.quit)
+        self.upload_button = tk.Button(self.buttom_frame, text="Browse File", command=self.upload_file)
+        self.search_button = tk.Button(self.buttom_frame, text="Search Articles", command=self.search_article)
+        self.download_button = tk.Button(self.buttom_frame, text="Download", command=self.print_message)
+        self.exit_button = tk.Button(self.buttom_frame, text="Exit", command=self.quit)
 
-        self.readyLabel.pack()
-        self.midFrame.pack()
-        self.topFrame.pack()
+        self.ready_label.pack()
+        self.mid_frame.pack()
+        self.top_frame.pack()
 
-        self.bottomFrame.pack()
-        self.firstLabel.pack()
+        self.buttom_frame.pack()
+        self.first_label.pack()
 
-        self.contentField.pack()
-        self.uploadButton.pack(side=tk.LEFT)
-        self.searchButton.pack(side=tk.LEFT)
-        self.downloadButton.pack(side=tk.LEFT)
-        self.exitButton.pack(side=tk.RIGHT)
+        self.content_field.pack()
+        self.upload_button.pack(side=tk.LEFT)
+        self.search_button.pack(side=tk.LEFT)
+        self.download_button.pack(side=tk.LEFT)
+        self.exit_button.pack(side=tk.RIGHT)
 
-    def uploadFile(self):
+    def upload_file(self):
         file_path = filedialog.askopenfilename(initialdir="currdir", title="Select File",
                                                filetypes=(("csv files", "*.csv"),
                                                           ("all files", "*.*")))
@@ -46,13 +46,14 @@ class MainUI(tk.Frame):
         csv_reader.read_csv_create_journal(file_path)
         return file_path
 
-    def searchArticle(self):
+    def search_article(self):
         print('search')
 
-    def printMessage(self):
+    def print_message(self):
         print('message')
 
 
-root = tk.Tk()
-app = MainUI(master=root)
-app.mainloop()
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = MainUI(master=root)
+    app.mainloop()
