@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d5753a26-b1c7-4cf0-b844-5cf0ba2bea18" name="Default Changelist" comment="This is the discription">
-      <change beforePath="$PROJECT_DIR$/journal_ui/main_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/journal_ui/main_ui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/journal_utils/csv_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/journal_utils/csv_reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,11 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="367">
-              <caret line="33" column="39" selection-start-line="33" selection-start-column="39" selection-end-line="33" selection-end-column="39" />
+            <state relative-caret-position="315">
+              <caret line="21" column="23" lean-forward="true" selection-start-line="21" selection-start-column="23" selection-end-line="21" selection-end-column="23" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -41,10 +39,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/journal_utils/journal.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="705">
+              <caret line="47" column="19" selection-start-line="47" selection-start-column="19" selection-end-line="47" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/journal_utils/csv_reader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
+            <state relative-caret-position="255">
+              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
             </state>
           </provider>
         </entry>
@@ -52,7 +59,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/journal_ui/main_ui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="314">
+            <state relative-caret-position="510">
               <caret line="36" column="35" selection-start-line="36" selection-start-column="35" selection-end-line="36" selection-end-column="35" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
@@ -116,9 +123,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="307" />
-    <option name="y" value="22" />
-    <option name="width" value="971" />
+    <option name="x" value="308" />
+    <option name="y" value="23" />
+    <option name="width" value="970" />
     <option name="height" value="774" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -140,12 +147,22 @@
             <path>
               <item name="CS4820-Project" type="b2602c69:ProjectViewProjectNode" />
               <item name="CS4820-Project" type="462c0819:PsiDirectoryNode" />
+              <item name="crossref_utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CS4820-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CS4820-Project" type="462c0819:PsiDirectoryNode" />
               <item name="journal_ui" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CS4820-Project" type="b2602c69:ProjectViewProjectNode" />
               <item name="CS4820-Project" type="462c0819:PsiDirectoryNode" />
               <item name="journal_utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CS4820-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CS4820-Project" type="462c0819:PsiDirectoryNode" />
+              <item name="screenscrape_utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -253,7 +270,8 @@
       <workItem from="1548870938532" duration="717000" />
       <workItem from="1548872093932" duration="771000" />
       <workItem from="1548875272251" duration="109000" />
-      <workItem from="1548895660806" duration="6611000" />
+      <workItem from="1548895660806" duration="6743000" />
+      <workItem from="1548902888431" duration="1077000" />
     </task>
     <task id="LOCAL-00001" summary="This is the discription">
       <created>1548697716866</created>
@@ -266,18 +284,18 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23821000" />
+    <option name="totallyTimeSpent" value="25030000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="307" y="22" width="971" height="774" extended-state="0" />
+    <frame x="308" y="23" width="970" height="774" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.7882883" visible="true" weight="0.19483316" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.7882883" visible="true" weight="0.19935344" />
       <window_info id="Structure" order="1" sideWeight="0.2117117" side_tool="true" weight="0.194292" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32776934" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.323217" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.323217" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39908952" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -331,42 +349,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/journal_ui/t1.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/journal_ui/t1.csv" />
     <entry file="file://$PROJECT_DIR$/journal_ui/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/journal_ui/journal_ui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="46" column="21" selection-start-line="46" selection-start-column="21" selection-end-line="46" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/journal_utils/t2.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/journal_ui/journal_ui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="58" selection-start-line="58" selection-end-line="58" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/journal_utils/t1.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/journal_utils/t2.py" />
+    <entry file="file://$PROJECT_DIR$/journal_ui/journal_ui.py" />
+    <entry file="file://$PROJECT_DIR$/journal_utils/t1.csv" />
     <entry file="file://$PROJECT_DIR$/screenscrape_utils/screenscrape.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -374,10 +363,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/journal_utils/journal.py">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="47" column="19" selection-start-line="47" selection-start-column="19" selection-end-line="47" selection-end-column="19" />
+        <state relative-caret-position="315">
+          <caret line="21" column="23" lean-forward="true" selection-start-line="21" selection-start-column="23" selection-end-line="21" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/journal_ui/main_ui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="36" column="35" selection-start-line="36" selection-start-column="35" selection-end-line="36" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -391,30 +393,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/journal_ui/main_ui.py">
+    <entry file="file://$PROJECT_DIR$/journal_utils/journal.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="36" column="35" selection-start-line="36" selection-start-column="35" selection-end-line="36" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="705">
+          <caret line="47" column="19" selection-start-line="47" selection-start-column="19" selection-end-line="47" selection-end-column="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/journal_utils/csv_reader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="33" column="39" selection-start-line="33" selection-start-column="39" selection-end-line="33" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="255">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
         </state>
       </provider>
     </entry>
