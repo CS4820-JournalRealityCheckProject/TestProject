@@ -34,7 +34,6 @@ def read_csv_create_journal(file_name):
     print(journal_list[0])
     return journal_list
 
-
 """
 write_file('t1')
 read_file('t1')
