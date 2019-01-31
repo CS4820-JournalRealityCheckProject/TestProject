@@ -5,13 +5,14 @@ import journal_utils.csv_reader as csv_reader
 
 class MainUI(tk.Frame):
 
-    def __init__(self, master=None):
+    def __init__(self, master=None, main_upload=None, main_download=None):
         super().__init__(master)
         self.master = master
         self.pack()
-        self.create_widget()
+        self.file_path = None
+        self.create_widget(main_upload=main_upload, main_download=main_download)
 
-    def create_widget(self):
+    def create_widget(self, main_upload, main_download):
         self.top_frame = tk.Frame(self, width=500, height=500)
         self.mid_frame = tk.Frame(self, width=500, height=100)
         self.buttom_frame = tk.Frame(self)
@@ -20,9 +21,9 @@ class MainUI(tk.Frame):
         self.content_field = tk.Text(self.top_frame)
         self.ready_label = tk.Entry(self.mid_frame)
 
-        self.upload_button = tk.Button(self.buttom_frame, text="Browse File", command=self.upload_file)
+        self.upload_button = tk.Button(self.buttom_frame, text="Browse File", command=main_upload)
         self.search_button = tk.Button(self.buttom_frame, text="Search Articles", command=self.search_article)
-        self.download_button = tk.Button(self.buttom_frame, text="Download", command=self.print_message)
+        self.download_button = tk.Button(self.buttom_frame, text="Download", command=main_download)
         self.exit_button = tk.Button(self.buttom_frame, text="Exit", command=self.quit)
 
         self.ready_label.pack()
@@ -43,7 +44,6 @@ class MainUI(tk.Frame):
                                                filetypes=(("csv files", "*.csv"),
                                                           ("all files", "*.*")))
         print(file_path)
-        csv_reader.read_csv_create_journal(file_path)
         return file_path
 
     def search_article(self):

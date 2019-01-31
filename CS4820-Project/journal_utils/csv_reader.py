@@ -30,8 +30,6 @@ def read_csv_create_journal(file_name):
                         row['Publisher'], row['PrintISSN'], row['OnlineISSN'],
                         row['ManagedCoverageBegin'], row['ManagedCoverageEnd']
                         ))
-
-    print(journal_list[0])
     return journal_list
 
 
