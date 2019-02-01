@@ -9,4 +9,3 @@ for i in works.query('Systematic Biology').filter(has_funder='true', has_license
 
 journals = Journals()
 journal_ = journals.journal('0975-7651')
-print journal_
