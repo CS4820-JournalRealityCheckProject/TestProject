@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d5753a26-b1c7-4cf0-b844-5cf0ba2bea18" name="Default Changelist" comment="This is the discription">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crossref_utils/MethodTesting.py" beforeDir="false" afterPath="$PROJECT_DIR$/crossref_utils/MethodTesting.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,13 +31,25 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/journal_ui/main_ui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="5" lean-forward="true" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+            <state relative-caret-position="-411">
+              <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/crossref_utils/MethodTesting.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="165">
+              <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+              <folding>
+                <element signature="e#0#34#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -80,13 +92,14 @@
         <option value="$PROJECT_DIR$/journal_utils/csv_reader.py" />
         <option value="$PROJECT_DIR$/journal_ui/main_ui.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/crossref_utils/MethodTesting.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="152" />
+    <option name="x" value="63" />
     <option name="y" value="23" />
-    <option name="width" value="1126" />
+    <option name="width" value="1215" />
     <option name="height" value="774" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -233,7 +246,7 @@
       <workItem from="1548875272251" duration="109000" />
       <workItem from="1548895660806" duration="6743000" />
       <workItem from="1548902888431" duration="1141000" />
-      <workItem from="1548905751325" duration="1070000" />
+      <workItem from="1548905751325" duration="1348000" />
     </task>
     <task id="LOCAL-00001" summary="This is the discription">
       <created>1548697716866</created>
@@ -246,18 +259,18 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="26164000" />
+    <option name="totallyTimeSpent" value="26442000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="152" y="23" width="1126" height="774" extended-state="0" />
+    <frame x="63" y="23" width="1215" height="774" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.7882883" visible="true" weight="0.20295203" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.7882883" visible="true" weight="0.18755329" />
       <window_info id="Structure" order="1" sideWeight="0.2117117" side_tool="true" weight="0.194292" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32776934" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.323217" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.25948405" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39908952" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -339,15 +352,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crossref_utils/MethodTesting.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#34#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/journal_utils/csv_reader.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-34">
@@ -370,10 +374,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/journal_ui/main_ui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="5" lean-forward="true" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+        <state relative-caret-position="-411">
+          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crossref_utils/MethodTesting.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="e#0#34#0" expanded="true" />
           </folding>
         </state>
       </provider>
