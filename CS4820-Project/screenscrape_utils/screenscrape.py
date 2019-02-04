@@ -88,3 +88,25 @@ class ScreenScraper:
             results[0] = False
 
         return results
+
+article_list = [['ACS', '10.1021/acs.inorgchem.8b03148'],
+                ['Oxford Journal', '10.1093/jigpal/jzy015'],
+                ['Oxford Journal', '10.1111/j.1095-8339.2011.01155.x'],  # Open Access
+                ['Oxford Journal', '10.1111/bij.12521'],                 # Open Access
+                ['Science Direct', '10.1016/j.ijrmhm.2018.07.009'],
+                ['Science Direct', '10.1016/j.burnso.2018.03.001'],      # Open access
+                ['Springer', '10.1007/s10059-013-0080-3'],
+               ]
+
+ss = ScreenScraper()
+
+for article in article_list:
+    if article[0] == 'Oxford Journal':
+        result = ScreenScraper.oxford(article[1])
+    elif article[0] == 'Springer':
+        result = ScreenScraper.springer(article[1])
+    elif article[0] == 'ACS':
+        result = ScreenScraper.acs(article[1])
+    elif article[0] == 'Science Direct':
+        result = ss.science_direct(article[1])
+    print(str(result)+": "+article[1])
