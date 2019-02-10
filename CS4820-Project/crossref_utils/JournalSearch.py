@@ -16,7 +16,7 @@ class JournalSearch:
         self.start_year = start_year
         self.end_year = end_year
 
-    #function that searches 10 articles in journal for each year
+    # function that searches 10 articles in journal for each year
     def search_journals(self):
         works = Works()
         doi_list = ['']
