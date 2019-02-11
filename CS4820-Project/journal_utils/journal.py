@@ -23,7 +23,7 @@ class Journal(object):
 
         self.begin_date = self.create_date(expected_subscript_begin)
         self.end_date = self.create_date(expected_subscript_end)
-        self.year_dict = {}  # year: (datetime, article, boolean)
+        self.year_dict = {}  # year: (start_date, end_date, article)
 
         self.create_year_dict()
 

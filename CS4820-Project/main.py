@@ -35,16 +35,38 @@ class MainSystem:
                 print(self.journal_list[n])
         print('finished')
 
-    def fetch_article(self, publisher, begin_date, end_date):
+    def start(self):
+        for journal in self.journal_list:
+            for year in journal.year_dict:
+
+                doi = crossref_utils.fetch(journal.year_dict[year][0], # start_date
+                                           journal.year_dict[year][1], # end_date
+                                           journal.title, journal.print_issn, journal.online_issn)
+
+                accessibility = screenscrape_utils.determine_reality(doi)
+                journal.year_dict[year][2].accessible = accessibility
+
+
+
+    def fetch_article(self, publisher, title, print_issn, online_issn, begin_date, end_date):
+        # return crossref_utils.fetch(publisher, title, print_issn, online_issn, begin_date, end_date);
         print("crossref.fetch_article is called here")
 
     def check_reality(self, doi):
+        # return screenscrape_utils.determine_reality(doi)
         print("journal reality check will be proceeded here")
 
 
 def main():
     main_system = MainSystem()
 
+def start():
+    main_system = MainSystem()
+
+
+
 
 if __name__ == '__main__':
     main()
+
+
