@@ -35,6 +35,12 @@ class MainSystem:
                 print(self.journal_list[n])
         print('finished')
 
+    def fetch_article(self, publisher, begin_date, end_date):
+        print("crossref.fetch_article is called here")
+
+    def check_reality(self, doi):
+        print("journal reality check will be proceeded here")
+
 
 def main():
     main_system = MainSystem()

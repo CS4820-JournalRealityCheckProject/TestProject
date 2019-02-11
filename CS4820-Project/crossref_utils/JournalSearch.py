@@ -26,7 +26,7 @@ class JournalSearch:
             print("Journals for year: " + str(self.start_year))
             for i in works.query(self.journal_title).filter(has_funder='true', has_license='true',
                                                             issn=self.online_issn,
-                                                            from_pub_date=str(self.start_year) + '-01-01',
+                                                            from_pub_date= str(self.start_year) + '-01-01',
                                                             until_pub_date=str(self.start_year) + '-12-31').sample(10).select('DOI, prefix'):
                 print(str(i))
                 doi_list.append(i)
