@@ -15,6 +15,33 @@ class ScreenScraper:
         r = requests.get(url, allow_redirects=False)
         return r.headers['Location']
 
+    @staticmethod
+    def doi_to_journal(doi):
+        url = "http://dx.doi.org/" + doi
+        headers = {"accept": "application/x-bibtex"}
+        r = requests.get(url, headers=headers)
+        # Very messy way to get the publisher
+        for line in r.text.split('\n'):
+            if 'publisher' in line:
+                return line[14:-2]
+
+    def check_journal(self, doi):
+        publisher = self.doi_to_journal(doi)
+        print(publisher)
+        if publisher == "Royal Society of Chemistry ({RSC})":
+            return self.chem_gold(doi)
+        elif publisher == "American Chemical Society ({ACS})":
+            return self.acs(doi)
+        elif publisher == "Oxford University Press ({OUP})":
+            return self.oxford(doi)
+        elif publisher == "Elsevier {BV}":
+            return self.science_direct(doi)
+        elif publisher == "Springer Nature":
+            return self.springer(doi)
+        else:
+            return '['+publisher+'] Not found'
+
+
     def science_direct(self, doi):
         parameters = {"APIKey": self.key_sd}
         r = requests.get("https://api.elsevier.com/content/article/doi/" + doi, params=parameters)
@@ -91,11 +118,28 @@ class ScreenScraper:
 
         return results
 
+    @staticmethod
+    def chem_gold(doi):
+        url = ScreenScraper.doi_to_url(doi)
+        # Pass through another redirect
+        headers = {
+            'User-Agent': 'Mozilla/5.0'
+        }
+        r = requests.get(url, headers=headers)
+        # change the url to get to the article
+        url = r.url.replace("ArticleLanding", "articlepdf")
+        r = requests.get(url, headers=headers)
+        # Check if we were kicked out of the article
+        if "articlepdf" in r.url:
+            return True
+        return False
 
-article_list = [['ACS', '10.1021/acs.inorgchem.8b03148'],
+
+article_list = [#['Chem Gold',  '10.1039/C8PP00052B'],
+                ['ACS', '10.1021/acs.inorgchem.8b03148'],
                 ['Oxford Journal', '10.1093/jigpal/jzy015'],
-                ['Oxford Journal', '10.1111/j.1095-8339.2011.01155.x'],  # Open Access
-                ['Oxford Journal', '10.1111/bij.12521'],  # Open Access
+                # ['Oxford Journal', '10.1111/j.1095-8339.2011.01155.x'],  # Open Access
+                # ['Oxford Journal', '10.1111/bij.12521'],  # Open Access
                 ['Science Direct', '10.1016/j.ijrmhm.2018.07.009'],
                 ['Science Direct', '10.1016/j.burnso.2018.03.001'],  # Open access
                 ['Springer', '10.1007/s10059-013-0080-3'],
@@ -104,12 +148,5 @@ article_list = [['ACS', '10.1021/acs.inorgchem.8b03148'],
 ss = ScreenScraper()
 
 for article in article_list:
-    if article[0] == 'Oxford Journal':
-        result = ScreenScraper.oxford(article[1])
-    elif article[0] == 'Springer':
-        result = ScreenScraper.springer(article[1])
-    elif article[0] == 'ACS':
-        result = ScreenScraper.acs(article[1])
-    elif article[0] == 'Science Direct':
-        result = ss.science_direct(article[1])
-    print(str(result) + ": " + article[1])
+    result = ss.check_journal(article[1])
+    print(str(result)+": "+str(article[1]))
