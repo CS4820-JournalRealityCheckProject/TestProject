@@ -1,7 +1,17 @@
 **/.DS_Store
 *.iwl
+*.iml
+CS4820-Project/screenscrape_utils/ScienceDirectApi.txt
 CS4820-Project/.idea/workspace.xml
 CS4820-Project/.idea/tasks.xml
+CS4820-Project/.idea/misc.xml
+CS4820-Project/.idea/vcs.xml
+CS4820-Project/.idea/
+CS4820-Project/.idea
+.idea
+.idea/
+**/.idea/
+**/.idea
 __pycache__/
 *.pyc
 CS4820-Project/.idea/workspace.xml
