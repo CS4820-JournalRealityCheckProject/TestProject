@@ -25,7 +25,7 @@ class EmailHandler:
     def is_valid_sender(self):
         return self.valid_sender
 
-    def send(self, file_path):
+    def send(self, file_array):
         if not self.valid_sender:
             print("Can not send an email without a valid sender")
             return
@@ -37,13 +37,14 @@ class EmailHandler:
         body = "This is a test email. Its purpose is to test attachments"
         msg.attach(MIMEText(body, "plain"))
         # Read the supplied file
-        fp = open(file_path, "rb")
-        attachment = MIMEBase("text", "csv")
-        attachment.set_payload(fp.read())
-        fp.close()
-        encoders.encode_base64(attachment)
-        attachment.add_header("Content-Disposition", "attachment", filename=file_path)
-        msg.attach(attachment)
+        for file_path in file_array:
+            fp = open(file_path, "rb")
+            attachment = MIMEBase("text", "csv")
+            attachment.set_payload(fp.read())
+            fp.close()
+            encoders.encode_base64(attachment)
+            attachment.add_header("Content-Disposition", "attachment", filename=file_path)
+            msg.attach(attachment)
 
         with smtplib.SMTP_SSL(self.smtp_server, self.port) as server:
             server.ehlo()
