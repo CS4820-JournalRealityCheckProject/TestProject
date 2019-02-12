@@ -8,19 +8,24 @@ from email.mime.multipart import MIMEMultipart
 class EmailHandler:
     port = 465
     smtp_server = "smtp.gmail.com"
+    sender = ""
+    password = ""
+    receiver = ""
     valid_sender = False
 
-    def set_sender(self):
-        self.sender = input("Enter the account of the sender: ")
-        self.password = input("Please enter a password: ")
+    def set_sender(self, sender, password):
+        self.sender = sender
+        self.password = password
         # try logging in to test
         try:
             server = smtplib.SMTP_SSL(self.smtp_server, self.port)
             server.login(self.sender, self.password)
             self.valid_sender = True
         except smtplib.SMTPAuthenticationError:
-            print("The supplied address or password is incorrect.")
             self.valid_sender = False
+
+    def set_receiver(self, receiver):
+        self.receiver = receiver
 
     def is_valid_sender(self):
         return self.valid_sender
@@ -29,11 +34,13 @@ class EmailHandler:
         if not self.valid_sender:
             print("Can not send an email without a valid sender")
             return
-        receiver = input("Who should I send this message to? ")
+        if self.receiver == "":
+            print("There is no specified receiver")
+            return
         msg = MIMEMultipart()
         msg['Subject'] = "Attachment test"
         msg['From'] = self.sender
-        msg['To'] = receiver
+        msg['To'] = self.receiver
         body = "This is a test email. Its purpose is to test attachments"
         msg.attach(MIMEText(body, "plain"))
         # Read the supplied file
@@ -45,11 +52,10 @@ class EmailHandler:
             encoders.encode_base64(attachment)
             attachment.add_header("Content-Disposition", "attachment", filename=file_path)
             msg.attach(attachment)
-
         with smtplib.SMTP_SSL(self.smtp_server, self.port) as server:
             server.ehlo()
             print("Logging in...")
             server.login(self.sender, self.password)
             print("Sending message...")
-            server.sendmail(self.sender, receiver, msg.as_string())
+            server.sendmail(self.sender, self.receiver, msg.as_string())
         print("Message sent")
