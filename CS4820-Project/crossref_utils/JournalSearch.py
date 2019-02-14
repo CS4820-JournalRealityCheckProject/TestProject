@@ -1,6 +1,7 @@
 #Module method that gives sample DOI's from the correct
 #journal from start date to end date
 #still a few indescrepencies
+
 from crossref.restful import Works
 
 
@@ -26,5 +27,6 @@ def search_journal(journal_title, start_date, end_date, print_issn, online_issn)
                 received_doi = j['DOI']
 
         return received_doi
+
 
 

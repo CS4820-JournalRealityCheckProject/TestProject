@@ -5,16 +5,14 @@ import journal_utils.csv_reader as csv_reader
 
 class MainUI(tk.Frame):
 
-    def __init__(self, main_system, master=None):
+    def __init__(self, master=None, main_upload=None, main_download=None):
         super().__init__(master)
         self.master = master
         self.pack()
         self.file_path = None
-        self.create_widget()
-        self.input_file_path = None
-        self.main_system = main_system
+        self.create_widget(main_upload=main_upload, main_download=main_download)
 
-    def create_widget(self):
+    def create_widget(self, main_upload, main_download):
         self.top_frame = tk.Frame(self, width=500, height=500)
         self.mid_frame = tk.Frame(self, width=500, height=100)
         self.buttom_frame = tk.Frame(self)
@@ -23,9 +21,9 @@ class MainUI(tk.Frame):
         self.content_field = tk.Text(self.top_frame)
         self.ready_label = tk.Entry(self.mid_frame)
 
-        self.upload_button = tk.Button(self.buttom_frame, text="Browse File", command=self.upload_file)
+        self.upload_button = tk.Button(self.buttom_frame, text="Browse File", command=main_upload)
         self.search_button = tk.Button(self.buttom_frame, text="Search Articles", command=self.search_article)
-        self.download_button = tk.Button(self.buttom_frame, text="Download", command=self.download_file)
+        self.download_button = tk.Button(self.buttom_frame, text="Download", command=main_download)
         self.exit_button = tk.Button(self.buttom_frame, text="Exit", command=self.quit)
 
         self.ready_label.pack()
@@ -46,14 +44,10 @@ class MainUI(tk.Frame):
                                                filetypes=(("csv files", "*.csv"),
                                                           ("all files", "*.*")))
         print(file_path)
-        self.input_file_path = file_path
-        self.main_system.update('FILE_UPLOADED')
-
-    def download_file(self):
-        self.main_system.update('DOWNLOAD_CLICKED')
+        return file_path
 
     def search_article(self):
-        self.main_system.update('SEARCH_CLICKED')
+        print('search')
 
     def print_message(self):
         print('message')
@@ -63,3 +57,4 @@ if __name__ == '__main__':
     root = tk.Tk()
     app = MainUI(master=root)
     app.mainloop()
+

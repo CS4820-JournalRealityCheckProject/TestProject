@@ -20,7 +20,6 @@ class Journal(object):
         self.online_issn = online_issn
         self.expected_subscription_begin = expected_subscript_begin
         self.expected_subscription_end = expected_subscript_end
-        print(title, package)
 
         self.begin_date = self.create_date(expected_subscript_begin)
         self.end_date = self.create_date(expected_subscript_end)
@@ -33,11 +32,8 @@ class Journal(object):
         line = ("\"" + self.title + "\" / " + self.package + s +
                 self.url + s +
                 self.publisher + s +
-                self.expected_subscription_begin + s +
-                self.expected_subscription_end + s +
                 str(self.begin_date) + s +
                 str(self.end_date) + s
-
                 )
         return line
 
@@ -45,15 +41,9 @@ class Journal(object):
     def create_date(date):
         if date == 'Present':
             return datetime.datetime.today()
-        try:
-            year = int(date[0:4])  # exception should be handled here
-            month = int(date[5:7])
-            day = int(date[8:10])
-        except ValueError:
-            year = 0
-            month = 0
-            day = 0
-
+        year = int(date[0:4])
+        month = int(date[5:7])
+        day = int(date[8:10])
         return datetime.datetime(year, month, day)
 
     def create_year_dict(self):
@@ -63,6 +53,7 @@ class Journal(object):
 
         year = self.begin_date.year + 1
         while year < self.end_date.year:
+            print('year:', year)
             self.year_dict[year] = (
                 str(year) + '-01-01',
                 str(year) + '-12-31',
