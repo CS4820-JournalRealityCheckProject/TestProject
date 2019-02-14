@@ -1,49 +1,32 @@
-#Program that gives sample DOI's from the correct
-#journal for each year from start year to end year
+#Module method that gives sample DOI's from the correct
+#journal from start date to end date
 #still a few indescrepencies
 
 from crossref.restful import Works
 
 
-class JournalSearch:
-
-    def __init__(self, journal_title, journal_package_name, journal_url, journal_publisher, print_issn, online_issn, start_year, end_year):
-        self.journal_title = journal_title
-        self.journal_package_name = journal_package_name
-        self.journal_url = journal_url
-        self.journal_publisher = journal_publisher
-        self.print_issn = print_issn
-        self.online_issn = online_issn
-        self.start_year = start_year
-        self.end_year = end_year
-
-    # function that searches 10 articles in journal for each year
-    def search_journals(self):
+#function that searches an article in between given dates
+def search_journal(journal_title, start_date, end_date, print_issn, online_issn):
         works = Works()
-        doi_list = ['']
+        received_doi = None
 
-        #loop executes until start year reaches the end year also puts results into a list
-        while self.start_year <= self.end_year:
-            print("Journals for year: " + str(self.start_year))
-            for i in works.query(self.journal_title).filter(has_funder='true', has_license='true',
-                                                            issn=self.online_issn,
-                                                            from_pub_date= str(self.start_year) + '-01-01',
-                                                            until_pub_date=str(self.start_year) + '-12-31').sample(10).select('DOI, prefix'):
-                print(str(i))
-                doi_list.append(i)
+        #loop executes until all the DOI's are put into a list,
+        #it is set up so if the online_issn doesn't return any DOI's then the method
+        #will try again using the print_issn
+        for i in works.query(journal_title).filter(has_funder='true', has_license='true',
+                                                            issn=online_issn,
+                                                            from_pub_date=start_date,
+                                                            until_pub_date=end_date).sample(1).select('DOI'):
+            received_doi = i['DOI']
 
-            self.start_year += 1
+        if received_doi is None:
+            for j in works.query(journal_title).filter(has_funder='true', has_license='true',
+                                                           issn=print_issn,
+                                                           from_pub_date=start_date,
+                                                           until_pub_date=end_date).sample(1).select('DOI'):
+                received_doi = j['DOI']
 
+        return received_doi
 
-def main():
-    #paramaters have some filler values that aren't needed but there for prooject purposes
-    #example used is Journal of Biosciences with correct ISSN
-    searcher = JournalSearch('Journal of biosciences', 'Filler-Value', 'filler-value', 'filler-value',
-                             'filler-value', '0973-7138', 2016, 2018)
-    searcher.search_journals()
-
-
-if __name__ == "__main__":
-    main()
 
 
