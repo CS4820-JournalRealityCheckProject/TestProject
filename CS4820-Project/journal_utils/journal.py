@@ -29,17 +29,25 @@ class Journal(object):
         self.create_year_dict()
 
     def __str__(self):
-        s = ' / '
+        s = ', '
+        q = "'"
+        cq = s + q
         line = ("\"" + self.title + "\" / " + self.package + s +
-                self.url + s +
-                self.publisher + s +
-                self.expected_subscription_begin + s +
-                self.expected_subscription_end + s +
-                str(self.begin_date) + s +
-                str(self.end_date) + s
-
+                # self.url + s +
+                # self.publisher + s +
+                self.wrap_quote(self.title) + s +
+                self.wrap_quote(self.expected_subscription_begin) + s +
+                self.wrap_quote(self.expected_subscription_end) + s +
+                self.wrap_quote(self.print_issn) + s +
+                self.wrap_quote(self.online_issn) + s
+                # str(self.begin_date) + s +
+                # str(self.end_date) + s
                 )
         return line
+
+    @staticmethod
+    def wrap_quote(s):
+        return "'" + s + "'"
 
     @staticmethod
     def create_date(date):
