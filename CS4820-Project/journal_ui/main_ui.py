@@ -50,11 +50,10 @@ class MainUI(tk.Frame):
         self.main_system.update('FILE_UPLOADED')
 
     def download_file(self):
-        print('download')
+        self.main_system.update('DOWNLOAD_CLICKED')
 
     def search_article(self):
         self.main_system.update('SEARCH_CLICKED')
-        print('search')
 
     def print_message(self):
         print('message')
@@ -64,4 +63,3 @@ if __name__ == '__main__':
     root = tk.Tk()
     app = MainUI(master=root)
     app.mainloop()
-
