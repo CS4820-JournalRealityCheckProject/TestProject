@@ -22,11 +22,11 @@ class Journal(object):
         self.expected_subscription_end = expected_subscript_end
         print(title, package)
 
-        self.begin_date = self.create_date(expected_subscript_begin)
-        self.end_date = self.create_date(expected_subscript_end)
+        # self.begin_date = self.create_date(expected_subscript_begin)
+        # self.end_date = self.create_date(expected_subscript_end)
         self.year_dict = {}  # year: (start_date, end_date, article)
 
-        self.create_year_dict()
+        # self.create_year_dict()
 
     def __str__(self):
         s = ' / '
@@ -37,6 +37,7 @@ class Journal(object):
                 self.expected_subscription_end + s +
                 str(self.begin_date) + s +
                 str(self.end_date) + s
+
                 )
         return line
 
