@@ -14,20 +14,13 @@ class MainSystem:
 
     def start_ui(self):
         self.root = tk.Tk()
-        self.app = main_ui.MainUI(master=self.root,
-                                  main_upload=self.read_csv,
-                                  main_download=self.download_csv)
-        self.app.mainloop()
-
-    def read_csv(self):
-        self.file_path = self.app.upload_file()
-        self.create_journal_list()
-        print('reading function of main')
+        self.main_ui = main_ui.MainUI(master=self.root, main_system=self)
+        self.main_ui.mainloop()
 
     def create_journal_list(self):
         self.journal_list = csv_reader.read_csv_create_journal(self.file_path)
 
-    def download_csv(self):
+    def test_print(self):
         n = 0
         while not (n == -1):
             n = int(input('Enter an index:'))
@@ -35,7 +28,7 @@ class MainSystem:
                 print(self.journal_list[n])
         print('finished')
 
-    def start(self):
+    def search(self):
         for journal in self.journal_list:
             for year in journal.year_dict:
 
@@ -46,8 +39,6 @@ class MainSystem:
                 accessibility = screenscrape_utils.determine_reality(doi)
                 journal.year_dict[year][2].accessible = accessibility
 
-
-
     def fetch_article(self, publisher, title, print_issn, online_issn, begin_date, end_date):
         # return crossref_utils.fetch(publisher, title, print_issn, online_issn, begin_date, end_date);
         print("crossref.fetch_article is called here")
@@ -55,6 +46,14 @@ class MainSystem:
     def check_reality(self, doi):
         # return screenscrape_utils.determine_reality(doi)
         print("journal reality check will be proceeded here")
+
+    def update(self, code):
+        print('CODE:', code)
+        if code == 'FILE_UPLOADED':
+            self.file_path = self.main_ui.input_file_path
+            self.create_journal_list()
+        elif code == 'SEARCH_CLICKED':
+            self.test_print()
 
 
 def main():
