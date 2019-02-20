@@ -30,5 +30,5 @@ def search_journal(journal_title, start_date, end_date, print_issn, online_issn)
 
 
 if __name__ == '__main__':
-   doi = search_journal('Annals of Combinatorics', '1997-01-01', 'Present', '0218-0006', '0219-3094')
-   print(doi)
+    doi = search_journal('Annals of Combinatorics', '1997-01-01', '2000-12-31', '0218-0006', '0219-3094')
+    print(doi)
