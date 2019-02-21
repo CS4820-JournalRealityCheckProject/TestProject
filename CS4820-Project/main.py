@@ -2,6 +2,7 @@ import tkinter as tk
 
 import journal_ui.main_ui as main_ui
 import journal_utils.csv_reader as csv_reader
+import crossrefapi_utils.journal_search as searcher
 
 
 class MainSystem:
@@ -21,19 +22,23 @@ class MainSystem:
         n = 0
         while not (n == -1):
             n = int(input('Enter an index:'))
-            if self.journal_list is not None:
-                print(self.journal_list[n])
+            if n != -1:
+                if self.journal_list is not None:
+                    print(self.journal_list[n])
+                    self.search(self.journal_list[n])
         print('finished')
 
-    def search(self):
-        for journal in self.journal_list:
-            for year in journal.year_dict:
-                doi = crossref_utils.fetch(journal.year_dict[year][0],  # start_date
-                                           journal.year_dict[year][1],  # end_date
-                                           journal.title, journal.print_issn, journal.online_issn)
-
-                access = screenscrape_utils.determine_reality(doi)
-                journal.year_dict[year][2].accessible = access
+    def search(self, journal):
+        for year in journal.year_dict:
+            print(journal.title,
+                  journal.year_dict[year][0],  # start_date
+                  journal.year_dict[year][1],  # end_date
+                  journal.print_issn, journal.online_issn)
+            doi = searcher.search_journal(journal.title,
+                                          journal.year_dict[year][0],  # start_date
+                                          journal.year_dict[year][1],  # end_date
+                                          journal.print_issn, journal.online_issn)
+            print(doi)
 
     def fetch_article(self, publisher, title, print_issn, online_issn, begin_date, end_date):
         # return crossref_utils.fetch(publisher, title, print_issn, online_issn, begin_date, end_date);
@@ -42,6 +47,8 @@ class MainSystem:
     def check_reality(self, doi):
         # return screenscrape_utils.determine_reality(doi)
         print("journal reality check will be proceeded here")
+        # access = screenscrape_utils.determine_reality(doi)
+        # journal.year_dict[year][2].accessible = access
 
     def update(self, code):
         print('CODE:', code)
