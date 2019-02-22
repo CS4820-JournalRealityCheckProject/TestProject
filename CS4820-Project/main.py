@@ -3,6 +3,7 @@ import tkinter as tk
 import journal_ui.main_ui as main_ui
 import journal_utils.csv_reader as csv_reader
 import crossrefapi_utils.journal_search as searcher
+import screenscrape_utils.screenscrape as screenscraper
 
 
 class MainSystem:
@@ -38,15 +39,27 @@ class MainSystem:
                                           journal.year_dict[year][0],  # start_date
                                           journal.year_dict[year][1],  # end_date
                                           journal.print_issn, journal.online_issn)
+            journal.year_dict[year][2].doi = doi
+            # journal.year_article_dict[year].doi = doi
             print(doi)
 
     def fetch_article(self, publisher, title, print_issn, online_issn, begin_date, end_date):
         # return crossref_utils.fetch(publisher, title, print_issn, online_issn, begin_date, end_date);
         print("crossref.fetch_article is called here")
 
-    def check_reality(self, doi):
+    def check_reality(self, journal):
         # return screenscrape_utils.determine_reality(doi)
         print("journal reality check will be proceeded here")
+        scraper = screenscraper.ScreenScraper
+        print(journal.title, journal.publisher)
+        for year in journal.year_dict:
+            # print(journal.year_dict[year][2])
+            doi = journal.year_dict[year][2].doi
+            print(doi)
+            article = [journal.publisher, doi]
+            result = scraper.check_journal(scraper, doi=doi)
+            print(str(result))
+
         # access = screenscrape_utils.determine_reality(doi)
         # journal.year_dict[year][2].accessible = access
 
@@ -62,6 +75,9 @@ class MainSystem:
 
         elif code == 'DOWNLOAD_CLICKED':
             print('"Download is ready"')
+            print('enter an index')
+            n = int(input('Enter an index:'))
+            self.check_reality(self.journal_list[n])
 
 
 def main():
