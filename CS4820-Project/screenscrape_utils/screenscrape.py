@@ -39,8 +39,7 @@ class ScreenScraper:
         elif publisher == "Springer Nature":
             return self.springer(doi)
         else:
-            return '['+publisher+'] Not found'
-
+            return '[' + publisher + '] Not found'
 
     def science_direct(self, doi):
         parameters = {"APIKey": self.key_sd}
@@ -135,18 +134,20 @@ class ScreenScraper:
         return False
 
 
-article_list = [#['Chem Gold',  '10.1039/C8PP00052B'],
-                ['ACS', '10.1021/acs.inorgchem.8b03148'],
-                ['Oxford Journal', '10.1093/jigpal/jzy015'],
-                # ['Oxford Journal', '10.1111/j.1095-8339.2011.01155.x'],  # Open Access
-                # ['Oxford Journal', '10.1111/bij.12521'],  # Open Access
-                ['Science Direct', '10.1016/j.ijrmhm.2018.07.009'],
-                ['Science Direct', '10.1016/j.burnso.2018.03.001'],  # Open access
-                ['Springer', '10.1007/s10059-013-0080-3'],
-                ]
+if __name__ == '__main__':
 
-ss = ScreenScraper()
+    article_list = [  # ['Chem Gold',  '10.1039/C8PP00052B'],
+        ['ACS', '10.1021/acs.inorgchem.8b03148'],
+        ['Oxford Journal', '10.1093/jigpal/jzy015'],
+        # ['Oxford Journal', '10.1111/j.1095-8339.2011.01155.x'],  # Open Access
+        # ['Oxford Journal', '10.1111/bij.12521'],  # Open Access
+        ['Science Direct', '10.1016/j.ijrmhm.2018.07.009'],
+        ['Science Direct', '10.1016/j.burnso.2018.03.001'],  # Open access
+        ['Springer', '10.1007/s10059-013-0080-3'],
+    ]
 
-for article in article_list:
-    result = ss.check_journal(article[1])
-    print(str(result)+": "+str(article[1]))
+    ss = ScreenScraper()
+
+    for article in article_list:
+        result = ss.check_journal(article[1])
+        print(str(result) + ": " + str(article[1]))
