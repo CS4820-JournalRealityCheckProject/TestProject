@@ -43,9 +43,12 @@ class MainSystem:
         for year in journal.year_dict:
             # print(journal.year_dict[year][2])
             doi = journal.year_dict[year][2].doi
-            print(doi)
-            result = scraper.check_journal(scraper, doi=doi)
-            print(str(result))
+            if doi is None:
+                print('DOI is none')
+            else:
+                print(doi)
+                result = scraper.check_journal(scraper, doi=doi)
+                print(str(result))
         print('Reality check finished')
 
     def update(self, code):
@@ -65,28 +68,27 @@ class MainSystem:
             self.check_reality(self.journal_list[n])
 
 
-def main():
-    # start()  # the main system
-    test()  # the test system
-
-
 def start():
     main_system = MainSystem()
 
 
 def test():
     main_system = MainSystem()
-    main_system.file_path = "./journal_utils/journals/use-this.csv"
+    main_system.file_path = "./journal_utils/journal-csv/use-this.csv"
     main_system.create_journal_list()
     n = int(input('Enter an index(-1 to exit):'))
     while n != -1:
         journal = main_system.journal_list[n]
         print('From', journal.expected_subscription_begin,
-              'to', journal.expected_subscription_end,
-              )
+              'to', journal.expected_subscription_end)
         main_system.search_article(journal)
         main_system.check_reality(journal)
         n = int(input('Enter an index(-1 to exit):'))
+
+
+def main():
+    # start()  # the main system
+    test()  # the test system
 
 
 if __name__ == '__main__':
