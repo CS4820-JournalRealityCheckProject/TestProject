@@ -22,9 +22,10 @@ class Journal(object):
         self.expected_subscription_end = expected_subscript_end
         print(title, package)
 
-        self.begin_date = self.create_date(expected_subscript_begin)
-        self.end_date = self.create_date(expected_subscript_end)
-        self.year_dict = {}  # year: (start_date, end_date, article)
+        self.begin_date = self.create_date(expected_subscript_begin)  # datetime object
+        self.end_date = self.create_date(expected_subscript_end)  # datetime object
+        self.year_dict = {}  # year: (start_date, end_date)
+        self.year_article_dict = {}  # year: Article
 
         self.create_year_dict()
 
@@ -68,6 +69,7 @@ class Journal(object):
         self.year_dict[self.begin_date.year] = (self.expected_subscription_begin,
                                                 str(self.begin_date.year) + '-12-31',
                                                 article.Article(date=self.begin_date))
+        # self.year_article_dict[self.begin_date.year] = article.Article(date=self.begin_date)
 
         year = self.begin_date.year + 1
         while year < self.end_date.year:
@@ -75,12 +77,14 @@ class Journal(object):
                 str(year) + '-01-01',
                 str(year) + '-12-31',
                 article.Article(date=datetime.datetime(year, 1, 1)))
+            # self.year_article_dict = article.Article(date=datetime.datetime(year, 1, 1))
             year = year + 1
         print('\n')
 
         self.year_dict[self.end_date.year] = (str(self.end_date.year) + '-01-01',
                                               self.str_date(self.end_date),
                                               article.Article(date=self.end_date))
+        # self.year_article_dict[self.end_date.year] = article.Article(date=self.end_date)
 
     @staticmethod
     def str_date(date):
