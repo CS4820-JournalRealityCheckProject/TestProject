@@ -13,14 +13,14 @@ def search_journal(journal_title, start_date, end_date, print_issn, online_issn)
     # loop executes until all the DOI's are put into a list,
     # it is set up so if the online_issn doesn't return any DOI's then the method
     # will try again using the print_issn
-    for i in works.query(journal_title).filter(has_funder='true', has_license='true',
+    for i in works.query(journal_title).filter(
                                                issn=online_issn,
                                                from_pub_date=start_date,
                                                until_pub_date=end_date).sample(1).select('DOI'):
         received_doi = i['DOI']
 
     if received_doi is None:
-        for j in works.query(journal_title).filter(has_funder='true', has_license='true',
+        for j in works.query(journal_title).filter(
                                                    issn=print_issn,
                                                    from_pub_date=start_date,
                                                    until_pub_date=end_date).sample(1).select('DOI'):
