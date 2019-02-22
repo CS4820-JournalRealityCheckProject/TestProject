@@ -36,7 +36,7 @@ class ScreenScraper:
             return self.oxford(doi)
         elif publisher == "Elsevier {BV}":
             return self.science_direct(doi)
-        elif publisher == "Springer Nature":
+        elif publisher == "Springer Nature" or publisher == "Pleiades Publishing Ltd":
             return self.springer(doi)
         else:
             return '[' + publisher + '] Not found'
