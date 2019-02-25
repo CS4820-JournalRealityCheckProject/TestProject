@@ -68,11 +68,12 @@ class MainSystem:
             self.check_reality(self.journal_list[n])
 
 
-def start():
+def start_with_ui():
     main_system = MainSystem()
+    main_system.main_ui.mainloop()  # starts UI
 
 
-def test():
+def start_without_ui():
     main_system = MainSystem()
     main_system.file_path = "./journal_utils/journal-csv/use-this.csv"
     main_system.create_journal_list()
@@ -87,8 +88,15 @@ def test():
 
 
 def main():
-    # start()  # the main system
-    test()  # the test system
+    #  start_with_ui()  # the main system
+    start_without_ui()  # the test system
+
+
+def test_call(turn_on_ui):
+    if turn_on_ui:
+        start_with_ui()
+    else:
+        start_without_ui()
 
 
 if __name__ == '__main__':
