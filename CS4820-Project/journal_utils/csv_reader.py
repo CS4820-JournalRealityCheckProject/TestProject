@@ -63,7 +63,7 @@ def read_file(file_name):
 def read_csv_create_journal(file_name):
     journal_list = []
 
-    with open(file_name, 'r') as csv_file:
+    with open(file_name, 'r', encoding="utf8") as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
             journal_list.append(
