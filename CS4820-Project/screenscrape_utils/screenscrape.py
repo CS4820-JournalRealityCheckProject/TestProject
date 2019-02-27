@@ -78,6 +78,12 @@ class ScreenScraper:
         r = requests.get(url, headers=headers)
 
         soup = BeautifulSoup(r.text, 'html.parser')
+        if not soup.find('div', {"class": "oup-header"}):
+            return "Can not read journal"
+        if soup.find('i', {"class": "icon-availability_open"}):
+            return "Open access"
+        if soup.find('i', {"class": "icon-availability_free"}):
+            return "Free access"
         for title in soup.find_all('title'):
             if 'OUP | Not Found' in title.text:
                 return "Article not found"
