@@ -54,7 +54,7 @@ def write_doi_csv():
 
 
 def read_file(file_name):
-    with open(file_name + '.csv', 'r') as csv_file:
+    with open(file_name + '.csv', 'r', encoding="utf8") as csv_file:
         reader = csv.DictReader(csv_file)
         # for row in reader:
         #     print(row['title'], '=>', row['package'])
