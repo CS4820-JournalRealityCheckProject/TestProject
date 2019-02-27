@@ -5,6 +5,7 @@ import journal_ui.main_ui as main_ui
 import journal_utils.csv_reader as csv_reader
 import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
+import email_utils.email_handler as email_handler
 
 
 class MainSystem:
@@ -13,8 +14,8 @@ class MainSystem:
         print("system turned on")
         self.journal_list = None
         self.file_path = None
-        self.root = tk.Tk()
-        self.main_ui = main_ui.MainUI(master=self.root, main_system=self)
+        # self.root = tk.Tk()
+        # self.main_ui = main_ui.MainUI(master=self.root, main_system=self)
         # self.main_ui.mainloop()  # starts UI
 
     def create_journal_list(self):
@@ -51,6 +52,20 @@ class MainSystem:
                 print(str(result))
         print('Reality check finished')
 
+    @staticmethod
+    def send_email():
+        emailer = email_handler.EmailHandler()
+        your_email = '@upei.ca'
+
+        sender = your_email
+        receiver = your_email
+        password = input("Please enter a password: ")
+        files = ["./email_utils/test.csv", "./email_utils/test2.csv"]
+
+        emailer.set_sender(sender=sender, password=password)
+        emailer.set_receiver(receiver=receiver)
+        emailer.send(files)
+
     def update(self, code):
         print('CODE:', code)
 
@@ -75,6 +90,7 @@ def start_with_ui():
 
 def start_without_ui():
     main_system = MainSystem()
+    # main_system.send_email()
     main_system.file_path = "./journal_utils/journal-csv/use-this.csv"
     main_system.create_journal_list()
     n = int(input('Enter an index(-1 to exit):'))
