@@ -2,6 +2,7 @@
 *.iwl
 *.iml
 CS4820-Project/screenscrape_utils/ScienceDirectApi.txt
+CS4820-Project/journal_utils/journal-csv
 CS4820-Project/.idea/workspace.xml
 CS4820-Project/.idea/tasks.xml
 CS4820-Project/.idea/misc.xml
@@ -14,4 +15,6 @@ CS4820-Project/.idea
 **/.idea
 __pycache__/
 *.pyc
+*.csv
+*.ini
 CS4820-Project/.idea/workspace.xml

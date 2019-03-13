@@ -3,6 +3,7 @@ import journal_utils.article as article
 
 
 class Journal(object):
+    """This class models a journal"""
 
     def __init__(self,
                  title='None', package='None',
@@ -20,14 +21,19 @@ class Journal(object):
         self.online_issn = online_issn
         self.expected_subscription_begin = expected_subscript_begin
         self.expected_subscription_end = expected_subscript_end
-        print(title, package)
+
+        print(title, package)  # Test print
 
         self.begin_date = self.create_date(expected_subscript_begin)  # datetime object
         self.end_date = self.create_date(expected_subscript_end)  # datetime object
-        self.year_dict = {}  # year: (start_date, end_date)
+        self.year_dict = {}  # year: (start_date, end_date, Article)
         self.year_article_dict = {}  # year: Article
 
         self.create_year_dict()
+
+        self.result_as_expected = True
+        self.wrong_years = ''
+        self.record_wrong_years()
 
     def __str__(self):
         s = ', '
@@ -48,10 +54,20 @@ class Journal(object):
 
     @staticmethod
     def wrap_quote(s):
+        """
+        Given string is wrapped with single quotes.
+        :param s: string
+        :return: a string wapped with single quotes.
+        """
         return "'" + s + "'"
 
     @staticmethod
     def create_date(date):
+        """
+        Dates formats are created from a given dates.
+        :param date:
+        :return:
+        """
         if date == 'Present':
             return datetime.datetime.today()
         try:
@@ -66,6 +82,11 @@ class Journal(object):
         return datetime.datetime(year, month, day)
 
     def create_year_dict(self):
+        """
+        The dictionary for each article year is made.
+            year_dict{year: (start_year, end_year, article)}
+        :return:
+        """
         self.year_dict[self.begin_date.year] = (self.expected_subscription_begin,
                                                 str(self.begin_date.year) + '-12-31',
                                                 article.Article(date=self.begin_date))
@@ -79,7 +100,6 @@ class Journal(object):
                 article.Article(date=datetime.datetime(year, 1, 1)))
             # self.year_article_dict = article.Article(date=datetime.datetime(year, 1, 1))
             year = year + 1
-        print('\n')
 
         self.year_dict[self.end_date.year] = (str(self.end_date.year) + '-01-01',
                                               self.str_date(self.end_date),
@@ -88,6 +108,11 @@ class Journal(object):
 
     @staticmethod
     def str_date(date):
+        """
+        Date is converted into "xxxx-yy-zz" format
+        :param date: datetime object
+        :return: date string
+        """
         if date.month <= 9:
             m = '0' + str(date.month)
         else:
@@ -99,10 +124,27 @@ class Journal(object):
         return str(date.year) + '-' + m + '-' + d
 
     def record_article(self, year, name, doi, date):
+        """
+        The result of an article is recorded.
+        :param year:
+        :param name:
+        :param doi:
+        :param date:
+        :return:
+        """
         a = self.year_dict[year][2]
         a.name = name
         a.doi = doi
         a.date = date
+
+    def record_wrong_years(self):
+
+        for year in self.year_dict:
+            if not self.year_dict[year][2].accessible:
+                self.wrong_years = self.wrong_years + str(year) + '/'
+                self.result_as_expected = False
+        if self.result_as_expected:
+            self.wrong_years = 'no wrong years'
 
 
 if __name__ == '__main__':

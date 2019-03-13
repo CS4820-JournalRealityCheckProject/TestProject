@@ -1,13 +1,21 @@
 import requests
 import xml.etree.ElementTree as ET
+import re
 from bs4 import BeautifulSoup
 
 
 class ScreenScraper:
     key_sd = ""
 
+    USER_AGENT = {
+        'User-Agent': 'Mozilla/5.0'
+    }
+
     def __init__(self):
-        self.key_sd = open("ScienceDirectAPI.txt").read()
+        if __name__ == '__main__':
+            self.key_sd = open("ScienceDirectAPI.txt").read()
+        else:
+            self.key_sd = open("screenscrape_utils/ScienceDirectAPI.txt").read()
 
     @staticmethod
     def doi_to_url(doi):
@@ -28,20 +36,53 @@ class ScreenScraper:
     def check_journal(self, doi):
         publisher = self.doi_to_journal(doi)
         print(publisher)
-        if publisher == "Royal Society of Chemistry ({RSC})":
-            return self.chem_gold(doi)
-        elif publisher == "American Chemical Society ({ACS})":
-            return self.acs(doi)
-        elif publisher == "Oxford University Press ({OUP})":
-            return self.oxford(doi)
-        elif publisher == "Elsevier {BV}":
-            return self.science_direct(doi)
-        elif publisher == "Springer Nature" or publisher == "Pleiades Publishing Ltd":
-            return self.springer(doi)
-        else:
-            return '[' + publisher + '] Not found'
+        try:
+            if publisher == "Royal Society of Chemistry ({RSC})":
+                return self.chem_gold(doi)
+            elif publisher == "American Chemical Society ({ACS})":
+                return self.acs(doi)
+            elif publisher == "Oxford University Press ({OUP})":
+                return self.oxford(doi)
+            elif publisher == "Elsevier {BV}":
+                return self.science_direct(doi)
+            elif publisher == "Springer Nature" or publisher == "Pleiades Publishing Ltd":
+                return self.springer(doi)
+            elif publisher is None:
+                return 'Could not find publisher'
+            else:
+                return '[' + publisher + '] Not found'
+        except requests.exceptions.ConnectionError:
+            return 'Could not connect to journal webpage'
 
-    def science_direct(self, doi):
+    @staticmethod
+    def science_direct(doi):
+        url = ScreenScraper.doi_to_url(doi)
+        r = requests.get(url)
+        # There is a meta redirect to follow, use soup to follow
+        soup1 = BeautifulSoup(r.text, 'html.parser')
+        refresh = soup1.find("meta", {'http-equiv': "REFRESH"})
+        # Take content and strip out everything before Redirect=
+        link = refresh["content"].split('Redirect=')[1]
+        # Remove everything after the questionmark(%3F)
+        link = link.split('%3F')[0]
+        # Fix some characters
+        link = link.replace('%3A', ':')
+        link = link.replace('%2F', '/')
+
+        r = requests.get(link, headers=ScreenScraper.USER_AGENT)
+        soup2 = BeautifulSoup(r.text, 'html.parser')
+        if soup2.find("div", {'class': "OpenAccessLabel"}):
+            return "Open access"
+        # Look at the download button
+        download_text = soup2.find("span", {'class': "pdf-download-label u-show-inline-from-lg"}).contents[0]
+        if 'Get Access' in download_text:
+            return False
+        if 'Download' in download_text:
+            return True
+
+        return 'Some kind of error'
+
+    def science_direct_api(self, doi):
         parameters = {"APIKey": self.key_sd}
         r = requests.get("https://api.elsevier.com/content/article/doi/" + doi, params=parameters)
 
@@ -62,9 +103,16 @@ class ScreenScraper:
 
         r = requests.get(url)
         soup = BeautifulSoup(r.text, 'html.parser')
-        if soup.find('div', {"id": "article_no_access_banner"}):
+        free = soup.find('div', {"id": "open-choice-icon"})
+        no_access = soup.find('div', {"id": "article_no_access_banner"})
+        school_access = soup.find('div', {"class": "note test-pdf-link"}, {"id": "cobranding-and-download-"
+                                                                                 "availability-text"})
+        if no_access:
             return False
-        return True
+        if school_access:
+            return True
+        if free.text == "Open Access":
+            return "Open access"
 
     @staticmethod
     def oxford(doi):
@@ -78,6 +126,11 @@ class ScreenScraper:
         r = requests.get(url, headers=headers)
 
         soup = BeautifulSoup(r.text, 'html.parser')
+
+        # Check for Wiley
+        if soup.find('a', {'title':'Wiley Online Library'}):
+            return ScreenScraper.wiley(soup)
+
         if not soup.find('div', {"class": "oup-header"}):
             return "Can not read journal"
         if soup.find('i', {"class": "icon-availability_open"}):
@@ -140,20 +193,20 @@ class ScreenScraper:
         return False
 
 
+    @staticmethod
+    def wiley(soup):
+        """
+        Currently just a filler,
+        other methods can call this if they find themselves on a Wiley library page
+        """
+        return 'Article on Wiley Online Library'
+
 if __name__ == '__main__':
 
-    article_list = [  # ['Chem Gold',  '10.1039/C8PP00052B'],
-        ['ACS', '10.1021/acs.inorgchem.8b03148'],
-        ['Oxford Journal', '10.1093/jigpal/jzy015'],
-        # ['Oxford Journal', '10.1111/j.1095-8339.2011.01155.x'],  # Open Access
-        # ['Oxford Journal', '10.1111/bij.12521'],  # Open Access
-        ['Science Direct', '10.1016/j.ijrmhm.2018.07.009'],
-        ['Science Direct', '10.1016/j.burnso.2018.03.001'],  # Open access
-        ['Springer', '10.1007/s10059-013-0080-3'],
-    ]
+    article_list = [ '10.1111/boj.2001.135.issue-1' ]
 
     ss = ScreenScraper()
 
     for article in article_list:
-        result = ss.check_journal(article[1])
-        print(str(result) + ": " + str(article[1]))
+        result = ss.check_journal(article)
+        print(str(result) + ": " + str(article))

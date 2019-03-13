@@ -19,7 +19,7 @@ def search_journal(journal_title, start_date, end_date, print_issn, online_issn)
                                                until_pub_date=end_date).sample(1).select('DOI'):
         received_doi = i['DOI']
 
-    if received_doi is None:
+    if received_doi is None and print_issn != "":
         for j in works.query(journal_title).filter(
                                                    issn=print_issn,
                                                    from_pub_date=start_date,
