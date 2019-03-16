@@ -152,21 +152,17 @@ class MainSystem(object):
         :param journal: a journal object
         :return:
         """
-        scraper = screenscraper.ScreenScraper()
         print(journal.title, journal.publisher)
         for year in journal.year_dict:
             # print(journal.year_dict[year][2])
             doi = journal.year_dict[year][2].doi
-            if doi is None:
-                print('DOI is none')
-            else:
-                print('https://doi.org/' + doi)
-                try:
-                    result = scraper.check_journal(doi)  # reality check
-                except Exception:
-                    print('|exception happened|')
-                journal.year_dict[year][2].accessible = result
-                print(str(result))
+            print('https://doi.org/' + doi)
+            try:
+                result = screenscraper.check_journal(doi)  # reality check
+            except Exception:
+                print('|exception happened|')
+            journal.year_dict[year][2].accessible = result
+            print(result.name)
         journal.record_wrong_years()  # wrong years are updated
 
         print('Reality check finished')
