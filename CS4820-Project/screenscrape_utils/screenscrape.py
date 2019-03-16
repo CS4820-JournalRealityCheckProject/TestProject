@@ -4,20 +4,9 @@ import re
 from enum import Enum
 from bs4 import BeautifulSoup
 if __name__ == '__main__':
-    from scrapeEnum import Result
-
-class Result(Enum):
-    Access = 0
-    OpenAccess = 1
-    FreeAccess = 2
-    # Above are all accessible
-    NoAccess = 3
-    NoArticle = 4
-    ArticleNotFound = 5
-    UnsupportedWebsite = 6
-    NetworkError = 7
-    PublisherNotFound = 8
-    OtherException = 9
+    from resultEnum import Result
+else:
+    from screenscrape_utils.resultEnum import Result
 
 USER_AGENT = {
         'User-Agent': 'Mozilla/5.0'
@@ -40,7 +29,7 @@ def doi_to_journal(doi):
             return line[14:-2]
 
 def check_journal(doi):
-    if doi == "":
+    if doi is None or doi == "":
         return Result.NoArticle
     publisher = doi_to_journal(doi)
     print(publisher)

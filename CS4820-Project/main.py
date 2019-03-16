@@ -9,6 +9,7 @@ import journal_ui.main_ui as main_ui
 import journal_utils.csv_reader as csv_reader
 import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
+import screenscrape_utils.resultEnum as resultEnum
 import email_utils.email_handler as email_handler
 
 
@@ -156,11 +157,12 @@ class MainSystem(object):
         for year in journal.year_dict:
             # print(journal.year_dict[year][2])
             doi = journal.year_dict[year][2].doi
-            print('https://doi.org/' + doi)
+            print('https://doi.org/' + str(doi))
             try:
                 result = screenscraper.check_journal(doi)  # reality check
             except Exception:
                 print('|exception happened|')
+                result = resultEnum.Result.OtherException
             journal.year_dict[year][2].accessible = result
             print(result.name)
         journal.record_wrong_years()  # wrong years are updated
