@@ -26,7 +26,11 @@ def doi_to_journal(doi):
     # Very messy way to get the publisher
     for line in r.text.split('\n'):
         if 'publisher' in line:
-            return line[14:-2]
+            # remove 'publisher ='
+            line = line[14:-1]
+            # Remove commas and curly brackets
+            line = re.sub('[{},]', '', line)
+            return line
 
 def check_journal(doi):
     if doi is None or doi == "":
@@ -34,13 +38,13 @@ def check_journal(doi):
     publisher = doi_to_journal(doi)
     print(publisher)
     try:
-        if publisher == "Royal Society of Chemistry ({RSC})":
+        if publisher == "Royal Society of Chemistry (RSC)":
             return chem_gold(doi)
-        elif publisher == "American Chemical Society ({ACS})":
+        elif publisher == "American Chemical Society (ACS)":
             return acs(doi)
-        elif publisher == "Oxford University Press ({OUP})":
+        elif publisher == "Oxford University Press (OUP)":
             return oxford(doi)
-        elif publisher == "Elsevier {BV}":
+        elif publisher == "Elsevier BV":
             return science_direct(doi)
         elif publisher == "Springer Nature" or publisher == "Pleiades Publishing Ltd":
             return springer(doi)
@@ -110,12 +114,18 @@ def springer(doi):
     no_access = soup.find('div', {"id": "article_no_access_banner"})
     school_access = soup.find('div', {"class": "note test-pdf-link"}, {"id": "cobranding-and-download-"
                                                                              "availability-text"})
+    if school_access is None:
+        school_access = soup.find('div', {"class": "download-article test-pdf-link"})
+
     if no_access:
         return Result.NoAccess
     if school_access:
         return Result.Access
-    if free.text == "Open Access":
+    if free is not None and free.text == "Open Access":
         return Result.OpenAccess
+
+    # Wrong site or Website changed
+    return Result.UnsupportedWebsite
 
 
 def oxford(doi):
