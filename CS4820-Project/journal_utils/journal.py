@@ -142,11 +142,6 @@ class Journal(object):
 
         for year in self.year_dict:
             access = self.year_dict[year][2].accessible
-            if type(access) == bool:
-                if access is True:
-                    access = resultEnum.Result.Access
-                else:
-                    access = resultEnum.Result.OtherException
             if access.value > resultEnum.Result.Access.value:
                 self.wrong_years = self.wrong_years + str(year) + '/'
                 self.result_as_expected = False
