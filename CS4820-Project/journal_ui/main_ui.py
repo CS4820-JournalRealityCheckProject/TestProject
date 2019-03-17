@@ -1,4 +1,6 @@
 import tkinter as tk
+import tkinter.ttk as ttk
+import csv
 from tkinter import filedialog
 import journal_utils.csv_reader as csv_reader
 
@@ -16,6 +18,12 @@ class MainUI(tk.Frame):
     DOI_SEARCH_MODE = 0
     REALITY_CHECK_MODE = 1
 
+    DOI_CSV_HEADER = ['Title', 'Year', 'DOI', 'DOI-URL', 'Accessible', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
+                      'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears',
+                      'FreeYears']
+    JOURNAL_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN', 'ManagedCoverageBegin',
+                          'ManagedCoverageEnd', 'AsExpected', 'ProblemYears', 'FreeYears']
+
     def __init__(self, main_system, master=None):
         super().__init__(master)
 
@@ -28,58 +36,67 @@ class MainUI(tk.Frame):
         self.file_path = None
         self.input_file_path = None
         self.mode = 'doi-search'
+        self.is_ready = False
+
+        # notebook (tab windows)
+        nb = ttk.Notebook(width=200, height=200)
+
+        # make tab windows (Frames)
+        tab1 = tk.Frame(nb)
+        tab2 = tk.Frame(nb)
+        nb.add(tab1, text='System', padding=3)
+        nb.add(tab2, text='', padding=3)
+        nb.pack(expand=1, fill='both')
+
+        # top label left
+        self.top_label = tk.Label(tab1, text='Status: ')
+        self.top_label.grid(row=0, column=1)
+
+        # top message label
+        self.top_message_var = tk.StringVar()
+        self.top_message_var.set('"Upload a file"')
+        self.top_message = tk.Label(tab1, textvariable=self.top_message_var, font='Helvetica 18 bold')
+        self.top_message.grid(row=0, column=2)
 
         # upload button
-        self.upload_button = tk.Button(self, text="Browse", command=self.upload_file)
+        self.upload_button = tk.Button(tab1, text="Browse", command=self.upload_file)
         self.upload_button.grid(row=1, column=1)
 
         # csv file label
         self.file_var = tk.StringVar()
         self.file_var.set("no file")
-        self.file_label = tk.Label(self, textvariable=self.file_var, bg='cyan2', height=1, width=30)
+        self.file_label = tk.Label(tab1, textvariable=self.file_var, bg='cyan2', height=1, width=30)
         self.file_label.grid(row=1, column=2)
 
         # email label
-        self.email_label = tk.Label(self, text='Email:')
+        self.email_label = tk.Label(tab1, text='Email:')
         self.email_label.grid(row=2, column=1)
 
         # email textfield
-        self.email_textfield = tk.Text(self, bd=1, bg='yellow', height=1, width=40)
+        self.email_textfield = tk.Text(tab1, bd=1, bg='yellow', height=1, width=40)
         self.email_textfield.grid(row=2, column=2)
 
-        # search button
-        self.search_button = tk.Button(self, text="DOI Search", command=self.search_article)
-        self.search_button.grid(row=3, column=1)
+        # confirm-email label
+        self.confirm_label = tk.Label(tab1, text='Confirm:')
+        self.confirm_label.grid(row=3, column=1)
 
-        # download button
-        self.download_button = tk.Button(self, text="Download", command=self.download_file)
-        self.download_button.grid(row=3, column=2)
+        # confirm-email textfield
+        self.confirm_textfield = tk.Text(tab1, bd=1, bg='yellow', height=1, width=40)
+        self.confirm_textfield.grid(row=3, column=2)
+
+        # warning message label
+        self.warn_var = tk.StringVar()
+        self.warn_var.set("")
+        self.warn_label = tk.Label(tab1, textvariable=self.warn_var, fg='red')
+        self.warn_label.grid(row=4, column=2)
+
+        # start button
+        self.start_button = tk.Button(tab1, text="START", state='disabled', command=self.start)
+        self.start_button.grid(row=5, column=1)
 
         # exit button
-        self.exit_button = tk.Button(self, text="Exit", command=self.quit)
-        self.exit_button.grid(row=3, column=3)
-
-        # email button
-        self.email_button = tk.Button(self, text='Send', command=self.send_email)
-        self.email_button.grid(row=4, column=2)
-
-        # reality check button
-        self.reality_check_button = tk.Button(self, text='Reality Check', command=self.check_reality)
-        self.reality_check_button.grid(row=4, column=1)
-
-
-        # radio buttons
-
-        self.radio_var = tk.IntVar()
-        self.radio_var.set(self.DOI_SEARCH_MODE)
-
-        self.radio_search_doi = tk.Radiobutton(self, value=self.DOI_SEARCH_MODE, variable=self.radio_var,
-                                               text='DOI Search')
-        self.radio_reality_check = tk.Radiobutton(self, value=self.REALITY_CHECK_MODE, variable=self.radio_var,
-                                                  text='Reality Check')
-
-        self.radio_search_doi.grid(row=5, column=1)
-        self.radio_reality_check.grid(row=5, column=2)
+        self.exit_button = tk.Button(tab1, text="Exit", command=self.quit)
+        self.exit_button.grid(row=5, column=3)
 
     def upload_file(self):
         """
@@ -94,8 +111,29 @@ class MainUI(tk.Frame):
         res2 = self.input_file_path.split('/')[-1]
         print(res2)
         self.file_var.set(res2)
-        self.mode = self.radio_var.get()
-        print(self.mode)
+        with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
+            reader = csv.reader(csv_file)
+            header = next(reader)  # only for python 3
+            print(header)
+            if header == self.JOURNAL_CSV_HEADER:
+                print('for journal')
+                self.mode = self.DOI_SEARCH_MODE
+                self.is_ready = True
+                self.start_button.config(state="normal")
+                self.top_message_var.set('"DOI-SEARCH"')
+                self.warn_var.set('')
+
+            elif header == self.DOI_CSV_HEADER:
+                print('for doi')
+                self.mode = self.REALITY_CHECK_MODE
+                self.is_ready = True
+                self.start_button.config(state="normal")
+                self.top_message_var.set('"REALITY CHECK"')
+                self.warn_var.set('')
+
+            else:
+                self.warn_var.set('Wrong file (wrong columns)')
+
         self.main_system.update(MainUI.FILE_UPLOADED)
 
     def download_file(self):
@@ -110,8 +148,20 @@ class MainUI(tk.Frame):
     def check_reality(self):
         self.main_system.update(MainUI.REALITY_CHECK_CLICKED)
 
-    def print_message(self):
-        print('message')
+    def start(self):
+
+        if self.confirm_textfield.get('1.0', 'end -1c') != self.email_textfield.get('1.0', 'end -1c') \
+                or self.email_textfield.get('1.0', 'end-1c') == '':
+            print('email did not match')
+            self.warn_var.set('Email is incorrect')
+            return
+
+        if self.mode == self.DOI_SEARCH_MODE:
+            self.warn_var.set('STARTED')
+            self.search_article()
+        elif self.mode == self.REALITY_CHECK_MODE:
+            self.warn_var.set('STARTED')
+            self.check_reality()
 
 
 if __name__ == '__main__':

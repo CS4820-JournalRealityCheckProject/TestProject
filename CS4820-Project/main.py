@@ -1,8 +1,5 @@
-import tkinter as tk
-import traceback
-from time import sleep
-import csv
 import configparser
+import tkinter as tk
 
 import config_utils.config
 import journal_ui.main_ui as main_ui
@@ -19,6 +16,7 @@ class MainSystem(object):
     """
 
     def __init__(self):
+
         print("system turned on")
         self.journal_list = None
         self.file_path = None
@@ -48,7 +46,9 @@ class MainSystem(object):
 
         self.ui = None
         self.root = tk.Tk()
-        self.root.title("Journal Reality")
+        self.root.title("Journal Reality Checking System")
+        self.root.geometry("500x400")
+
         self.ui = main_ui.MainUI(master=self.root, main_system=self)
         self.ui.mainloop()  # starts UI
 
@@ -91,8 +91,8 @@ class MainSystem(object):
 
             index = index + 1
 
-        self.send_email()
         config_utils.config.clear_progress()
+        self.send_email()
 
     @staticmethod
     def search_article(journal):
@@ -138,11 +138,10 @@ class MainSystem(object):
             self.check_reality(self.journal_list[index])
             csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
 
-
             index = index + 1
 
-        self.send_email()
         config_utils.config.clear_progress()
+        self.send_email()
         self.ui.quit()
 
     @staticmethod
@@ -214,8 +213,6 @@ class MainSystem(object):
 
         elif code == main_ui.MainUI.SEARCH_CLICKED:
             self.search_articles_journal_list()
-            # n = int(input('Enter an index:'))
-            # self.search_article(self.journal_list[n])
 
         elif code == main_ui.MainUI.REALITY_CHECK_CLICKED:
             self.check_reality_journal_list()
