@@ -21,13 +21,22 @@ class MainSystem(object):
         self.journal_list = None
         self.file_path = None
 
+        #  Config for the progress
         self.config = configparser.ConfigParser()
-        self.config.read('progress.ini')
+        self.config.read('./Data-Files/Configurations/progress.ini')
         self.complete = self.config['progress']['complete']
         self.status = self.config['progress']['status']
         self.current_index = int(self.config['progress']['current-index'])
         self.input_file_path = self.config['progress']['input-file-path']
         self.output_file_path = self.config['progress']['output-file-path']
+
+        # Config for email
+        self.email_config = configparser.ConfigParser()
+        self.email_config.read('./Data-Files/Configurations/email.ini')
+        self.sender = self.email_config['email']['sender']
+        self.receiver = self.email_config['email']['receiver']
+        self.password = self.email_config['email']['password']
+
         print(self.input_file_path)
         print(self.status)
 
@@ -177,20 +186,12 @@ class MainSystem(object):
         :return:
         """
         emailer = email_handler.EmailHandler()
-        your_email = email
-
-        sender = your_email
-        password = password
-
-        sender = input('Please enter sender email:')
-        password = input("Please enter a password for the sender: ")
-        receiver = input('Please enter receiver email:')
 
         f = './' + self.output_file_path + '.csv'
         files = [f, "./email_utils/test2.csv"]
 
-        emailer.set_sender(sender=sender, password=password)
-        emailer.set_receiver(receiver=receiver)
+        emailer.set_sender(sender=self.sender, password=self.password)
+        emailer.set_receiver(receiver=self.receiver)
         emailer.send(files)
 
     def update(self, code):

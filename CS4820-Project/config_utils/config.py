@@ -12,7 +12,7 @@ def update_progress(input_file, output_file, status, index, title='not-specified
         'title': title
 
     }
-    with open('progress.ini', 'w') as config_file:
+    with open('./Data-Files/Configurations/progress.ini', 'w') as config_file:
         config.write(config_file)
 
 
@@ -27,7 +27,7 @@ def clear_progress():
         'current-index': -1
 
     }
-    with open('progress.ini', 'w') as config_file:
+    with open('./Data-Files/Configurations/progress.ini', 'w') as config_file:
         config.write(config_file)
 
 
