@@ -46,7 +46,7 @@ def check_journal(doi):
             return oxford(doi)
         elif publisher == "Elsevier BV":
             return science_direct(doi)
-        elif publisher == "Springer Nature" or publisher == "Pleiades Publishing Ltd":
+        elif publisher == "Springer Nature":
             return springer(doi)
         elif publisher is None:
             return Result.PublisherNotFound
