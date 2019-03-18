@@ -7,6 +7,7 @@ import journal_ui.main_ui as main_ui
 import journal_utils.csv_reader as csv_reader
 import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
+import screenscrape_utils.result_enum as resultEnum
 import email_utils.email_handler as email_handler
 
 
@@ -179,22 +180,20 @@ class MainSystem(object):
         :param journal: a journal object
         :return:
         """
-        scraper = screenscraper.ScreenScraper()
         print(journal.title, journal.publisher)
         for year in journal.year_dict:
             # print(journal.year_dict[year][2])
             doi = journal.year_dict[year][2].doi
-            if doi is None:
-                print('DOI is none')
-            else:
-                print('https://doi.org/' + doi)
-                try:
-                    result = scraper.check_journal(doi)  # reality check
-                except Exception:
-                    print(year)
-                    print('|exception happened|')
-                journal.year_dict[year][2].accessible = result
-                print(str(year), ':', str(result))
+            print('https://doi.org/' + str(doi))
+            try:
+                result = screenscraper.check_journal(doi)  # reality check
+            except Exception:
+                print(year)
+                print('|exception happened|')
+                result = resultEnum.Result.OtherException
+            journal.year_dict[year][2].accessible = result
+            print(result.name)
+            print(str(year), ':', str(result))
         journal.record_wrong_years()  # wrong years are updated
 
         print('Reality check finished')
