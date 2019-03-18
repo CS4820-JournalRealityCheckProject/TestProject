@@ -1,8 +1,6 @@
-import tkinter as tk
-import traceback
-from time import sleep
-import csv
 import configparser
+import tkinter as tk
+import datetime
 
 import config_utils.config
 import journal_ui.main_ui as main_ui
@@ -20,17 +18,28 @@ class MainSystem(object):
     """
 
     def __init__(self):
+
         print("system turned on")
         self.journal_list = None
         self.file_path = None
 
+        #  Config for the progress
         self.config = configparser.ConfigParser()
-        self.config.read('progress.ini')
+        self.config.read('./Data-Files/Configurations/progress.ini')
         self.complete = self.config['progress']['complete']
         self.status = self.config['progress']['status']
         self.current_index = int(self.config['progress']['current-index'])
         self.input_file_path = self.config['progress']['input-file-path']
         self.output_file_path = self.config['progress']['output-file-path']
+        self.wrong_file_path = self.config['progress']['wrong-file-path']
+
+        # Config for email
+        self.email_config = configparser.ConfigParser()
+        self.email_config.read('./Data-Files/Configurations/email.ini')
+        self.sender = self.email_config['email']['sender']
+        self.receiver = self.email_config['email']['receiver']
+        self.password = self.email_config['email']['password']
+
         print(self.input_file_path)
         print(self.status)
 
@@ -49,7 +58,9 @@ class MainSystem(object):
 
         self.ui = None
         self.root = tk.Tk()
-        self.root.title("Journal Reality")
+        self.root.title("Journal Reality Checking System")
+        self.root.geometry("500x400")
+
         self.ui = main_ui.MainUI(master=self.root, main_system=self)
         self.ui.mainloop()  # starts UI
 
@@ -76,24 +87,32 @@ class MainSystem(object):
 
     def search_articles_journal_list(self):
         """iterates a list of journal and fetches an article and a doi for each year"""
-        self.output_file_path = 'doi-articles'  # file name
+        d = str(datetime.datetime.today())
+        date = d[0:4] + d[5:7] + d[8:10]
+        date = d[0:19]
+        self.output_file_path = date + '-' + 'doi-articles'  # file name
+        self.wrong_file_path = date + '-' + 'wrong-list'
+
+        config_utils.config.update_email(self.receiver)
         index = self.current_index
         if index == -1:
             print('initialized')
             csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
+            csv_reader.prepare_wrong_csv(self.wrong_file_path)
             index = 0
 
         while index < len(self.journal_list):
             title = self.journal_list[index].title
-            config_utils.config.update_progress(self.input_file_path, self.output_file_path,
+            config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
                                                 status='doi-search', index=index, title=title)
             self.search_article(self.journal_list[index])
             csv_reader.append_doi_row(self.journal_list[index], self.output_file_path)
-
+            csv_reader.append_wrong_row(mode='doi-search', journal=self.journal_list[index],
+                                        file_name=self.wrong_file_path)
             index = index + 1
 
-        self.send_email()
         config_utils.config.clear_progress()
+        self.send_email()
 
     @staticmethod
     def search_article(journal):
@@ -125,26 +144,34 @@ class MainSystem(object):
         :param journal_list:
         :return:
         """
-        self.output_file_path = 'result-journals'  # file name
+        d = str(datetime.datetime.today())
+        date = d[0:4] + d[5:7] + d[8:10]
+        date = d
+        date = d[0:19]
+        self.output_file_path = date + '-' + 'result-journals'  # file name
+        self.wrong_file_path = date + '-' + 'wrong-list'
+
+        config_utils.config.update_email(self.receiver)
         index = self.current_index
         if index == -1:
             print('initialized')
             csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
+            csv_reader.prepare_wrong_csv(self.wrong_file_path)
             index = 0
 
         while index < len(self.journal_list):
             title = self.journal_list[index].title
-            config_utils.config.update_progress(self.input_file_path, self.output_file_path,
+            config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
                                                 status='reality-check', index=index, title=title)
             self.check_reality(self.journal_list[index])
             csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
-
+            csv_reader.append_wrong_row(mode='check-reality', journal=self.journal_list[index],
+                                        file_name=self.wrong_file_path)
 
             index = index + 1
 
-        self.send_email()
         config_utils.config.clear_progress()
-        self.ui.quit()
+        self.send_email()
 
     @staticmethod
     def check_reality(journal):
@@ -161,10 +188,12 @@ class MainSystem(object):
             try:
                 result = screenscraper.check_journal(doi)  # reality check
             except Exception:
+                print(year)
                 print('|exception happened|')
                 result = resultEnum.Result.OtherException
             journal.year_dict[year][2].accessible = result
             print(result.name)
+            print(str(year), ':', str(result))
         journal.record_wrong_years()  # wrong years are updated
 
         print('Reality check finished')
@@ -175,20 +204,13 @@ class MainSystem(object):
         :return:
         """
         emailer = email_handler.EmailHandler()
-        your_email = email
 
-        sender = your_email
-        password = password
+        f1 = csv_reader.path + self.output_file_path + '.csv'
+        f2 = csv_reader.path + self.wrong_file_path + '.csv'
+        files = [f1, f2]
 
-        sender = input('Please enter sender email:')
-        password = input("Please enter a password for the sender: ")
-        receiver = input('Please enter receiver email:')
-
-        f = './' + self.output_file_path + '.csv'
-        files = [f, "./email_utils/test2.csv"]
-
-        emailer.set_sender(sender=sender, password=password)
-        emailer.set_receiver(receiver=receiver)
+        emailer.set_sender(sender=self.sender, password=self.password)
+        emailer.set_receiver(receiver=self.receiver)
         emailer.send(files)
 
     def update(self, code):
@@ -211,60 +233,17 @@ class MainSystem(object):
                 self.recreate_journal_list()
 
         elif code == main_ui.MainUI.SEARCH_CLICKED:
+            self.receiver = self.ui.receiver
             self.search_articles_journal_list()
-            # n = int(input('Enter an index:'))
-            # self.search_article(self.journal_list[n])
 
         elif code == main_ui.MainUI.REALITY_CHECK_CLICKED:
+            self.receiver = self.ui.receiver
             self.check_reality_journal_list()
-
-        elif code == main_ui.MainUI.EMAIL_CLICKED:
-            self.send_email()
-
-
-def start_with_ui(file_path="./journal_utils/journal-csv/use-this.csv"):
-    """
-    System starts the UI.
-    :param file_path: the file path to the csv file of journals
-    :return:
-    """
-    main_system = MainSystem()
-    main_system.main_ui.mainloop()  # starts UI
-
-
-def start_without_ui(file_path="./journal_utils/journal-csv/use-this.csv"):
-    """
-    Test method for starting the system without UI.
-    :param file_path:
-    :return: file_path: the file path to the csv file of journals
-    """
-    main_system = MainSystem()
-    print('here')
-    # main_system.send_email()
-    # main_system.input_file_path = file_path
-    # main_system.create_journal_list()
 
 
 def main():
-    """
-    Main method to be called when the system gets turned on.
-    :return:
-    """
-    #  start_with_ui()  # the main system
-    start_without_ui()  # the test system
-
-
-def test_call(turn_on_ui, file_path):
-    """
-    Test method to be called from test.py
-    :param turn_on_ui: boolean to activate UI or not.
-    :param file_path: the file path to the csv file of journals
-    :return: file_path:
-    """
-    if turn_on_ui:
-        start_with_ui(file_path)
-    else:
-        start_without_ui(file_path)
+    main_system = MainSystem()
+    print('"PROGRAM TERMINATED"')
 
 
 if __name__ == '__main__':
