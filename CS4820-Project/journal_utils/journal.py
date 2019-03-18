@@ -1,6 +1,6 @@
 import datetime
 import journal_utils.article as article
-import screenscrape_utils.resultEnum as resultEnum
+import screenscrape_utils.result_enum as resultEnum
 
 
 class Journal(object):

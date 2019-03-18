@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 # <= 0 good
 #  > 1 bad
 class Result(Enum):

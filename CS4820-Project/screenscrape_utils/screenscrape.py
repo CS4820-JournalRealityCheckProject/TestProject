@@ -4,9 +4,9 @@ import re
 from enum import Enum
 from bs4 import BeautifulSoup
 if __name__ == '__main__':
-    from resultEnum import Result
+    from result_enum import Result
 else:
-    from screenscrape_utils.resultEnum import Result
+    from screenscrape_utils.result_enum import Result
 
 USER_AGENT = {
         'User-Agent': 'Mozilla/5.0'

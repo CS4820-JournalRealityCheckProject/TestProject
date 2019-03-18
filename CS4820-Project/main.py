@@ -7,7 +7,7 @@ import journal_ui.main_ui as main_ui
 import journal_utils.csv_reader as csv_reader
 import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
-import screenscrape_utils.resultEnum as resultEnum
+import screenscrape_utils.result_enum as resultEnum
 import email_utils.email_handler as email_handler
 
 

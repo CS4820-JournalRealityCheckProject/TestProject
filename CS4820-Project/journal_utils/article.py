@@ -1,5 +1,5 @@
 import datetime
-import screenscrape_utils.resultEnum as resultEnum
+import screenscrape_utils.result_enum as resultEnum
 
 class Article(object):
     """This class models an article"""
