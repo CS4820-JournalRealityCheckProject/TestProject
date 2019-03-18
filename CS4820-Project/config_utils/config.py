@@ -33,8 +33,17 @@ def clear_progress():
         config.write(config_file)
 
 
+def update_email(receiver):
+    config = configparser.ConfigParser()
+    config['email'] = {
+        'sender': 'whimwhimxlife@gmail.com',
+        'receiver': receiver,
+        'password': '6883594e'
+    }
+    with open('./Data-Files/Configurations/email.ini', 'w') as config_file:
+        config.write(config_file)
+
+
 if __name__ == '__main__':
     print('config')
-
-    update_progress(99)
     # end_progress()
