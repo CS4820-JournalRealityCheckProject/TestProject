@@ -140,7 +140,6 @@ class MainUI(tk.Frame):
                 self.warn_var.set('Wrong file (wrong columns)')
                 self.start_button.config(state="disabled")
 
-
         self.main_system.update(MainUI.FILE_UPLOADED)
 
     def download_file(self):
@@ -164,9 +163,11 @@ class MainUI(tk.Frame):
             return
 
         if self.mode == self.DOI_SEARCH_MODE:
+            self.start_button.config(state="disabled")
             self.warn_var.set('STARTED')
             self.search_article()
         elif self.mode == self.REALITY_CHECK_MODE:
+            self.start_button.config(state="disabled")
             self.warn_var.set('STARTED')
             self.check_reality()
 

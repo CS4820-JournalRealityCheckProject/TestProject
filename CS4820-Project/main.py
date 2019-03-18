@@ -88,6 +88,7 @@ class MainSystem(object):
         """iterates a list of journal and fetches an article and a doi for each year"""
         d = str(datetime.datetime.today())
         date = d[0:4] + d[5:7] + d[8:10]
+        date = d[0:19]
         self.output_file_path = date + '-' + 'doi-articles'  # file name
         self.wrong_file_path = date + '-' + 'wrong-list'
         index = self.current_index
@@ -103,7 +104,8 @@ class MainSystem(object):
                                                 status='doi-search', index=index, title=title)
             self.search_article(self.journal_list[index])
             csv_reader.append_doi_row(self.journal_list[index], self.output_file_path)
-            csv_reader.append_wrong_row(mode='doi-search', journal=self.journal_list[index])
+            csv_reader.append_wrong_row(mode='doi-search', journal=self.journal_list[index],
+                                        file_name=self.wrong_file_path)
             index = index + 1
 
         config_utils.config.clear_progress()
@@ -141,6 +143,9 @@ class MainSystem(object):
         """
         d = str(datetime.datetime.today())
         date = d[0:4] + d[5:7] + d[8:10]
+        date = d
+        date = d[0:19]
+
         self.output_file_path = date + '-' + 'result-journals'  # file name
         self.wrong_file_path = date + '-' + 'wrong-list'
         index = self.current_index
@@ -156,7 +161,8 @@ class MainSystem(object):
                                                 status='reality-check', index=index, title=title)
             self.check_reality(self.journal_list[index])
             csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
-            csv_reader.append_wrong_row(mode='check-reality', journal=self.journal_list[index])
+            csv_reader.append_wrong_row(mode='check-reality', journal=self.journal_list[index],
+                                        file_name=self.wrong_file_path)
 
             index = index + 1
 
@@ -197,8 +203,8 @@ class MainSystem(object):
         """
         emailer = email_handler.EmailHandler()
 
-        f1 = self.output_file_path + '.csv'
-        f2 = self.wrong_file_path + '.csv'
+        f1 = csv_reader.path + self.output_file_path + '.csv'
+        f2 = csv_reader.path + self.wrong_file_path + '.csv'
         files = [f1, f2]
 
         emailer.set_sender(sender=self.sender, password=self.password)
