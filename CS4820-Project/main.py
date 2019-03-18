@@ -91,6 +91,8 @@ class MainSystem(object):
         date = d[0:19]
         self.output_file_path = date + '-' + 'doi-articles'  # file name
         self.wrong_file_path = date + '-' + 'wrong-list'
+
+        config_utils.config.update_email(self.receiver)
         index = self.current_index
         if index == -1:
             print('initialized')
@@ -145,9 +147,10 @@ class MainSystem(object):
         date = d[0:4] + d[5:7] + d[8:10]
         date = d
         date = d[0:19]
-
         self.output_file_path = date + '-' + 'result-journals'  # file name
         self.wrong_file_path = date + '-' + 'wrong-list'
+
+        config_utils.config.update_email(self.receiver)
         index = self.current_index
         if index == -1:
             print('initialized')
@@ -235,6 +238,7 @@ class MainSystem(object):
             self.search_articles_journal_list()
 
         elif code == main_ui.MainUI.REALITY_CHECK_CLICKED:
+            self.receiver = self.ui.receiver
             self.check_reality_journal_list()
 
 
