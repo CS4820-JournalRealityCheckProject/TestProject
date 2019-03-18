@@ -231,58 +231,16 @@ class MainSystem(object):
                 self.recreate_journal_list()
 
         elif code == main_ui.MainUI.SEARCH_CLICKED:
+            self.receiver = self.ui.receiver
             self.search_articles_journal_list()
 
         elif code == main_ui.MainUI.REALITY_CHECK_CLICKED:
             self.check_reality_journal_list()
 
-        elif code == main_ui.MainUI.EMAIL_CLICKED:
-            self.send_email()
-
-
-def start_with_ui(file_path="./journal_utils/journal-csv/use-this.csv"):
-    """
-    System starts the UI.
-    :param file_path: the file path to the csv file of journals
-    :return:
-    """
-    main_system = MainSystem()
-    main_system.main_ui.mainloop()  # starts UI
-
-
-def start_without_ui(file_path="./journal_utils/journal-csv/use-this.csv"):
-    """
-    Test method for starting the system without UI.
-    :param file_path:
-    :return: file_path: the file path to the csv file of journals
-    """
-    main_system = MainSystem()
-    print('here')
-    # main_system.send_email()
-    # main_system.input_file_path = file_path
-    # main_system.create_journal_list()
-
 
 def main():
-    """
-    Main method to be called when the system gets turned on.
-    :return:
-    """
-    #  start_with_ui()  # the main system
-    start_without_ui()  # the test system
-
-
-def test_call(turn_on_ui, file_path):
-    """
-    Test method to be called from test.py
-    :param turn_on_ui: boolean to activate UI or not.
-    :param file_path: the file path to the csv file of journals
-    :return: file_path:
-    """
-    if turn_on_ui:
-        start_with_ui(file_path)
-    else:
-        start_without_ui(file_path)
+    main_system = MainSystem()
+    print('"PROGRAM TERMINATED"')
 
 
 if __name__ == '__main__':
