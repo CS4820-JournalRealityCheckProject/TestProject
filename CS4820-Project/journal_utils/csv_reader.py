@@ -3,85 +3,6 @@ import csv
 from journal_utils.journal import Journal
 
 
-def write_journal_list_to_csv(journal_list, file_name='journal_result'):
-    print('Journal object is converted into output csv')
-    with open(file_name + '.csv', 'w', encoding='utf8') as csv_file:
-        fieldnames = ['Title',
-                      'PackageName',
-                      'URL',
-                      'Publisher',
-                      'PrintISSN',
-                      'OnlineISSN',
-                      'ManagedCoverageBegin',
-                      'ManagedCoverageEnd'
-                      'AsExpected',
-                      'ProblemYears',
-                      'FreeYears'
-                      ]
-
-
-def write_journal_to_csv(journal, file_name='journal'):
-    """
-    Given a journal object, creates a csv file with the articles of the journal objects
-    :param journal: an object of a Journal class
-    :param file_name: the name of the output file
-    :return:
-    """
-    print('Journal object is converted into output csv')
-    file_name = './journal_utils/journal-csv/acs-journals/acs-archives-articles/' + journal.title
-    with open(file_name + '.csv', 'w', encoding='utf8') as csv_file:
-        fieldnames = ['Name',
-                      'Year',
-                      'DOI',
-                      'DOI-URL',
-                      'Accessible'
-                      ]
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        for y in journal.year_dict:
-            doi = journal.year_dict[y][2].doi
-            if doi is None:
-                doi = 'none'
-            writer.writerow({'Name': journal.title,
-                             'Year': y,
-                             'DOI': journal.year_dict[y][2].doi,
-                             'DOI-URL': 'https://doi.org/' + doi,
-                             'Accessible': journal.year_dict[y][2].accessible
-                             })
-
-
-def write_result_csv(journal_list, file_name='journal_result'):
-    print("result file")
-    with open(file_name + '.csv', 'w', encoding='utf8') as csv_file:
-        fieldnames = ['Title',
-                      'PackageName',
-                      'URL',
-                      'Publisher',
-                      'PrintISSN',
-                      'OnlineISSN',
-                      'ManagedCoverageBegin',
-                      'ManagedCoverageEnd',
-                      'AsExpected',
-                      'ProblemYears',
-                      'FreeYears'
-                      ]
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        for j in journal_list:
-            writer.writerow({'Title': j.title,
-                             'PackageName': j.package,
-                             'URL': j.url,
-                             'Publisher': j.publisher,
-                             'PrintISSN': j.print_isssn,
-                             'OnlineISSN': j.online_issn,
-                             'ManagedCoverageBegin': j.expected_subscript_begin,
-                             'ManagedCoverageEnd': j.expected_subscript_end,
-                             'AsExpected': 'Correct',
-                             'ProblemYears': '1993, 1995',
-                             'FreeYears': '2005'
-                             })
-
-
 def construct_journal_list_from(journals_csv):
     journal_obj_list = []
 
@@ -142,86 +63,6 @@ def reconstruct_journal_list_from(articles_csv):
 
     print('size' + str(len(journal_obj_list)))
     return journal_obj_list
-
-
-def write_articles_csv_from(journal_obj_list, file_name='new-articles.csv'):
-    print("result file")
-    with open(file_name + '.csv', 'w', encoding='utf8') as csv_file:
-        fieldnames = ['Title',
-
-                      'Year',
-                      'DOI',
-                      'DOI-URL',
-                      'Accessible',
-
-                      'PackageName',
-                      'URL',
-                      'Publisher',
-                      'PrintISSN',
-                      'OnlineISSN',
-                      'ManagedCoverageBegin',
-                      'ManagedCoverageEnd',
-                      'AsExpected',
-                      'ProblemYears',
-                      'FreeYears'
-                      ]
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-
-        for j in journal_obj_list:
-            for y in j.year_dict:
-                writer.writerow({'Title': j.title,
-
-                                 'Year': y,
-                                 'DOI': j.year_dict[y][2].doi,
-                                 'DOI-URL': 'http://doi.org/' + str(j.year_dict[y][2].doi),
-                                 'Accessible': j.year_dict[y][2].accessible,
-
-                                 'PackageName': j.package,
-                                 'URL': j.url,
-                                 'Publisher': j.publisher,
-                                 'PrintISSN': j.print_issn,
-                                 'OnlineISSN': j.online_issn,
-                                 'ManagedCoverageBegin': j.expected_subscription_begin,
-                                 'ManagedCoverageEnd': j.expected_subscription_end,
-                                 'AsExpected': j.result_as_expected,
-                                 'ProblemYears': j.wrong_years,
-                                 'FreeYears': 'NoYears'
-                                 })
-
-
-def write_journals_csv_from(journal_obj_list, file_name='new-journals.csv'):
-    print("result file")
-    with open(file_name + '.csv', 'w', encoding='utf8') as csv_file:
-        fieldnames = ['Title',
-                      'PackageName',
-                      'URL',
-                      'Publisher',
-                      'PrintISSN',
-                      'OnlineISSN',
-                      'ManagedCoverageBegin',
-                      'ManagedCoverageEnd',
-                      'AsExpected',
-                      'ProblemYears',
-                      'FreeYears'
-                      ]
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-
-        for j in journal_obj_list:
-            writer.writerow({'Title': j.title,
-
-                             'PackageName': j.package,
-                             'URL': j.url,
-                             'Publisher': j.publisher,
-                             'PrintISSN': j.print_issn,
-                             'OnlineISSN': j.online_issn,
-                             'ManagedCoverageBegin': j.expected_subscription_begin,
-                             'ManagedCoverageEnd': j.expected_subscription_end,
-                             'AsExpected': 'Correct',
-                             'ProblemYears': j.wrong_years,
-                             'FreeYears': '2005'
-                             })
 
 
 def write_wrong_result_csv_from(journal_list):
@@ -319,7 +160,4 @@ def append_journal_row(journal, file_name='result-journals'):
 
 
 if __name__ == '__main__':
-    # list = construct_journal_list_from('./journal-csv/acs-journals/acs-archives.csv')
-    list = reconstruct_journal_list_from('./journal-csv/acs-journals/acs-short.csv')
-    write_journals_csv_from(list)
-    write_articles_csv_from(list)
+    print('csv reader')
