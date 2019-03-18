@@ -109,6 +109,7 @@ def reconstruct_journal_list_from(articles_csv):
     """
     journal_obj_list = []
     current_title = ''
+    current_platform = ''
 
     with open(articles_csv, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
@@ -119,8 +120,9 @@ def reconstruct_journal_list_from(articles_csv):
                 access = True
             else:
                 access = False
-            if current_title != row['Title']:
+            if current_title != row['Title'] or current_platform != row['PackageName']:
                 current_title = row['Title']
+                current_platform = row['PackageName']
 
                 j = Journal(row['Title'],
                             row['PackageName'],

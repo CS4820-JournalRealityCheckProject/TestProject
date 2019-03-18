@@ -22,7 +22,11 @@ class MainUI(tk.Frame):
                       'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears',
                       'FreeYears']
     JOURNAL_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN', 'ManagedCoverageBegin',
-                          'ManagedCoverageEnd', 'AsExpected', 'ProblemYears', 'FreeYears']
+                          'ManagedCoverageEnd']
+
+    JOURNAL_RESULT_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN',
+                                 'ManagedCoverageBegin',
+                                 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears', 'FreeYears']
 
     def __init__(self, main_system, master=None):
         super().__init__(master)
@@ -115,7 +119,8 @@ class MainUI(tk.Frame):
             reader = csv.reader(csv_file)
             header = next(reader)  # only for python 3
             print(header)
-            if header == self.JOURNAL_CSV_HEADER:
+            print(self.JOURNAL_CSV_HEADER)
+            if header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER:
                 print('for journal')
                 self.mode = self.DOI_SEARCH_MODE
                 self.is_ready = True
@@ -133,6 +138,8 @@ class MainUI(tk.Frame):
 
             else:
                 self.warn_var.set('Wrong file (wrong columns)')
+                self.start_button.config(state="disabled")
+
 
         self.main_system.update(MainUI.FILE_UPLOADED)
 
