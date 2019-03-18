@@ -163,9 +163,10 @@ class MainSystem(object):
                 try:
                     result = scraper.check_journal(doi)  # reality check
                 except Exception:
+                    print(year)
                     print('|exception happened|')
                 journal.year_dict[year][2].accessible = result
-                print(str(result))
+                print(str(year), ':', str(result))
         journal.record_wrong_years()  # wrong years are updated
 
         print('Reality check finished')
