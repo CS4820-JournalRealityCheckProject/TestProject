@@ -115,6 +115,23 @@ def prepare_result_csv(result_file='result-journals'):
         writer.writeheader()
 
 
+def prepare_wrong_csv(wrong_file='wrong-list'):
+    with open(wrong_file + '.csv', 'w', encoding='utf8') as csv_file:
+        fieldnames = ['Title',
+
+                      'Year',
+                      'DOI',
+                      'DOI-URL',
+                      'Accessible',
+
+                      'PackageName',
+                      'URL',
+                      'Publisher',
+                      ]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+
+
 def append_doi_row(journal, file_name='doi-articles'):
     with open(file_name + '.csv', 'a', encoding='utf8') as file:
         writer = csv.writer(file)
@@ -157,6 +174,33 @@ def append_journal_row(journal, file_name='result-journals'):
                          j.wrong_years,
                          'NoYears'
                          ])
+
+
+def append_wrong_row(mode, journal, file_name='wrong-list'):
+    """
+
+    :param mode: 'doi-search' or 'reality-check'
+    :param journal:
+    :param file_name:
+    :return:
+    """
+    with open(file_name + '.csv', 'a', encoding='utf8') as file:
+        writer = csv.writer(file)
+        j = journal
+        for y in j.year_dict:
+            if (mode == 'doi-search' and j.year_dict[y][2].doi is None) or \
+                    (mode == 'check-reality' and not j.year_dict[y][2].accessible):
+                writer.writerow([j.title,
+
+                                 y,
+                                 j.year_dict[y][2].doi,
+                                 'http://doi.org/' + str(j.year_dict[y][2].doi),
+                                 j.year_dict[y][2].accessible,
+
+                                 j.package,
+                                 j.url,
+                                 j.publisher,
+                                 ])
 
 
 if __name__ == '__main__':
