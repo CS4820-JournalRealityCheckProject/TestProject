@@ -1,5 +1,6 @@
 import configparser
 import tkinter as tk
+import datetime
 
 import config_utils.config
 import journal_ui.main_ui as main_ui
@@ -29,6 +30,7 @@ class MainSystem(object):
         self.current_index = int(self.config['progress']['current-index'])
         self.input_file_path = self.config['progress']['input-file-path']
         self.output_file_path = self.config['progress']['output-file-path']
+        self.wrong_file_path = self.config['progress']['wrong-file-path']
 
         # Config for email
         self.email_config = configparser.ConfigParser()
@@ -84,20 +86,26 @@ class MainSystem(object):
 
     def search_articles_journal_list(self):
         """iterates a list of journal and fetches an article and a doi for each year"""
-        self.output_file_path = 'doi-articles'  # file name
+        d = str(datetime.datetime.today())
+        date = d[0:4] + d[5:7] + d[8:10]
+        date = d[0:19]
+        self.output_file_path = date + '-' + 'doi-articles'  # file name
+        self.wrong_file_path = date + '-' + 'wrong-list'
         index = self.current_index
         if index == -1:
             print('initialized')
             csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
+            csv_reader.prepare_wrong_csv(self.wrong_file_path)
             index = 0
 
         while index < len(self.journal_list):
             title = self.journal_list[index].title
-            config_utils.config.update_progress(self.input_file_path, self.output_file_path,
+            config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
                                                 status='doi-search', index=index, title=title)
             self.search_article(self.journal_list[index])
             csv_reader.append_doi_row(self.journal_list[index], self.output_file_path)
-
+            csv_reader.append_wrong_row(mode='doi-search', journal=self.journal_list[index],
+                                        file_name=self.wrong_file_path)
             index = index + 1
 
         config_utils.config.clear_progress()
@@ -133,25 +141,33 @@ class MainSystem(object):
         :param journal_list:
         :return:
         """
-        self.output_file_path = 'result-journals'  # file name
+        d = str(datetime.datetime.today())
+        date = d[0:4] + d[5:7] + d[8:10]
+        date = d
+        date = d[0:19]
+
+        self.output_file_path = date + '-' + 'result-journals'  # file name
+        self.wrong_file_path = date + '-' + 'wrong-list'
         index = self.current_index
         if index == -1:
             print('initialized')
             csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
+            csv_reader.prepare_wrong_csv(self.wrong_file_path)
             index = 0
 
         while index < len(self.journal_list):
             title = self.journal_list[index].title
-            config_utils.config.update_progress(self.input_file_path, self.output_file_path,
+            config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
                                                 status='reality-check', index=index, title=title)
             self.check_reality(self.journal_list[index])
             csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
+            csv_reader.append_wrong_row(mode='check-reality', journal=self.journal_list[index],
+                                        file_name=self.wrong_file_path)
 
             index = index + 1
 
         config_utils.config.clear_progress()
         self.send_email()
-        self.ui.quit()
 
     @staticmethod
     def check_reality(journal):
@@ -187,8 +203,9 @@ class MainSystem(object):
         """
         emailer = email_handler.EmailHandler()
 
-        f = './' + self.output_file_path + '.csv'
-        files = [f, "./email_utils/test2.csv"]
+        f1 = csv_reader.path + self.output_file_path + '.csv'
+        f2 = csv_reader.path + self.wrong_file_path + '.csv'
+        files = [f1, f2]
 
         emailer.set_sender(sender=self.sender, password=self.password)
         emailer.set_receiver(receiver=self.receiver)
