@@ -41,6 +41,7 @@ class MainUI(tk.Frame):
         self.input_file_path = None
         self.mode = 'doi-search'
         self.is_ready = False
+        self.receiver = None
 
         # notebook (tab windows)
         nb = ttk.Notebook(width=200, height=200)
@@ -142,14 +143,8 @@ class MainUI(tk.Frame):
 
         self.main_system.update(MainUI.FILE_UPLOADED)
 
-    def download_file(self):
-        self.main_system.update(MainUI.DOWNLOAD_CLICKED)
-
     def search_article(self):
         self.main_system.update(MainUI.SEARCH_CLICKED)
-
-    def send_email(self):
-        self.main_system.update(MainUI.EMAIL_CLICKED)
 
     def check_reality(self):
         self.main_system.update(MainUI.REALITY_CHECK_CLICKED)
@@ -161,15 +156,19 @@ class MainUI(tk.Frame):
             print('email did not match')
             self.warn_var.set('Email is incorrect')
             return
+        else:
+            self.receiver = self.email_textfield.get('1.0', 'end -1c')
+            print(self.receiver)
 
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")
-            self.warn_var.set('STARTED')
             self.search_article()
+            self.warn_var.set('FINISHED')
+
         elif self.mode == self.REALITY_CHECK_MODE:
             self.start_button.config(state="disabled")
-            self.warn_var.set('STARTED')
             self.check_reality()
+            self.warn_var.set('FINISHED')
 
 
 if __name__ == '__main__':
