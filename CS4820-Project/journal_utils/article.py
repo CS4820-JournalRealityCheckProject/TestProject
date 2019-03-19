@@ -1,5 +1,3 @@
-import datetime
-import screenscrape_utils.result_enum as resultEnum
 
 class Article(object):
     """This class models an article"""
@@ -8,7 +6,8 @@ class Article(object):
         self.name = name
         self.doi = doi
         self.date = date
-        self.accessible = resultEnum.Result.Access
+        self.accessible = False
+        self.result = None
         self.reason_of_false = 'no issues'
 
     def __str__(self):

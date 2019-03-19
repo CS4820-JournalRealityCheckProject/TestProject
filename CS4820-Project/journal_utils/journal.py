@@ -1,7 +1,5 @@
 import datetime
 import journal_utils.article as article
-import screenscrape_utils.result_enum as resultEnum
-
 
 class Journal(object):
     """This class models a journal"""
@@ -141,8 +139,7 @@ class Journal(object):
     def record_wrong_years(self):
 
         for year in self.year_dict:
-            access = self.year_dict[year][2].accessible
-            if access.value > resultEnum.Result.Access.value:
+            if not self.year_dict[year][2].accessible:  # article is accessible
                 self.wrong_years = self.wrong_years + str(year) + '/'
                 self.result_as_expected = False
         if self.result_as_expected:

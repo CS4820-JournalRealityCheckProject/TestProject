@@ -7,7 +7,7 @@ import journal_ui.main_ui as main_ui
 import journal_utils.csv_reader as csv_reader
 import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
-import screenscrape_utils.result_enum as resultEnum
+import screenscrape_utils.result_enum as result_enum
 import email_utils.email_handler as email_handler
 
 
@@ -89,7 +89,7 @@ class MainSystem(object):
         """iterates a list of journal and fetches an article and a doi for each year"""
         d = str(datetime.datetime.today())
         date = d[0:4] + d[5:7] + d[8:10]
-        date = d[0:19]
+        # date = d[0:19]
         self.output_file_path = date + '-' + 'doi-articles'  # file name
         self.wrong_file_path = date + '-' + 'wrong-list'
 
@@ -105,7 +105,9 @@ class MainSystem(object):
             title = self.journal_list[index].title
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
                                                 status='doi-search', index=index, title=title)
-            self.search_article(self.journal_list[index])
+
+            self.search_article(self.journal_list[index])  # DOI Search
+
             csv_reader.append_doi_row(self.journal_list[index], self.output_file_path)
             csv_reader.append_wrong_row(mode='doi-search', journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
@@ -146,8 +148,7 @@ class MainSystem(object):
         """
         d = str(datetime.datetime.today())
         date = d[0:4] + d[5:7] + d[8:10]
-        date = d
-        date = d[0:19]
+        # date = d[0:19]
         self.output_file_path = date + '-' + 'result-journals'  # file name
         self.wrong_file_path = date + '-' + 'wrong-list'
 
@@ -163,7 +164,9 @@ class MainSystem(object):
             title = self.journal_list[index].title
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
                                                 status='reality-check', index=index, title=title)
-            self.check_reality(self.journal_list[index])
+
+            self.check_reality(self.journal_list[index])  # Reality Check
+
             csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
             csv_reader.append_wrong_row(mode='check-reality', journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
@@ -173,8 +176,7 @@ class MainSystem(object):
         config_utils.config.clear_progress()
         self.send_email()
 
-    @staticmethod
-    def check_reality(journal):
+    def check_reality(self, journal):
         """
         Screen scrape and determine the journal reality.
         :param journal: a journal object
@@ -191,13 +193,42 @@ class MainSystem(object):
             except Exception:
                 print(year)
                 print('|exception happened|')
-                result = resultEnum.Result.OtherException
-            journal.year_dict[year][2].accessible = result
-            print(result.name)
+                result = result_enum.Result.OtherException
+
+            journal.year_dict[year][2].result = result  # result is stored in article
+            if result == result_enum.Result.Access or result == result_enum.Result.OpenAccess:
+                journal.year_dict[year][2].accessible = True
+
+            journal.year_dict[year][2].result = self.convert_result(result)  # result is checked
             print(str(year), ':', str(result))
         journal.record_wrong_years()  # wrong years are updated
 
         print('Reality check finished')
+
+    @staticmethod
+    def convert_result(result):
+        if result == result_enum.Result.Access:
+            return 'Accessible'
+        elif result == result_enum.Result.OpenAccess:
+            return 'Open-Access'
+        elif result == result_enum.Result.FreeAccess:
+            return 'Free-Access'
+        elif result == result_enum.Result.NoAccess:
+            return 'No-Access'
+        elif result == result_enum.Result.NoArticle:
+            return 'No-Article'
+        elif result == result_enum.Result.ArticleNotFound:
+            return 'Article-Not-Found'
+        elif result == result_enum.Result.UnsupportedWebsite:
+            return 'Unsupported-Website'
+        elif result == result_enum.Result.NetworkError:
+            return 'Network-Error'
+        elif result == result_enum.Result.PublisherNotFound:
+            return 'Publisher-Not-Found'
+        elif result == result_enum.Result.OtherException:
+            return 'Other-Exception'
+        else:
+            return 'No-Result-Obtained'
 
     def send_email(self, email='whimwhimxlife@gmail.com', password='xxxxx'):
         """
