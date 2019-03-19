@@ -9,6 +9,7 @@ import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
 import screenscrape_utils.result_enum as result_enum
 import email_utils.email_handler as email_handler
+import journal_utils.debug as debug
 
 
 class MainSystem(object):
@@ -18,10 +19,9 @@ class MainSystem(object):
     """
 
     def __init__(self):
-
-        print("system turned on")
+        
+        debug.d_print("system turned on")
         self.journal_list = None
-        self.file_path = None
 
         #  Config for the progress
         self.config = configparser.ConfigParser()
@@ -257,7 +257,6 @@ class MainSystem(object):
         print('CODE:', code)
 
         if code == main_ui.MainUI.FILE_UPLOADED:
-            self.file_path = self.ui.input_file_path
             self.input_file_path = self.ui.input_file_path
             if self.ui.mode == self.ui.DOI_SEARCH_MODE:
                 self.create_journal_list()

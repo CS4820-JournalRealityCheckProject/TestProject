@@ -2,7 +2,6 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import csv
 from tkinter import filedialog
-import journal_utils.csv_reader as csv_reader
 
 
 class MainUI(tk.Frame):
@@ -23,7 +22,6 @@ class MainUI(tk.Frame):
                       'FreeYears']
     JOURNAL_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN', 'ManagedCoverageBegin',
                           'ManagedCoverageEnd']
-
     JOURNAL_RESULT_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN',
                                  'ManagedCoverageBegin',
                                  'ManagedCoverageEnd', 'AsExpected', 'ProblemYears', 'FreeYears']
@@ -37,8 +35,8 @@ class MainUI(tk.Frame):
 
         # member variables
         self.main_system = main_system
-        self.file_path = None
         self.input_file_path = None
+        self.file_name = None
         self.mode = 'doi-search'
         self.is_ready = False
         self.receiver = None
@@ -113,9 +111,13 @@ class MainUI(tk.Frame):
                                                                      ("all files", "*.*")))
         print(self.input_file_path)
 
-        res2 = self.input_file_path.split('/')[-1]
-        print(res2)
-        self.file_var.set(res2)
+        f_name = self.input_file_path.split('/')[-1]
+        print(f_name)
+        self.file_var.set(f_name)
+        self.file_name = f_name
+
+
+        # checks if the uploaded file is valid
         with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
             reader = csv.reader(csv_file)
             header = next(reader)  # only for python 3
