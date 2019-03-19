@@ -187,6 +187,7 @@ class MainSystem(object):
             print('https://doi.org/' + str(doi))
             try:
                 result = screenscraper.check_journal(doi)  # reality check
+                print('result:', result, type(result))
             except Exception:
                 print(year)
                 print('|exception happened|')
