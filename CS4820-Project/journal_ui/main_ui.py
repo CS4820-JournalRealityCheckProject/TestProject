@@ -23,8 +23,8 @@ class MainUI(tk.Frame):
                       'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears',
                       'FreeYears']
 
-    DOI_CSV_HEADER2 = ['Title', 'Year', 'DOI', 'DOI-URL', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
-                       'OnlineISSN', 'ManagedCoverageBegin']
+    TEMP_CSV_HEADER = ['Title', 'Year', 'DOI', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
+                       'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd']
 
     JOURNAL_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN', 'ManagedCoverageBegin',
                           'ManagedCoverageEnd']
@@ -128,6 +128,7 @@ class MainUI(tk.Frame):
             header = next(reader)  # only for python 3
             debug.d_print(header)
             debug.d_print(self.JOURNAL_CSV_HEADER)
+
             if header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER:
                 debug.d_print('for journal')
                 self.mode = self.DOI_SEARCH_MODE
@@ -137,6 +138,9 @@ class MainUI(tk.Frame):
                 self.warn_var.set('')
 
             elif header == self.DOI_CSV_HEADER:
+                debug.d_print('this is an old format of temp file')
+
+            elif header == self.TEMP_CSV_HEADER:
                 debug.d_print('for doi')
                 self.mode = self.REALITY_CHECK_MODE
                 self.is_ready = True

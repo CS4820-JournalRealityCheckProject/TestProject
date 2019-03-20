@@ -150,7 +150,7 @@ class MainSystem(object):
         d = str(datetime.datetime.today())
         date = d[0:4] + d[5:7] + d[8:10]
         # date = d[0:19]
-        self.output_file_path = 'RESULT-JOURNALS' + date   # file name
+        self.output_file_path = 'RESULT-JOURNALS' + date  # file name
         self.wrong_file_path = 'WRONG-JOURNALS' + date
 
         config_utils.config.update_email(self.receiver)
@@ -196,11 +196,13 @@ class MainSystem(object):
                 result = result_enum.Result.OtherException
 
             journal.year_dict[year][2].result = result  # result is stored in article
-            if result == result_enum.Result.Access or result == result_enum.Result.OpenAccess:
+            if result is result_enum.Result.Access or result is result_enum.Result.OpenAccess:
                 journal.year_dict[year][2].accessible = True
 
             journal.year_dict[year][2].result = self.convert_result(result)  # result is checked
             debug.d_print(str(year), ':', str(result))
+
+        debug.d_print(journal.wrong_years)
         journal.record_wrong_years()  # wrong years are updated
 
         debug.d_print('Reality check finished')

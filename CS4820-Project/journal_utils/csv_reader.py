@@ -39,10 +39,11 @@ def reconstruct_journal_list_from(articles_csv):
         j = None
         for row in reader:
             y = int(row['Year'])
-            if row['Accessible'] == 'TRUE':
-                access = True
-            else:
-                access = False
+            # if row['Accessible'] == 'TRUE':
+            #     access = True
+            # else:
+            #     access = False
+
             if current_title != row['Title'] or current_platform != row['PackageName']:
                 current_title = row['Title']
                 current_platform = row['PackageName']
@@ -57,11 +58,11 @@ def reconstruct_journal_list_from(articles_csv):
                             row['ManagedCoverageEnd']
                             )
                 j.year_dict[y][2].doi = row['DOI']
-                j.year_dict[y][2].accessible = access
                 journal_obj_list.append(j)
+                # j.year_dict[y][2].accessible = access
             else:
                 j.year_dict[y][2].doi = row['DOI']
-                j.year_dict[y][2].accessible = access
+                # j.year_dict[y][2].accessible = access
 
     print('size' + str(len(journal_obj_list)))
     return journal_obj_list
@@ -73,8 +74,8 @@ def prepare_temp_csv(temp_file='doi-articles'):
 
                       'Year',
                       'DOI',
-                      'DOI-URL',
-                      'Accessible',
+                      # 'DOI-URL',
+                      # 'Accessible',
 
                       'PackageName',
                       'URL',
@@ -83,9 +84,9 @@ def prepare_temp_csv(temp_file='doi-articles'):
                       'OnlineISSN',
                       'ManagedCoverageBegin',
                       'ManagedCoverageEnd',
-                      'AsExpected',
-                      'ProblemYears',
-                      'FreeYears'
+                      # 'AsExpected',
+                      # 'ProblemYears',
+                      # 'FreeYears'
                       ]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
@@ -138,8 +139,8 @@ def append_doi_row(journal, file_name='doi-articles'):
 
                              y,
                              j.year_dict[y][2].doi,
-                             'http://doi.org/' + str(j.year_dict[y][2].doi),
-                             j.year_dict[y][2].accessible,
+                             # 'http://doi.org/' + str(j.year_dict[y][2].doi),
+                             # j.year_dict[y][2].accessible,
 
                              j.package,
                              j.url,
@@ -148,9 +149,9 @@ def append_doi_row(journal, file_name='doi-articles'):
                              j.online_issn,
                              j.expected_subscription_begin,
                              j.expected_subscription_end,
-                             j.year_dict[y][2].result,
-                             '',
-                             ''
+                             # j.year_dict[y][2].result,
+                             # '',
+                             # ''
                              ])
 
 
