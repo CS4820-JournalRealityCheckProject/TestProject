@@ -148,9 +148,9 @@ def append_doi_row(journal, file_name='doi-articles'):
                              j.online_issn,
                              j.expected_subscription_begin,
                              j.expected_subscription_end,
-                             j.result_as_expected,
-                             j.wrong_years,
-                             'NoYears'
+                             j.year_dict[y][2].result,
+                             '',
+                             ''
                              ])
 
 
@@ -185,14 +185,26 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
         writer = csv.writer(file)
         j = journal
         for y in j.year_dict:
-            if (mode == 'doi-search' and j.year_dict[y][2].doi is None) or \
-                    (mode == 'check-reality' and not j.year_dict[y][2].accessible):
+            if mode == 'doi-search' and j.year_dict[y][2].doi is None:
+                writer.writerow([j.title,
+
+                                 y,
+                                 'no-doi',
+                                 '',
+                                 j.year_dict[y][2].result,
+
+                                 j.package,
+                                 j.url,
+                                 j.publisher,
+                                 ])
+
+            if mode == 'check-reality' and not j.year_dict[y][2].accessible:
                 writer.writerow([j.title,
 
                                  y,
                                  j.year_dict[y][2].doi,
                                  'http://doi.org/' + str(j.year_dict[y][2].doi),
-                                 j.year_dict[y][2].accessible,
+                                 j.year_dict[y][2].result,
 
                                  j.package,
                                  j.url,
