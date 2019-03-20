@@ -22,6 +22,10 @@ class MainUI(tk.Frame):
     DOI_CSV_HEADER = ['Title', 'Year', 'DOI', 'DOI-URL', 'Accessible', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
                       'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears',
                       'FreeYears']
+
+    DOI_CSV_HEADER2 = ['Title', 'Year', 'DOI', 'DOI-URL', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
+                       'OnlineISSN', 'ManagedCoverageBegin']
+
     JOURNAL_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN', 'ManagedCoverageBegin',
                           'ManagedCoverageEnd']
     JOURNAL_RESULT_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN',
@@ -59,7 +63,7 @@ class MainUI(tk.Frame):
 
         # top message label
         self.top_message_var = tk.StringVar()
-        self.top_message_var.set('"Upload a file"')
+        self.top_message_var.set('Upload a file')
         self.top_message = tk.Label(tab1, textvariable=self.top_message_var, font='Helvetica 18 bold')
         self.top_message.grid(row=0, column=2)
 
@@ -113,7 +117,7 @@ class MainUI(tk.Frame):
                                                                      ("all files", "*.*")))
         debug.d_print(self.input_file_path)
 
-        f_name = self.input_file_path.split('/')[-1]
+        f_name = self.input_file_path.split('/')[-1]  # get only the name.csv
         debug.d_print(f_name)
         self.file_var.set(f_name)
         self.file_name = f_name

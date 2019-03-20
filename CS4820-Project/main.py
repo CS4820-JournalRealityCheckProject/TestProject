@@ -262,6 +262,7 @@ class MainSystem(object):
         if code == main_ui.MainUI.FILE_UPLOADED:
             self.input_file_path = self.ui.input_file_path
             self.file_name = self.ui.file_name
+
             if self.ui.mode == self.ui.DOI_SEARCH_MODE:
                 self.create_journal_list()
             elif self.ui.mode == self.ui.REALITY_CHECK_MODE:
