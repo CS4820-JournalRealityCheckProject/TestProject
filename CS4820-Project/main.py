@@ -1,6 +1,7 @@
 import configparser
 import tkinter as tk
 import datetime
+import smtplib
 
 import config_utils.config
 import journal_ui.main_ui as main_ui
@@ -19,7 +20,7 @@ class MainSystem(object):
     """
 
     def __init__(self):
-        
+
         debug.d_print("system turned on")
         self.journal_list = None
 
@@ -32,6 +33,7 @@ class MainSystem(object):
         self.input_file_path = self.config['progress']['input-file-path']
         self.output_file_path = self.config['progress']['output-file-path']
         self.wrong_file_path = self.config['progress']['wrong-file-path']
+        self.file_name = None
 
         # Config for email
         self.email_config = configparser.ConfigParser()
@@ -40,11 +42,10 @@ class MainSystem(object):
         self.receiver = self.email_config['email']['receiver']
         self.password = self.email_config['email']['password']
 
-        print(self.input_file_path)
-        print(self.status)
+        debug.d_print(self.input_file_path)
+        debug.d_print(self.status)
 
         if self.complete == 'False':
-            print()
             choice = input('Do you want to continue what interrupted last time?(y/n)')
             if choice == 'y':
                 self.restore_progress()
@@ -65,7 +66,7 @@ class MainSystem(object):
         self.ui.mainloop()  # starts UI
 
     def restore_progress(self):
-        print('|progress restored|')
+        debug.d_print('|progress restored|')
 
         if self.status == 'doi-search':
             self.create_journal_list()
@@ -90,13 +91,13 @@ class MainSystem(object):
         d = str(datetime.datetime.today())
         date = d[0:4] + d[5:7] + d[8:10]
         # date = d[0:19]
-        self.output_file_path = date + '-' + 'doi-articles'  # file name
-        self.wrong_file_path = date + '-' + 'wrong-list'
+        self.output_file_path = 'DOI-TEMP' + date  # file name
+        self.wrong_file_path = 'DOI-WRONG' + date
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
         if index == -1:
-            print('initialized')
+            debug.d_print('initialized')
             csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
             index = 0
@@ -124,10 +125,10 @@ class MainSystem(object):
         :return:
         """
         for year in journal.year_dict:
-            print(journal.title,
-                  journal.year_dict[year][0],  # start_date
-                  journal.year_dict[year][1],  # end_date
-                  journal.print_issn, journal.online_issn)
+            debug.d_print(journal.title,
+                          journal.year_dict[year][0],  # start_date
+                          journal.year_dict[year][1],  # end_date
+                          journal.print_issn, journal.online_issn)
             doi = searcher.search_journal(journal.title,
                                           journal.year_dict[year][0],  # start_date
                                           journal.year_dict[year][1],  # end_date
@@ -135,10 +136,10 @@ class MainSystem(object):
             journal.year_dict[year][2].doi = doi
             # journal.year_article_dict[year].doi = doi
             if doi is None:
-                print(doi)
+                debug.d_print(doi)
             else:
-                print('https://doi.org/' + doi)
-        print('Search article finished')
+                debug.d_print('https://doi.org/' + doi)
+        debug.d_print('Search article finished')
 
     def check_reality_journal_list(self):
         """
@@ -149,13 +150,13 @@ class MainSystem(object):
         d = str(datetime.datetime.today())
         date = d[0:4] + d[5:7] + d[8:10]
         # date = d[0:19]
-        self.output_file_path = date + '-' + 'result-journals'  # file name
-        self.wrong_file_path = date + '-' + 'wrong-list'
+        self.output_file_path = 'RESULT-JOURNALS' + date   # file name
+        self.wrong_file_path = 'WRONG-JOURNALS' + date
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
         if index == -1:
-            print('initialized')
+            debug.d_print('initialized')
             csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
             index = 0
@@ -182,17 +183,16 @@ class MainSystem(object):
         :param journal: a journal object
         :return:
         """
-        print(journal.title, journal.publisher)
+        debug.d_print(journal.title, journal.publisher)
         for year in journal.year_dict:
-            # print(journal.year_dict[year][2])
+            # debug.d_print(journal.year_dict[year][2])
             doi = journal.year_dict[year][2].doi
-            print('https://doi.org/' + str(doi))
+            debug.d_print('https://doi.org/' + str(doi))
             try:
                 result = screenscraper.check_journal(doi)  # reality check
-                print('result:', result, type(result))
             except Exception:
-                print(year)
-                print('|exception happened|')
+                debug.d_print(year)
+                debug.d_print('|exception happened|')
                 result = result_enum.Result.OtherException
 
             journal.year_dict[year][2].result = result  # result is stored in article
@@ -200,10 +200,10 @@ class MainSystem(object):
                 journal.year_dict[year][2].accessible = True
 
             journal.year_dict[year][2].result = self.convert_result(result)  # result is checked
-            print(str(year), ':', str(result))
+            debug.d_print(str(year), ':', str(result))
         journal.record_wrong_years()  # wrong years are updated
 
-        print('Reality check finished')
+        debug.d_print('Reality check finished')
 
     @staticmethod
     def convert_result(result):
@@ -243,7 +243,10 @@ class MainSystem(object):
 
         emailer.set_sender(sender=self.sender, password=self.password)
         emailer.set_receiver(receiver=self.receiver)
-        emailer.send(files)
+        try:
+            emailer.send(files)
+        except smtplib.SMTPRecipientsRefused:
+            print('Email was incorrect')
 
     def update(self, code):
         """
@@ -254,10 +257,12 @@ class MainSystem(object):
         :param code: a message from main_ui.py
         :return:
         """
-        print('CODE:', code)
+        debug.d_print('CODE:', code)
 
         if code == main_ui.MainUI.FILE_UPLOADED:
             self.input_file_path = self.ui.input_file_path
+            self.file_name = self.ui.file_name
+
             if self.ui.mode == self.ui.DOI_SEARCH_MODE:
                 self.create_journal_list()
             elif self.ui.mode == self.ui.REALITY_CHECK_MODE:
@@ -274,7 +279,7 @@ class MainSystem(object):
 
 def main():
     main_system = MainSystem()
-    print('"PROGRAM TERMINATED"')
+    debug.d_print('"PROGRAM TERMINATED"')
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
-debug_mode = False
+debug_mode = True
 
 
-def d_print(sth):
+def d_print(s1='', s2='', s3='', s4='', s5=''):
     if debug_mode:
-        print(sth)
+        print(s1, s2, s3, s4, s5)
