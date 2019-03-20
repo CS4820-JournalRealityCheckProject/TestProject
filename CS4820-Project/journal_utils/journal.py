@@ -32,7 +32,7 @@ class Journal(object):
 
         self.result_as_expected = True
         self.wrong_years = ''
-        self.record_wrong_years()
+        # self.record_wrong_years()
 
     def __str__(self):
         s = ', '
@@ -143,7 +143,7 @@ class Journal(object):
                 self.wrong_years = self.wrong_years + str(year) + '/'
                 self.result_as_expected = False
         if self.result_as_expected:
-            self.wrong_years = 'no wrong years'
+            self.wrong_years = 'CORRECT'
 
 
 if __name__ == '__main__':
