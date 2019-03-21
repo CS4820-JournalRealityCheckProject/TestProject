@@ -117,15 +117,15 @@ class MainUI(tk.Frame):
         self.exit_button = tk.Button(tab1, text="Exit", command=self.quit)
         self.exit_button.grid(row=6, column=3)
 
+        # radio button for new or existing email
         self.radio_var = tk.IntVar()
-        # value=0のラジオボタンにチェックを入れる
         self.radio_var.set(0)
 
-        # ラジオボタン作成
-        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use the Last Email')
+        # radio buttons
+        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Existing Email')
         self.rdo1.grid(row=7, column=2)
 
-        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Use a New Email')
+        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Use New Email')
         self.rdo2.grid(row=8, column=2)
 
     def upload_file(self):
@@ -204,7 +204,8 @@ class MainUI(tk.Frame):
             self.warn_var.set('FINISHED')
 
     def is_new_receiver(self):
-        if self.radio_var == self.NEW_EMAIL:
+        if self.radio_var.get() == self.NEW_EMAIL:
+            debug.d_print('truetrue')
             return True
         return False
 
