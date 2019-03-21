@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 import csv
 from tkinter import filedialog
 import journal_utils.csv_reader as csv_reader
+import debug_utils.debug as debug
 
 
 class MainUI(tk.Frame):
@@ -21,9 +22,12 @@ class MainUI(tk.Frame):
     DOI_CSV_HEADER = ['Title', 'Year', 'DOI', 'DOI-URL', 'Accessible', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
                       'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears',
                       'FreeYears']
+
+    TEMP_CSV_HEADER = ['Title', 'Year', 'DOI', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
+                       'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd']
+
     JOURNAL_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN', 'ManagedCoverageBegin',
                           'ManagedCoverageEnd']
-
     JOURNAL_RESULT_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN',
                                  'ManagedCoverageBegin',
                                  'ManagedCoverageEnd', 'AsExpected', 'ProblemYears', 'FreeYears']
@@ -37,8 +41,8 @@ class MainUI(tk.Frame):
 
         # member variables
         self.main_system = main_system
-        self.file_path = None
         self.input_file_path = None
+        self.file_name = None
         self.mode = 'doi-search'
         self.is_ready = False
         self.receiver = None
@@ -51,6 +55,7 @@ class MainUI(tk.Frame):
         tab2 = tk.Frame(nb)
         nb.add(tab1, text='System', padding=3)
         #nb.add(tab2, text='', padding=3)
+
         nb.pack(expand=1, fill='both')
 
         # top label left
@@ -74,6 +79,7 @@ class MainUI(tk.Frame):
         self.upload_button = tk.Button(tab1, text="Browse", command=self.upload_file)
         self.upload_button.grid(row=2, column=1)
 
+
         # csv file label
         self.file_var = tk.StringVar()
         self.file_var.set("no file")
@@ -95,6 +101,7 @@ class MainUI(tk.Frame):
         self.email_textfield = tk.Text(tab1, bd=1, bg='light grey', height=1, width=40)
         self.email_textfield.grid(row=4, column=2)
 
+
         # warning message label
         self.warn_var = tk.StringVar()
         self.warn_var.set("")
@@ -109,6 +116,7 @@ class MainUI(tk.Frame):
         self.exit_button = tk.Button(tab1, text="Exit", command=self.quit)
         self.exit_button.grid(row=6, column=3)
 
+
     def upload_file(self):
         """
         Allows a user to browse a csv file and upload it.
@@ -117,18 +125,23 @@ class MainUI(tk.Frame):
         self.input_file_path = filedialog.askopenfilename(initialdir="currdir", title="Select File",
                                                           filetypes=(("csv files", "*.csv"),
                                                                      ("all files", "*.*")))
-        print(self.input_file_path)
 
-        res2 = self.input_file_path.split('/')[-1]
-        print(res2)
-        self.file_var.set(res2)
+        debug.d_print(self.input_file_path)
+
+        f_name = self.input_file_path.split('/')[-1]  # get only the name.csv
+        debug.d_print(f_name)
+        self.file_var.set(f_name)
+        self.file_name = f_name
+
+        # checks if the uploaded file is valid
         with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
             reader = csv.reader(csv_file)
             header = next(reader)  # only for python 3
-            print(header)
-            print(self.JOURNAL_CSV_HEADER)
+            debug.d_print(header)
+            debug.d_print(self.JOURNAL_CSV_HEADER)
+
             if header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER:
-                print('for journal')
+                debug.d_print('for journal')
                 self.mode = self.DOI_SEARCH_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
@@ -136,7 +149,11 @@ class MainUI(tk.Frame):
                 self.warn_var.set('')
 
             elif header == self.DOI_CSV_HEADER:
-                print('for doi')
+
+                debug.d_print('this is an old format of temp file')
+
+            elif header == self.TEMP_CSV_HEADER:
+                debug.d_print('for doi')
                 self.mode = self.REALITY_CHECK_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
@@ -159,11 +176,13 @@ class MainUI(tk.Frame):
 
         if self.email_textfield.get('1.0', 'end -1c') == '':
             print('email did not match')
+
             self.warn_var.set('Email is incorrect')
             return
         else:
             self.receiver = self.email_textfield.get('1.0', 'end -1c')
-            print(self.receiver)
+
+            debug.d_print(self.receiver)
 
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")
