@@ -35,6 +35,7 @@ class Journal(object):
 
         self.result_as_expected = True
         self.wrong_years = ''
+        self.free_years = ''
         # self.record_wrong_years()
 
     def __str__(self):
@@ -140,13 +141,24 @@ class Journal(object):
         a.date = date
 
     def record_wrong_years(self):
-
         for year in self.year_dict:
             if not self.year_dict[year][2].accessible:  # article is accessible
-                self.wrong_years = self.wrong_years + str(year) + '/'
-                self.result_as_expected = False
+                if self.year_dict[year][2].result != 'Open-Access' and \
+                        self.year_dict[year][2].result != 'Free-Access':
+                    self.wrong_years = self.wrong_years + str(year) + '/'
+                    self.result_as_expected = False
         if self.result_as_expected:
-            self.wrong_years = 'CORRECT'
+            self.wrong_years = 'No-Wrong-Years'
+
+    def record_free_years(self):
+        for year in self.year_dict:
+            if not self.year_dict[year][2].accessible:  # article is accessible
+                if self.year_dict[year][2].result == 'Open-Access' or \
+                        self.year_dict[year][2].result == 'Free-Access':
+                    self.free_years = self.free_years + str(year) + '/'
+                    self.result_as_expected = False
+        if self.result_as_expected:
+            self.free_years = 'No-Free-Years'
 
     @staticmethod
     def format_date(date):

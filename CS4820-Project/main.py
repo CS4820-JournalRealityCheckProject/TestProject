@@ -92,12 +92,15 @@ class MainSystem(object):
         config_utils.config.update_email(self.receiver)
         index = self.current_index
 
+        self.output_file_path = 'TEMP-DOI'# file name
+        self.wrong_file_path = 'NO-DOI'
+
         if index == -1:
-            d = str(datetime.datetime.today())
-            date = d[0:4] + d[5:7] + d[8:10] + '-'
+            # d = str(datetime.datetime.today())
+            # date = d[0:4] + d[5:7] + d[8:10] + '-'
             # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
-            self.output_file_path = 'TEMP-DOI-' + date  # file name
-            self.wrong_file_path = 'NO-DOI-' + date
+            # self.output_file_path = 'TEMP-DOI-' + date  # file name
+            # self.wrong_file_path = 'NO-DOI-' + date
 
             debug.d_print('initialized')
             csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
@@ -152,12 +155,15 @@ class MainSystem(object):
         config_utils.config.update_email(self.receiver)
         index = self.current_index
 
+        self.output_file_path = 'RESULT-JOURNALS' # file name
+        self.wrong_file_path = 'PROBLEM-JOURNALS'
+
         if index == -1:
-            d = str(datetime.datetime.today())
-            date = d[0:4] + d[5:7] + d[8:10] + '-'
-            # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
-            self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
-            self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
+            # d = str(datetime.datetime.today())
+            # date = d[0:4] + d[5:7] + d[8:10] + '-'
+            # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]　# not used
+            # self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
+            # self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
 
             debug.d_print('initialized')
             csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
@@ -207,6 +213,7 @@ class MainSystem(object):
 
         debug.d_print(journal.wrong_years)
         journal.record_wrong_years()  # wrong years are updated
+        journal.record_free_years()  # free years are updated
 
         debug.d_print('Reality check finished')
 
