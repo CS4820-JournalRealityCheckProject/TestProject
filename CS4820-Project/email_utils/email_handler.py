@@ -38,10 +38,10 @@ class EmailHandler:
             print("There is no specified receiver")
             return
         msg = MIMEMultipart()
-        msg['Subject'] = "Attachment test"
+        msg['Subject'] = "Reality Check Finished"
         msg['From'] = self.sender
         msg['To'] = self.receiver
-        body = "This is a test email. Its purpose is to test attachments"
+        body = "Reality Check System finished. There are two files attached\n"
         msg.attach(MIMEText(body, "plain"))
         # Read the supplied file
         for file_path in file_array:
@@ -50,7 +50,8 @@ class EmailHandler:
             attachment.set_payload(fp.read())
             fp.close()
             encoders.encode_base64(attachment)
-            attachment.add_header("Content-Disposition", "attachment", filename=file_path)
+            f_name = file_path.split('/')[-1]  # get only the name.csv
+            attachment.add_header("Content-Disposition", "attachment", filename=f_name)
             msg.attach(attachment)
         with smtplib.SMTP_SSL(self.smtp_server, self.port) as server:
             server.ehlo()

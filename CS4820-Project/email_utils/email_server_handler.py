@@ -30,7 +30,8 @@ class EmailHandler:
             attachment.set_payload(fp.read())
             fp.close()
             encoders.encode_base64(attachment)
-            attachment.add_header("Content-Disposition", "attachment", filename=file_path)
+            f_name = file_path.split('/')[-1]  # get only the name.csv
+            attachment.add_header("Content-Disposition", "attachment", filename=f_name)
             msg.attach(attachment)
         with SMTP(self.smtp_server, self.port) as server:
             server.ehlo()
