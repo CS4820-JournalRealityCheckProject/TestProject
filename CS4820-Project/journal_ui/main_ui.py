@@ -50,7 +50,7 @@ class MainUI(tk.Frame):
         tab1 = tk.Frame(nb)
         tab2 = tk.Frame(nb)
         nb.add(tab1, text='System', padding=3)
-        nb.add(tab2, text='', padding=3)
+        #nb.add(tab2, text='', padding=3)
         nb.pack(expand=1, fill='both')
 
         # top label left
