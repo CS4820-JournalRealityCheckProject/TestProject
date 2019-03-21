@@ -19,6 +19,9 @@ class MainUI(tk.Frame):
     DOI_SEARCH_MODE = 0
     REALITY_CHECK_MODE = 1
 
+    PREVIOUS_EMAIL = 0
+    NEW_EMAIL = 1
+
     DOI_CSV_HEADER = ['Title', 'Year', 'DOI', 'DOI-URL', 'Accessible', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
                       'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears',
                       'FreeYears']
@@ -54,7 +57,7 @@ class MainUI(tk.Frame):
         tab1 = tk.Frame(nb)
         tab2 = tk.Frame(nb)
         nb.add(tab1, text='System', padding=3)
-        #nb.add(tab2, text='', padding=3)
+        # nb.add(tab2, text='', padding=3)
 
         nb.pack(expand=1, fill='both')
 
@@ -79,7 +82,6 @@ class MainUI(tk.Frame):
         self.upload_button = tk.Button(tab1, text="Browse", command=self.upload_file)
         self.upload_button.grid(row=2, column=1)
 
-
         # csv file label
         self.file_var = tk.StringVar()
         self.file_var.set("no file")
@@ -101,7 +103,6 @@ class MainUI(tk.Frame):
         self.email_textfield = tk.Text(tab1, bd=1, bg='light grey', height=1, width=40)
         self.email_textfield.grid(row=4, column=2)
 
-
         # warning message label
         self.warn_var = tk.StringVar()
         self.warn_var.set("")
@@ -116,6 +117,16 @@ class MainUI(tk.Frame):
         self.exit_button = tk.Button(tab1, text="Exit", command=self.quit)
         self.exit_button.grid(row=6, column=3)
 
+        # radio button for new or existing email
+        self.radio_var = tk.IntVar()
+        self.radio_var.set(0)
+
+        # radio buttons
+        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Existing Email')
+        self.rdo1.grid(row=7, column=2)
+
+        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Use New Email')
+        self.rdo2.grid(row=8, column=2)
 
     def upload_file(self):
         """
@@ -174,14 +185,12 @@ class MainUI(tk.Frame):
 
     def start(self):
 
-        if self.email_textfield.get('1.0', 'end -1c') == '':
-            print('email did not match')
-
-            self.warn_var.set('Email is incorrect')
+        if self.email_textfield.get('1.0', 'end -1c') == '' and \
+                self.radio_var.get() == self.NEW_EMAIL:
+            self.warn_var.set('Enter an email')
             return
         else:
             self.receiver = self.email_textfield.get('1.0', 'end -1c')
-
             debug.d_print(self.receiver)
 
         if self.mode == self.DOI_SEARCH_MODE:
@@ -193,6 +202,12 @@ class MainUI(tk.Frame):
             self.start_button.config(state="disabled")
             self.check_reality()
             self.warn_var.set('FINISHED')
+
+    def is_new_receiver(self):
+        if self.radio_var.get() == self.NEW_EMAIL:
+            debug.d_print('truetrue')
+            return True
+        return False
 
 
 if __name__ == '__main__':
