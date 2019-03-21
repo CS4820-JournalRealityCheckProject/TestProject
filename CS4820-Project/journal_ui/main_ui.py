@@ -3,7 +3,7 @@ import tkinter.ttk as ttk
 import csv
 from tkinter import filedialog
 
-import journal_utils.debug as debug
+import debug_utils.debug as debug
 
 
 class MainUI(tk.Frame):

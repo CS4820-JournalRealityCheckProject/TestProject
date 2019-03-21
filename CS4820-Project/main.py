@@ -10,7 +10,7 @@ import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
 import screenscrape_utils.result_enum as result_enum
 import email_utils.email_handler as email_handler
-import journal_utils.debug as debug
+import debug_utils.debug as debug
 
 
 class MainSystem(object):
