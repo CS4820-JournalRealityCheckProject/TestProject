@@ -19,9 +19,9 @@ class EmailHandler:
             return
         msg = MIMEMultipart()
         msg['Subject'] = "Results"
-        msg['From'] = "Program"
+        msg['From'] = "UPEI REALITY CHECK SYSTEM"
         msg['To'] = self.receiver
-        body = "These are the results of the script"
+        body = "Reality Check System finished. There are two files attached\n\n"
         msg.attach(MIMEText(body, "plain"))
         # Read the supplied file
         for file_path in file_array:
