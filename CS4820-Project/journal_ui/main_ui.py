@@ -59,27 +59,41 @@ class MainUI(tk.Frame):
 
         # top message label
         self.top_message_var = tk.StringVar()
-        self.top_message_var.set('"Upload a file"')
+        self.top_message_var.set('Upload a file')
         self.top_message = tk.Label(tab1, textvariable=self.top_message_var, font='Helvetica 18 bold')
         self.top_message.grid(row=0, column=2)
 
+        # empty field to allow space
+        self.empty_field = tk.StringVar()
+        self.empty_field.set("")
+        self.empty_field = tk.Label(tab1)
+        self.empty_field.grid(row=1, column=1)
+        self.empty_field.grid(row=1, column=2)
+
         # upload button
         self.upload_button = tk.Button(tab1, text="Browse", command=self.upload_file)
-        self.upload_button.grid(row=1, column=1)
+        self.upload_button.grid(row=2, column=1)
 
         # csv file label
         self.file_var = tk.StringVar()
         self.file_var.set("no file")
-        self.file_label = tk.Label(tab1, textvariable=self.file_var, bg='cyan2', height=1, width=30)
-        self.file_label.grid(row=1, column=2)
+        self.file_label = tk.Label(tab1, textvariable=self.file_var, bg='light grey', height=1, width=30)
+        self.file_label.grid(row=2, column=2)
+
+        # empty field to allow space
+        self.empty_field = tk.StringVar()
+        self.empty_field.set("")
+        self.empty_field = tk.Label(tab1)
+        self.empty_field.grid(row=3, column=1)
+        self.empty_field.grid(row=3, column=2)
 
         # email label
         self.email_label = tk.Label(tab1, text='Email:')
-        self.email_label.grid(row=2, column=1)
+        self.email_label.grid(row=4, column=1)
 
         # email textfield
-        self.email_textfield = tk.Text(tab1, bd=1, bg='grey', height=1, width=40)
-        self.email_textfield.grid(row=2, column=2)
+        self.email_textfield = tk.Text(tab1, bd=1, bg='light grey', height=1, width=40)
+        self.email_textfield.grid(row=4, column=2)
 
         # confirm-email label
         # self.confirm_label = tk.Label(tab1, text='Confirm:')
@@ -93,15 +107,15 @@ class MainUI(tk.Frame):
         self.warn_var = tk.StringVar()
         self.warn_var.set("")
         self.warn_label = tk.Label(tab1, textvariable=self.warn_var, fg='red')
-        self.warn_label.grid(row=4, column=2)
+        self.warn_label.grid(row=5, column=2)
 
         # start button
         self.start_button = tk.Button(tab1, text="START", state='disabled', command=self.start)
-        self.start_button.grid(row=5, column=1)
+        self.start_button.grid(row=6, column=1)
 
         # exit button
         self.exit_button = tk.Button(tab1, text="Exit", command=self.quit)
-        self.exit_button.grid(row=5, column=3)
+        self.exit_button.grid(row=6, column=3)
 
     def upload_file(self):
         """
