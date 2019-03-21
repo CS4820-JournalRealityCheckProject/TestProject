@@ -28,7 +28,7 @@ class MainSystem(object):
         #  Config for the progress
         self.config = configparser.ConfigParser()
         self.config.read('./Data-Files/Configurations/progress.ini')
-        self.complete = self.config['progress']['complete']
+        self.complete = self.config['progress']['complete']  # PROBLEM
         self.status = self.config['progress']['status']
         self.current_index = int(self.config['progress']['current-index'])
         self.input_file_path = self.config['progress']['input-file-path']
