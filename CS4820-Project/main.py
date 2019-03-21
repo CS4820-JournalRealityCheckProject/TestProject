@@ -52,11 +52,7 @@ class MainSystem(object):
                 self.restore_progress()
             else:
                 config_utils.config.clear_progress()
-                self.complete = 'True'
-                self.status = '0'
-                self.input_file_path = 'no-path'
-                self.output_file_path = 'no-path'
-                self.current_index = -1
+                self.reset_member_variables()
 
         self.ui = None
         self.root = tk.Tk()
@@ -76,6 +72,14 @@ class MainSystem(object):
             self.recreate_journal_list()
             self.check_reality_journal_list()
 
+    def reset_member_variables(self):
+        self.complete = 'True'
+        self.status = '0'
+        self.input_file_path = 'no-path'
+        self.output_file_path = 'no-path'
+        self.wrong_file_path = 'no-path'
+        self.current_index = -1
+
     def create_journal_list(self):
         """
         Creates a list of journals with a given file path
@@ -92,15 +96,15 @@ class MainSystem(object):
         config_utils.config.update_email(self.receiver)
         index = self.current_index
 
-        self.output_file_path = 'TEMP-DOI'# file name
-        self.wrong_file_path = 'NO-DOI'
+        # self.output_file_path = 'TEMP-DOI' # file name
+        # self.wrong_file_path = 'NO-DOI'
 
         if index == -1:
-            # d = str(datetime.datetime.today())
-            # date = d[0:4] + d[5:7] + d[8:10] + '-'
+            d = str(datetime.datetime.today())
+            date = d[5:7] + d[8:10]
             # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
-            # self.output_file_path = 'TEMP-DOI-' + date  # file name
-            # self.wrong_file_path = 'NO-DOI-' + date
+            self.output_file_path = 'TEMP-DOI-' + date  # file name
+            self.wrong_file_path = 'NO-DOI-' + date
 
             debug.d_print('initialized')
             csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
@@ -121,6 +125,7 @@ class MainSystem(object):
 
         config_utils.config.clear_progress()
         self.send_email()
+        self.reset_member_variables()
 
     @staticmethod
     def search_article(journal):
@@ -155,15 +160,15 @@ class MainSystem(object):
         config_utils.config.update_email(self.receiver)
         index = self.current_index
 
-        self.output_file_path = 'RESULT-JOURNALS' # file name
-        self.wrong_file_path = 'PROBLEM-JOURNALS'
+        # self.output_file_path = 'RESULT-JOURNALS'  # file name
+        # self.wrong_file_path = 'PROBLEM-JOURNALS'
 
         if index == -1:
-            # d = str(datetime.datetime.today())
-            # date = d[0:4] + d[5:7] + d[8:10] + '-'
+            d = str(datetime.datetime.today())
+            date = d[5:7] + d[8:10]
             # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]　# not used
-            # self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
-            # self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
+            self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
+            self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
 
             debug.d_print('initialized')
             csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
@@ -185,6 +190,7 @@ class MainSystem(object):
 
         config_utils.config.clear_progress()
         self.send_email()
+        self.reset_member_variables()
 
     def check_reality(self, journal):
         """
