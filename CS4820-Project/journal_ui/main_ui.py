@@ -95,14 +95,6 @@ class MainUI(tk.Frame):
         self.email_textfield = tk.Text(tab1, bd=1, bg='light grey', height=1, width=40)
         self.email_textfield.grid(row=4, column=2)
 
-        # confirm-email label
-        # self.confirm_label = tk.Label(tab1, text='Confirm:')
-        # self.confirm_label.grid(row=3, column=1)
-
-        # confirm-email textfield
-        # self.confirm_textfield = tk.Text(tab1, bd=1, bg='yellow', height=1, width=40)
-        # self.confirm_textfield.grid(row=3, column=2)
-
         # warning message label
         self.warn_var = tk.StringVar()
         self.warn_var.set("")
@@ -165,16 +157,11 @@ class MainUI(tk.Frame):
 
     def start(self):
 
-        # if self.confirm_textfield.get('1.0', 'end -1c') != self.email_textfield.get('1.0', 'end -1c') \
-        #         or self.email_textfield.get('1.0', 'end-1c') == '':
-        #     print('email did not match')
-        #     self.warn_var.set('Email is incorrect')
-        #     return
-        # else:
-        #     self.receiver = self.email_textfield.get('1.0', 'end -1c')
-        #     print(self.receiver)
-
-        if self.email_textfield.get('1.0', 'end -1c') != '':
+        if self.email_textfield.get('1.0', 'end -1c') == '':
+            print('email did not match')
+            self.warn_var.set('Email is incorrect')
+            return
+        else:
             self.receiver = self.email_textfield.get('1.0', 'end -1c')
             print(self.receiver)
 
