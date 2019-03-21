@@ -10,6 +10,7 @@ import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
 import screenscrape_utils.result_enum as result_enum
 import email_utils.email_handler as email_handler
+import email_utils.email_server_handler as email_handler_s
 import debug_utils.debug as debug
 
 
@@ -229,23 +230,26 @@ class MainSystem(object):
         else:
             return 'No-Result-Obtained'
 
-    def send_email(self, email='whimwhimxlife@gmail.com', password='xxxxx'):
+    def send_email(self):
         """
         Send the result file to a specified email address.
         :return:
         """
         emailer = email_handler.EmailHandler()
+        # emailer = email_handler_s.EmailHandler()  # using a server name to send
+
+        emailer.set_sender(sender=self.sender, password=self.password)
+        emailer.set_receiver(receiver=self.receiver)
 
         f1 = csv_reader.path + self.output_file_path + '.csv'
         f2 = csv_reader.path + self.wrong_file_path + '.csv'
         files = [f1, f2]
 
-        emailer.set_sender(sender=self.sender, password=self.password)
-        emailer.set_receiver(receiver=self.receiver)
         try:
             emailer.send(files)
         except smtplib.SMTPRecipientsRefused:
             print('Email was incorrect')
+        debug.d_print('email finished')
 
     def update(self, code):
         """
