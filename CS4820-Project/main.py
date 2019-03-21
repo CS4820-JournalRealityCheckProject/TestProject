@@ -88,9 +88,9 @@ class MainSystem(object):
     def search_articles_journal_list(self):
         """iterates a list of journal and fetches an article and a doi for each year"""
         d = str(datetime.datetime.today())
-        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:16] + '-'
-        self.output_file_path = date + 'DOI-TEMP'  # file name
-        self.wrong_file_path = date + 'DOI-WRONG'
+        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
+        self.output_file_path = 'TEMP-DOI-' + date  # file name
+        self.wrong_file_path = 'NO-DOI-' + date
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
@@ -146,9 +146,9 @@ class MainSystem(object):
         :return:
         """
         d = str(datetime.datetime.today())
-        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:16] + '-'
-        self.output_file_path = date + 'RESULT-JOURNALS' # file name
-        self.wrong_file_path = date + 'WRONG-JOURNALS'
+        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
+        self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
+        self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
