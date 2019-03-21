@@ -19,7 +19,7 @@ class EmailHandler:
             return
         msg = MIMEMultipart()
         msg['Subject'] = "Results"
-        msg['From'] = "Program"
+        msg['From'] = "UPEI REALITY CHECK SYSTEM"
         msg['To'] = self.receiver
         body = "These are the results of the script"
         msg.attach(MIMEText(body, "plain"))

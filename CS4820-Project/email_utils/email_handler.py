@@ -39,7 +39,7 @@ class EmailHandler:
             return
         msg = MIMEMultipart()
         msg['Subject'] = "Reality Check Finished"
-        msg['From'] = self.sender
+        msg['From'] = 'UPEI REALITY CHECK SYSTEM'
         msg['To'] = self.receiver
         body = "Reality Check System finished. There are two files attached\n"
         msg.attach(MIMEText(body, "plain"))
