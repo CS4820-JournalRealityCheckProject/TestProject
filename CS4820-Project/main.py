@@ -74,7 +74,6 @@ class MainSystem(object):
         elif self.status == 'reality-check':
             self.recreate_journal_list()
             self.check_reality_journal_list()
-            # check articles
 
     def create_journal_list(self):
         """
@@ -89,10 +88,9 @@ class MainSystem(object):
     def search_articles_journal_list(self):
         """iterates a list of journal and fetches an article and a doi for each year"""
         d = str(datetime.datetime.today())
-        date = d[0:4] + d[5:7] + d[8:10]
-        # date = d[0:19]
-        self.output_file_path = 'DOI-TEMP' + date  # file name
-        self.wrong_file_path = 'DOI-WRONG' + date
+        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
+        self.output_file_path = 'TEMP-DOI-' + date  # file name
+        self.wrong_file_path = 'NO-DOI-' + date
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
@@ -148,10 +146,9 @@ class MainSystem(object):
         :return:
         """
         d = str(datetime.datetime.today())
-        date = d[0:4] + d[5:7] + d[8:10]
-        # date = d[0:19]
-        self.output_file_path = 'RESULT-JOURNALS' + date  # file name
-        self.wrong_file_path = 'WRONG-JOURNALS' + date
+        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
+        self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
+        self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index

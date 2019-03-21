@@ -74,8 +74,6 @@ def prepare_temp_csv(temp_file='doi-articles'):
 
                       'Year',
                       'DOI',
-                      # 'DOI-URL',
-                      # 'Accessible',
 
                       'PackageName',
                       'URL',
@@ -84,9 +82,6 @@ def prepare_temp_csv(temp_file='doi-articles'):
                       'OnlineISSN',
                       'ManagedCoverageBegin',
                       'ManagedCoverageEnd',
-                      # 'AsExpected',
-                      # 'ProblemYears',
-                      # 'FreeYears'
                       ]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
@@ -97,7 +92,6 @@ def prepare_result_csv(result_file='result-journals'):
     print("result file")
     with open(path + result_file + '.csv', 'w', encoding='utf8') as csv_file:
         fieldnames = ['Title',
-
                       'PackageName',
                       'URL',
                       'Publisher',
@@ -116,12 +110,10 @@ def prepare_result_csv(result_file='result-journals'):
 def prepare_wrong_csv(wrong_file='wrong-list'):
     with open(path + wrong_file + '.csv', 'w', encoding='utf8') as csv_file:
         fieldnames = ['Title',
-
                       'Year',
+                      'Result',
                       'DOI',
                       'DOI-URL',
-                      'Accessible',
-
                       'PackageName',
                       'URL',
                       'Publisher',
@@ -136,12 +128,8 @@ def append_doi_row(journal, file_name='doi-articles'):
         j = journal
         for y in j.year_dict:
             writer.writerow([j.title,
-
                              y,
                              j.year_dict[y][2].doi,
-                             # 'http://doi.org/' + str(j.year_dict[y][2].doi),
-                             # j.year_dict[y][2].accessible,
-
                              j.package,
                              j.url,
                              j.publisher,
@@ -149,9 +137,6 @@ def append_doi_row(journal, file_name='doi-articles'):
                              j.online_issn,
                              j.expected_subscription_begin,
                              j.expected_subscription_end,
-                             # j.year_dict[y][2].result,
-                             # '',
-                             # ''
                              ])
 
 
@@ -160,7 +145,6 @@ def append_journal_row(journal, file_name='result-journals'):
         writer = csv.writer(file)
         j = journal
         writer.writerow([j.title,
-
                          j.package,
                          j.url,
                          j.publisher,
@@ -170,7 +154,7 @@ def append_journal_row(journal, file_name='result-journals'):
                          j.expected_subscription_end,
                          j.result_as_expected,
                          j.wrong_years,
-                         'NoYears'
+                         'None'
                          ])
 
 
@@ -188,12 +172,10 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
         for y in j.year_dict:
             if mode == 'doi-search' and j.year_dict[y][2].doi is None:
                 writer.writerow([j.title,
-
                                  y,
+                                 j.year_dict[y][2].result,
                                  'no-doi',
                                  '',
-                                 j.year_dict[y][2].result,
-
                                  j.package,
                                  j.url,
                                  j.publisher,
@@ -201,12 +183,10 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
 
             if mode == 'check-reality' and not j.year_dict[y][2].accessible:
                 writer.writerow([j.title,
-
                                  y,
+                                 j.year_dict[y][2].result,
                                  j.year_dict[y][2].doi,
                                  'http://doi.org/' + str(j.year_dict[y][2].doi),
-                                 j.year_dict[y][2].result,
-
                                  j.package,
                                  j.url,
                                  j.publisher,
