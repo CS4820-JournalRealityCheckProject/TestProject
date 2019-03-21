@@ -69,7 +69,7 @@ def reconstruct_journal_list_from(articles_csv):
 
 
 def prepare_temp_csv(temp_file='doi-articles'):
-    with open(path + temp_file + '.csv', 'w', encoding='utf8') as csv_file:
+    with open(path + temp_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
         fieldnames = ['Title',
 
                       'Year',
@@ -90,7 +90,7 @@ def prepare_temp_csv(temp_file='doi-articles'):
 
 def prepare_result_csv(result_file='result-journals'):
     print("result file")
-    with open(path + result_file + '.csv', 'w', encoding='utf8') as csv_file:
+    with open(path + result_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
         fieldnames = ['Title',
                       'PackageName',
                       'URL',
@@ -108,7 +108,7 @@ def prepare_result_csv(result_file='result-journals'):
 
 
 def prepare_wrong_csv(wrong_file='wrong-list'):
-    with open(path + wrong_file + '.csv', 'w', encoding='utf8') as csv_file:
+    with open(path + wrong_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
         fieldnames = ['Title',
                       'Year',
                       'Result',
@@ -123,7 +123,7 @@ def prepare_wrong_csv(wrong_file='wrong-list'):
 
 
 def append_doi_row(journal, file_name='doi-articles'):
-    with open(path + file_name + '.csv', 'a', encoding='utf8') as file:
+    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
         j = journal
         for y in j.year_dict:
@@ -141,7 +141,7 @@ def append_doi_row(journal, file_name='doi-articles'):
 
 
 def append_journal_row(journal, file_name='result-journals'):
-    with open(path + file_name + '.csv', 'a', encoding='utf8') as file:
+    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
         j = journal
         writer.writerow([j.title,
@@ -166,7 +166,7 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
     :param file_name:
     :return:
     """
-    with open(path + file_name + '.csv', 'a', encoding='utf8') as file:
+    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
         j = journal
         for y in j.year_dict:
