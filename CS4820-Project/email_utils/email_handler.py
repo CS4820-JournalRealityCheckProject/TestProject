@@ -41,7 +41,7 @@ class EmailHandler:
         msg['Subject'] = "Reality Check Finished"
         msg['From'] = 'UPEI REALITY CHECK SYSTEM'
         msg['To'] = self.receiver
-        body = "Reality Check System finished. There are two files attached\n"
+        body = "Reality Check System finished. There are two files attached\n\n"
         msg.attach(MIMEText(body, "plain"))
         # Read the supplied file
         for file_path in file_array:
