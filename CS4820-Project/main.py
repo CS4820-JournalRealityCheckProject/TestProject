@@ -88,14 +88,17 @@ class MainSystem(object):
 
     def search_articles_journal_list(self):
         """iterates a list of journal and fetches an article and a doi for each year"""
-        d = str(datetime.datetime.today())
-        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
-        self.output_file_path = 'TEMP-DOI-' + date  # file name
-        self.wrong_file_path = 'NO-DOI-' + date
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
+
         if index == -1:
+            d = str(datetime.datetime.today())
+            date = d[0:4] + d[5:7] + d[8:10] + '-'
+            # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
+            self.output_file_path = 'TEMP-DOI-' + date  # file name
+            self.wrong_file_path = 'NO-DOI-' + date
+
             debug.d_print('initialized')
             csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
@@ -146,14 +149,16 @@ class MainSystem(object):
         :param journal_list:
         :return:
         """
-        d = str(datetime.datetime.today())
-        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
-        self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
-        self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
-
         config_utils.config.update_email(self.receiver)
         index = self.current_index
+
         if index == -1:
+            d = str(datetime.datetime.today())
+            date = d[0:4] + d[5:7] + d[8:10] + '-'
+            # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
+            self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
+            self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
+
             debug.d_print('initialized')
             csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
@@ -236,9 +241,10 @@ class MainSystem(object):
         :return:
         """
         emailer = email_handler.EmailHandler()
+        emailer.set_sender(sender=self.sender, password=self.password)
+
         # emailer = email_handler_s.EmailHandler()  # using a server name to send
 
-        emailer.set_sender(sender=self.sender, password=self.password)
         emailer.set_receiver(receiver=self.receiver)
 
         f1 = csv_reader.path + self.output_file_path + '.csv'

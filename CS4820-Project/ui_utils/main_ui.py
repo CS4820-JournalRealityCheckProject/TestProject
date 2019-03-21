@@ -122,10 +122,10 @@ class MainUI(tk.Frame):
         self.radio_var.set(0)
 
         # radio buttons
-        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Existing Email')
+        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Saved Email')
         self.rdo1.grid(row=7, column=2)
 
-        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Use New Email')
+        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Update Email')
         self.rdo2.grid(row=8, column=2)
 
     def upload_file(self):
@@ -148,8 +148,7 @@ class MainUI(tk.Frame):
         with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
             reader = csv.reader(csv_file)
             header = next(reader)  # only for python 3
-            debug.d_print(header)
-            debug.d_print(self.JOURNAL_CSV_HEADER)
+            debug.d_print('current:', header)
 
             if header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER:
                 debug.d_print('for journal')
