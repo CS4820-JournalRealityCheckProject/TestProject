@@ -28,7 +28,7 @@ class MainSystem(object):
         #  Config for the progress
         self.config = configparser.ConfigParser()
         self.config.read('./Data-Files/Configurations/progress.ini')
-        self.complete = self.config['progress']['complete']
+        self.complete = self.config['progress']['complete']  # PROBLEM
         self.status = self.config['progress']['status']
         self.current_index = int(self.config['progress']['current-index'])
         self.input_file_path = self.config['progress']['input-file-path']
@@ -52,11 +52,7 @@ class MainSystem(object):
                 self.restore_progress()
             else:
                 config_utils.config.clear_progress()
-                self.complete = 'True'
-                self.status = '0'
-                self.input_file_path = 'no-path'
-                self.output_file_path = 'no-path'
-                self.current_index = -1
+                self.reset_member_variables()
 
         self.ui = None
         self.root = tk.Tk()
@@ -76,6 +72,14 @@ class MainSystem(object):
             self.recreate_journal_list()
             self.check_reality_journal_list()
 
+    def reset_member_variables(self):
+        self.complete = 'True'
+        self.status = '0'
+        self.input_file_path = 'no-path'
+        self.output_file_path = 'no-path'
+        self.wrong_file_path = 'no-path'
+        self.current_index = -1
+
     def create_journal_list(self):
         """
         Creates a list of journals with a given file path
@@ -88,14 +92,20 @@ class MainSystem(object):
 
     def search_articles_journal_list(self):
         """iterates a list of journal and fetches an article and a doi for each year"""
-        d = str(datetime.datetime.today())
-        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
-        self.output_file_path = 'TEMP-DOI-' + date  # file name
-        self.wrong_file_path = 'NO-DOI-' + date
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
+
+        # self.output_file_path = 'TEMP-DOI' # file name
+        # self.wrong_file_path = 'NO-DOI'
+
         if index == -1:
+            d = str(datetime.datetime.today())
+            date = d[5:7] + d[8:10]
+            # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
+            self.output_file_path = 'TEMP-DOI-' + date  # file name
+            self.wrong_file_path = 'NO-DOI-' + date
+
             debug.d_print('initialized')
             csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
@@ -115,6 +125,7 @@ class MainSystem(object):
 
         config_utils.config.clear_progress()
         self.send_email()
+        self.reset_member_variables()
 
     @staticmethod
     def search_article(journal):
@@ -146,14 +157,19 @@ class MainSystem(object):
         :param journal_list:
         :return:
         """
-        d = str(datetime.datetime.today())
-        date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
-        self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
-        self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
-
         config_utils.config.update_email(self.receiver)
         index = self.current_index
+
+        # self.output_file_path = 'RESULT-JOURNALS'  # file name
+        # self.wrong_file_path = 'PROBLEM-JOURNALS'
+
         if index == -1:
+            d = str(datetime.datetime.today())
+            date = d[5:7] + d[8:10]
+            # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]　# not used
+            self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
+            self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
+
             debug.d_print('initialized')
             csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
@@ -174,6 +190,7 @@ class MainSystem(object):
 
         config_utils.config.clear_progress()
         self.send_email()
+        self.reset_member_variables()
 
     def check_reality(self, journal):
         """
@@ -202,6 +219,7 @@ class MainSystem(object):
 
         debug.d_print(journal.wrong_years)
         journal.record_wrong_years()  # wrong years are updated
+        journal.record_free_years()  # free years are updated
 
         debug.d_print('Reality check finished')
 
@@ -236,9 +254,10 @@ class MainSystem(object):
         :return:
         """
         emailer = email_handler.EmailHandler()
+        emailer.set_sender(sender=self.sender, password=self.password)
+
         # emailer = email_handler_s.EmailHandler()  # using a server name to send
 
-        emailer.set_sender(sender=self.sender, password=self.password)
         emailer.set_receiver(receiver=self.receiver)
 
         f1 = csv_reader.path + self.output_file_path + '.csv'
@@ -272,11 +291,13 @@ class MainSystem(object):
                 self.recreate_journal_list()
 
         elif code == main_ui.MainUI.SEARCH_CLICKED:
-            self.receiver = self.ui.receiver
+            if self.ui.is_new_receiver():
+                self.receiver = self.ui.receiver
             self.search_articles_journal_list()
 
         elif code == main_ui.MainUI.REALITY_CHECK_CLICKED:
-            self.receiver = self.ui.receiver
+            if self.ui.is_new_receiver():
+                self.receiver = self.ui.receiver
             self.check_reality_journal_list()
 
 
