@@ -3,7 +3,7 @@ import tkinter as tk
 import datetime
 
 import config_utils.config
-import journal_ui.main_ui as main_ui
+import ui_utils.main_ui as main_ui
 import journal_utils.csv_reader as csv_reader
 import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
