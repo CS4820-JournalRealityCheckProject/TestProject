@@ -272,11 +272,13 @@ class MainSystem(object):
                 self.recreate_journal_list()
 
         elif code == main_ui.MainUI.SEARCH_CLICKED:
-            self.receiver = self.ui.receiver
+            if self.ui.is_new_receiver():
+                self.receiver = self.ui.receiver
             self.search_articles_journal_list()
 
         elif code == main_ui.MainUI.REALITY_CHECK_CLICKED:
-            self.receiver = self.ui.receiver
+            if self.ui.is_new_receiver():
+                self.receiver = self.ui.receiver
             self.check_reality_journal_list()
 
 
