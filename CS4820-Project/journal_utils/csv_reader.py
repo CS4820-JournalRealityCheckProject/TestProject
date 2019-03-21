@@ -154,7 +154,7 @@ def append_journal_row(journal, file_name='result-journals'):
                          j.expected_subscription_end,
                          j.result_as_expected,
                          j.wrong_years,
-                         'None'
+                         j.free_years
                          ])
 
 
