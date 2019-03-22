@@ -100,7 +100,7 @@ class MainUI(tk.Frame):
         self.email_label.grid(row=4, column=1)
 
         # email textfield
-        self.email_textfield = tk.Text(tab1, bd=1, bg='light grey', height=1, width=40)
+        self.email_textfield = tk.Entry(tab1, bd=1, bg='light grey')
         self.email_textfield.grid(row=4, column=2)
 
         # warning message label
@@ -184,12 +184,12 @@ class MainUI(tk.Frame):
 
     def start(self):
 
-        if self.email_textfield.get('1.0', 'end -1c') == '' and \
+        if self.email_textfield.get() == '' and \
                 self.radio_var.get() == self.NEW_EMAIL:
             self.warn_var.set('Enter an email')
             return
         else:
-            self.receiver = self.email_textfield.get('1.0', 'end -1c')
+            self.receiver = self.email_textfield.get()
             debug.d_print(self.receiver)
 
         if self.mode == self.DOI_SEARCH_MODE:
@@ -201,6 +201,9 @@ class MainUI(tk.Frame):
             self.start_button.config(state="disabled")
             self.check_reality()
             self.warn_var.set('FINISHED')
+
+    def email_entered(self):
+        debug.d_print('email is entered')
 
     def is_new_receiver(self):
         if self.radio_var.get() == self.NEW_EMAIL:
