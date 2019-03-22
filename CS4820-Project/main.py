@@ -64,11 +64,13 @@ class MainSystem(object):
                 config_utils.config.clear_progress()
                 self.reset_member_variables()
 
+        # Prepare UI
         self.ui = None
         self.root = tk.Tk()
         self.root.title("Journal Reality Checking System")
         self.root.geometry("500x400")
 
+        # Starts UI
         self.ui = main_ui.MainUI(master=self.root, main_system=self)
         self.ui.mainloop()  # starts UI
 
