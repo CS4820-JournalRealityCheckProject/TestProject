@@ -216,7 +216,7 @@ class MainUI(tk.Frame):
             self.top_message_var.set('REALITY CHECK READY')
             self.warn_var.set(self.output_file_path)
             self.continue_button.config(state="normal")
-            self.continue_button_var.set(self.output_file_path.split('/')[-1] + '.csv')
+            self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
 
         elif self.mode == self.REALITY_CHECK_MODE:
             self.start_button.config(state="disabled")
