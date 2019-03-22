@@ -1,5 +1,8 @@
 import configparser
 
+PATH_TO_PROGRESS_INI = './Data-Files/Configurations/progress.ini'
+PATH_TO_EMAIL_INI = './Data-Files/Configurations/email.ini'
+
 
 def update_progress(input_file, output_file, wrong_file, status, index, title='not-specified'):
     config = configparser.ConfigParser()
@@ -31,6 +34,8 @@ def clear_progress():
     }
     with open('./Data-Files/Configurations/progress.ini', 'w') as config_file:
         config.write(config_file)
+
+    return PATH_TO_PROGRESS_INI
 
 
 def update_email(receiver):

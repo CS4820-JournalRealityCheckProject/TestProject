@@ -35,6 +35,9 @@ class MainUI(tk.Frame):
                                  'ManagedCoverageBegin',
                                  'ManagedCoverageEnd', 'AsExpected', 'ProblemYears', 'FreeYears']
 
+    COLOR_SAVED_EMAIL = 'lightcyan4'
+    COLOR_NEW_EMAIL = 'black'
+
     def __init__(self, main_system, master=None):
         super().__init__(master)
 
@@ -45,10 +48,12 @@ class MainUI(tk.Frame):
         # member variables
         self.main_system = main_system
         self.input_file_path = None
+        self.output_file_path = None
         self.file_name = None
         self.mode = 'doi-search'
         self.is_ready = False
-        self.receiver = None
+        self.receiver = self.main_system.receiver
+        self.temp_receiver = ''
 
         # notebook (tab windows)
         nb = ttk.Notebook(width=200, height=200)
@@ -100,8 +105,10 @@ class MainUI(tk.Frame):
         self.email_label.grid(row=4, column=1)
 
         # email textfield
-        self.email_textfield = tk.Text(tab1, bd=1, bg='light grey', height=1, width=40)
+        self.email_textfield = tk.Entry(tab1, bd=1, bg='light grey', fg=self.COLOR_SAVED_EMAIL)
         self.email_textfield.grid(row=4, column=2)
+        self.email_textfield.insert(tk.END, self.receiver)
+        self.email_textfield.bind("<FocusIn>", self.email_entered)
 
         # warning message label
         self.warn_var = tk.StringVar()
@@ -119,14 +126,24 @@ class MainUI(tk.Frame):
 
         # radio button for new or existing email
         self.radio_var = tk.IntVar()
-        self.radio_var.set(0)
+        self.radio_var.set(self.PREVIOUS_EMAIL)
 
         # radio buttons
-        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Saved Email')
+        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Saved Email',
+                                   command=self.radio_button_changed)
         self.rdo1.grid(row=7, column=2)
 
-        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Update Email')
+        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Update Email',
+                                   command=self.radio_button_changed)
         self.rdo2.grid(row=8, column=2)
+
+        # continue button
+        self.continue_msg = 'Continue with '
+        self.continue_button_var = tk.StringVar()
+        self.continue_button_var.set(self.continue_msg + 'produced DOI file')
+        self.continue_button = tk.Button(tab1, textvariable=self.continue_button_var,
+                                         command=self.continue_reality_check, state='disabled')
+        self.continue_button.grid(row=9, column=2)
 
     def upload_file(self):
         """
@@ -148,18 +165,16 @@ class MainUI(tk.Frame):
         with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
             reader = csv.reader(csv_file)
             header = next(reader)  # only for python 3
-            debug.d_print('current:', header)
 
             if header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER:
                 debug.d_print('for journal')
                 self.mode = self.DOI_SEARCH_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
-                self.top_message_var.set('"DOI-SEARCH"')
+                self.top_message_var.set('DOI-SEARCH')
                 self.warn_var.set('')
 
             elif header == self.DOI_CSV_HEADER:
-
                 debug.d_print('this is an old format of temp file')
 
             elif header == self.TEMP_CSV_HEADER:
@@ -167,7 +182,7 @@ class MainUI(tk.Frame):
                 self.mode = self.REALITY_CHECK_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
-                self.top_message_var.set('"REALITY CHECK"')
+                self.top_message_var.set('REALITY CHECK')
                 self.warn_var.set('')
 
             else:
@@ -184,29 +199,54 @@ class MainUI(tk.Frame):
 
     def start(self):
 
-        if self.email_textfield.get('1.0', 'end -1c') == '' and \
+        if self.email_textfield.get() == '' and \
                 self.radio_var.get() == self.NEW_EMAIL:
             self.warn_var.set('Enter an email')
             return
         else:
-            self.receiver = self.email_textfield.get('1.0', 'end -1c')
+            self.receiver = self.email_textfield.get()
             debug.d_print(self.receiver)
 
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")
             self.search_article()
-            self.warn_var.set('FINISHED')
+            self.warn_var.set('DOI Search FINISHED')
+            self.output_file_path = self.main_system.continue_output_file_path
+            print(self.output_file_path)
+            self.top_message_var.set('REALITY CHECK READY')
+            self.warn_var.set(self.output_file_path)
+            self.continue_button.config(state="normal")
+            self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
 
         elif self.mode == self.REALITY_CHECK_MODE:
             self.start_button.config(state="disabled")
             self.check_reality()
-            self.warn_var.set('FINISHED')
+            self.warn_var.set('Reality Check FINISHED')
+
+    def email_entered(self, event=None):
+        self.email_textfield.delete(0, tk.END)
+        self.radio_var.set(self.NEW_EMAIL)
+
+    def radio_button_changed(self, event=None):
+        if self.radio_var.get() == self.PREVIOUS_EMAIL:
+            self.temp_receiver = self.email_textfield.get()
+            self.email_textfield.delete(0, tk.END)
+            self.email_textfield.insert(tk.END, self.receiver)
+            self.email_textfield.configure(fg=self.COLOR_SAVED_EMAIL)
+        elif self.radio_var.get() == self.NEW_EMAIL:
+            self.email_textfield.delete(0, tk.END)
+            self.email_textfield.insert(tk.END, self.temp_receiver)
+            self.email_textfield.configure(fg=self.COLOR_NEW_EMAIL)
 
     def is_new_receiver(self):
         if self.radio_var.get() == self.NEW_EMAIL:
-            debug.d_print('truetrue')
             return True
         return False
+
+    def continue_reality_check(self):
+        self.mode = self.REALITY_CHECK_MODE
+        self.input_file_path = self.output_file_path
+        self.start()
 
 
 if __name__ == '__main__':

@@ -27,18 +27,29 @@ class MainSystem(object):
 
         #  Config for the progress
         self.config = configparser.ConfigParser()
-        self.config.read('./Data-Files/Configurations/progress.ini')
-        self.complete = self.config['progress']['complete']  # PROBLEM
+        self.config.read(config_utils.config.PATH_TO_PROGRESS_INI)
+        self.complete = None
+
+        # handles no progress.ini exists or file path is incorrect
+        try:
+            self.complete = self.config['progress']['complete']  # PROBLEM
+        except KeyError as e:  # if
+            progress_ini_path = config_utils.config.clear_progress()
+            self.config.read(progress_ini_path)
+            self.complete = self.config['progress']['complete']
+            debug.d_print('new progress.ini created')
+
         self.status = self.config['progress']['status']
         self.current_index = int(self.config['progress']['current-index'])
         self.input_file_path = self.config['progress']['input-file-path']
         self.output_file_path = self.config['progress']['output-file-path']
         self.wrong_file_path = self.config['progress']['wrong-file-path']
         self.file_name = None
+        self.continue_output_file_path = None
 
         # Config for email
         self.email_config = configparser.ConfigParser()
-        self.email_config.read('./Data-Files/Configurations/email.ini')
+        self.email_config.read(config_utils.config.PATH_TO_EMAIL_INI)
         self.sender = self.email_config['email']['sender']
         self.receiver = self.email_config['email']['receiver']
         self.password = self.email_config['email']['password']
@@ -54,11 +65,13 @@ class MainSystem(object):
                 config_utils.config.clear_progress()
                 self.reset_member_variables()
 
+        # Prepare UI
         self.ui = None
         self.root = tk.Tk()
         self.root.title("Journal Reality Checking System")
         self.root.geometry("500x400")
 
+        # Starts UI
         self.ui = main_ui.MainUI(master=self.root, main_system=self)
         self.ui.mainloop()  # starts UI
 
@@ -123,6 +136,7 @@ class MainSystem(object):
                                         file_name=self.wrong_file_path)
             index = index + 1
 
+        self.continue_output_file_path = 'Data-Files/Output-Files/'+self.output_file_path
         config_utils.config.clear_progress()
         self.send_email()
         self.reset_member_variables()
