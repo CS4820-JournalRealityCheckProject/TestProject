@@ -45,6 +45,7 @@ class MainSystem(object):
         self.output_file_path = self.config['progress']['output-file-path']
         self.wrong_file_path = self.config['progress']['wrong-file-path']
         self.file_name = None
+        self.continue_output_file_path = None
 
         # Config for email
         self.email_config = configparser.ConfigParser()
@@ -135,6 +136,7 @@ class MainSystem(object):
                                         file_name=self.wrong_file_path)
             index = index + 1
 
+        self.continue_output_file_path = 'Data-Files/Output-Files/'+self.output_file_path
         config_utils.config.clear_progress()
         self.send_email()
         self.reset_member_variables()

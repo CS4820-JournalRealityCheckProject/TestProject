@@ -138,7 +138,10 @@ class MainUI(tk.Frame):
         self.rdo2.grid(row=8, column=2)
 
         # continue button
-        self.continue_button = tk.Button(tab1, text='Continue with produced DOI file',
+        self.continue_msg = 'Continue with '
+        self.continue_button_var = tk.StringVar()
+        self.continue_button_var.set(self.continue_msg + 'produced DOI file')
+        self.continue_button = tk.Button(tab1, textvariable=self.continue_button_var,
                                          command=self.continue_reality_check, state='disabled')
         self.continue_button.grid(row=9, column=2)
 
@@ -168,9 +171,9 @@ class MainUI(tk.Frame):
                 self.mode = self.DOI_SEARCH_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
-                self.top_message_var.set('"DOI-SEARCH"')
+                self.top_message_var.set('DOI-SEARCH')
                 self.warn_var.set('')
-                
+
             elif header == self.DOI_CSV_HEADER:
                 debug.d_print('this is an old format of temp file')
 
@@ -179,7 +182,7 @@ class MainUI(tk.Frame):
                 self.mode = self.REALITY_CHECK_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
-                self.top_message_var.set('"REALITY CHECK"')
+                self.top_message_var.set('REALITY CHECK')
                 self.warn_var.set('')
 
             else:
@@ -207,12 +210,18 @@ class MainUI(tk.Frame):
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")
             self.search_article()
-            self.warn_var.set('FINISHED')
+            self.warn_var.set('DOI Search FINISHED')
+            self.output_file_path = self.main_system.continue_output_file_path
+            print(self.output_file_path)
+            self.top_message_var.set('REALITY CHECK READY')
+            self.warn_var.set(self.output_file_path)
+            self.continue_button.config(state="normal")
+            self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
 
         elif self.mode == self.REALITY_CHECK_MODE:
             self.start_button.config(state="disabled")
             self.check_reality()
-            self.warn_var.set('FINISHED')
+            self.warn_var.set('Reality Check FINISHED')
 
     def email_entered(self, event=None):
         self.email_textfield.delete(0, tk.END)
@@ -231,12 +240,13 @@ class MainUI(tk.Frame):
 
     def is_new_receiver(self):
         if self.radio_var.get() == self.NEW_EMAIL:
-            debug.d_print('truetrue')
             return True
         return False
 
     def continue_reality_check(self):
-        print('contine')
+        self.mode = self.REALITY_CHECK_MODE
+        self.input_file_path = self.output_file_path
+        self.start()
 
 
 if __name__ == '__main__':
