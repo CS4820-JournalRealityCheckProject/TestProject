@@ -16,25 +16,41 @@ class MainUI(tk.Frame):
     EMAIL_CLICKED = 'EMAIL_CLICKED'
     REALITY_CHECK_CLICKED = 'REALITY_CHECK_CLICKED'
 
+    # system modes
     DOI_SEARCH_MODE = 0
     REALITY_CHECK_MODE = 1
+    MODE_NOT_SET = -1
 
+    # checks if update an email
     PREVIOUS_EMAIL = 0
     NEW_EMAIL = 1
 
-    DOI_CSV_HEADER = ['Title', 'Year', 'DOI', 'DOI-URL', 'Accessible', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
-                      'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AccessToAll', 'ProblemYears',
-                      'FreeYears']
-
+    # header column's format
     TEMP_CSV_HEADER = ['Title', 'Year', 'DOI', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
                        'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd']
-
     JOURNAL_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN', 'ManagedCoverageBegin',
                           'ManagedCoverageEnd']
     JOURNAL_RESULT_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN',
                                  'ManagedCoverageBegin',
-                                 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears', 'FreeYears']
+                                 'ManagedCoverageEnd', 'AccessToAll', 'ProblemYears', 'FreeYears']
+    STANDARD_HEADER = ['publication_title', 'print_identifier', 'online_identifier', 'date_first_issue_online',
+                       'num_first_vol_online', 'num_first_issue_online', 'date_last_issue_online',
+                       'num_last_vol_online',
+                       'num_last_issue_online', 'title_url', 'first_author', 'title_id', 'embargo_info',
+                       'coverage_depth',
+                       'notes', 'publisher_name', 'publication_type', 'date_monograph_published_print',
+                       'date_monograph_published_online', 'monograph_volume', 'monograph_edition', 'first_editor',
+                       'parent_publication_title_id', 'preceding_publication_title_id', 'access_type', 'Subject(s)',
+                       'Collection(s)', 'Year Started at OUP', 'MARC Control Number', 'Title History']
+    OXFORD_HEADER = ['Title', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'PrintISSN', 'OnlineISSN', 'KBID',
+                     'AlternateTitle', 'PackageName', 'URL', 'Publisher', 'Edition', 'Author', 'Editor', 'Illustrator',
+                     'PrintISBN', 'OnlineISBN', 'DOI', 'PeerReviewed', 'CustomCoverageBegin', 'CustomCoverageEnd',
+                     'CoverageStatement', 'Embargo', 'CustomEmbargo', 'Description', 'Subject', 'ResourceType',
+                     'PackageContentType', 'CreateCustom', 'HideOnPublicationFinder', 'Delete', 'OrderedThroughEBSCO',
+                     'IsCustom', 'UserDefinedField1', 'UserDefinedField2', 'UserDefinedField3', 'UserDefinedField4',
+                     'UserDefinedField5', 'PackageType', 'AllowEbscoToAddNewTitles']
 
+    # colors for email Entry
     COLOR_SAVED_EMAIL = 'lightcyan4'
     COLOR_NEW_EMAIL = 'black'
 
@@ -50,7 +66,7 @@ class MainUI(tk.Frame):
         self.input_file_path = None
         self.output_file_path = None
         self.file_name = None
-        self.mode = 'doi-search'
+        self.mode = self.MODE_NOT_SET
         self.is_ready = False
         self.receiver = self.main_system.receiver
         self.temp_receiver = ''
@@ -154,9 +170,8 @@ class MainUI(tk.Frame):
                                                           filetypes=(("csv files", "*.csv"),
                                                                      ("all files", "*.*")))
 
-        debug.d_print(self.input_file_path)
-
         f_name = self.input_file_path.split('/')[-1]  # get only the name.csv
+        debug.d_print(self.input_file_path)
         debug.d_print(f_name)
         self.file_var.set(f_name)
         self.file_name = f_name
@@ -165,27 +180,34 @@ class MainUI(tk.Frame):
         with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
             reader = csv.reader(csv_file)
             header = next(reader)  # only for python 3
+            debug.d_print('Columns:', header)
 
-            if header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER:
-                debug.d_print('for journal')
+            if header == self.STANDARD_HEADER:
+                self.mode = self.MODE_NOT_SET
+                debug.d_print('*This is the standard format')
+
+            elif header == self.OXFORD_HEADER:
+                self.mode = self.MODE_NOT_SET
+                debug.d_print('*This is the oxford format')
+
+            elif header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER:
                 self.mode = self.DOI_SEARCH_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
                 self.top_message_var.set('DOI-SEARCH')
                 self.warn_var.set('')
-
-            elif header == self.DOI_CSV_HEADER:
-                debug.d_print('this is an old format of temp file')
+                debug.d_print('for journal')
 
             elif header == self.TEMP_CSV_HEADER:
-                debug.d_print('for doi')
                 self.mode = self.REALITY_CHECK_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
                 self.top_message_var.set('REALITY CHECK')
                 self.warn_var.set('')
+                debug.d_print('for doi')
 
             else:
+                self.mode = self.MODE_NOT_SET
                 self.warn_var.set('Wrong file (wrong columns)')
                 self.start_button.config(state="disabled")
 
