@@ -148,9 +148,10 @@ class Journal(object):
 
     def record_wrong_years(self):
         for year in self.year_dict:
-            if not self.year_dict[year][self.ARTICLE].accessible:  # article is accessible
-                if self.year_dict[year][self.ARTICLE].result != 'Open-Access' and \
-                        self.year_dict[year][self.ARTICLE].result != 'Free-Access':
+            a = self.year_dict[year][self.ARTICLE]
+
+            if not a.accessible:  # article is accessible
+                if not a.open and not a.free:
                     self.wrong_years = self.wrong_years + str(year) + '/'
                     self.result_as_expected = False
                     self.access_to_all = False
@@ -159,9 +160,10 @@ class Journal(object):
 
     def record_free_years(self):
         for year in self.year_dict:
-            if self.year_dict[year][self.ARTICLE].accessible:  # article is accessible
-                if self.year_dict[year][self.ARTICLE].result == 'Open-Access' or \
-                        self.year_dict[year][self.ARTICLE].result == 'Free-Access':
+            a = self.year_dict[year][self.ARTICLE]
+
+            if a.accessible:
+                if a.open or a.free:
                     self.free_years = self.free_years + str(year) + '/'
                     self.result_as_expected = False
                     self.has_free_years = True
