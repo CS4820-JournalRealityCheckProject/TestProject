@@ -20,6 +20,16 @@ class MainSystem(object):
     This class is instantiated at turning on the system.
     """
 
+    # two modes
+    DOI_SEARCH_MODE = 'doi-search'
+    REALITY_CHECK_MODE = 'reality-check'
+
+    # indexes used for year_dict[year][index] for Journal
+    # year_dict = {year: (begin_date, end_date, Article)}
+    BEGIN = 0
+    END = 1
+    ARTICLE = 2
+
     def __init__(self):
 
         debug.d_print("system turned on")
@@ -39,6 +49,7 @@ class MainSystem(object):
             self.complete = self.config['progress']['complete']
             debug.d_print('new progress.ini created')
 
+        # Config for progress
         self.status = self.config['progress']['status']
         self.current_index = int(self.config['progress']['current-index'])
         self.input_file_path = self.config['progress']['input-file-path']
@@ -80,10 +91,10 @@ class MainSystem(object):
 
         if self.status == 'doi-search':
             self.create_journal_list()
-            self.search_articles_journal_list()
+            self.iterate_journal_list(self.DOI_SEARCH_MODE)
         elif self.status == 'reality-check':
             self.recreate_journal_list()
-            self.check_reality_journal_list()
+            self.iterate_journal_list(self.REALITY_CHECK_MODE)
 
     def reset_member_variables(self):
         self.complete = 'True'
@@ -94,55 +105,68 @@ class MainSystem(object):
         self.current_index = -1
 
     def create_journal_list(self):
-        """
-        Creates a list of journals with a given file path
-        :return: a list of journal objects
-        """
         self.journal_list = csv_reader.construct_journal_list_from(self.input_file_path)
 
     def recreate_journal_list(self):
         self.journal_list = csv_reader.reconstruct_journal_list_from(self.input_file_path)
 
-    def search_articles_journal_list(self):
-        """iterates a list of journal and fetches an article and a doi for each year"""
+    def iterate_journal_list(self, mode):
+        """
+        Iterates a journal list
+        :param mode: 'doi-search' or 'reality-check'
+        :return:
+        """
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
-
-        # self.output_file_path = 'TEMP-DOI' # file name
-        # self.wrong_file_path = 'NO-DOI'
 
         if index == -1:
             d = str(datetime.datetime.today())
             date = d[5:7] + d[8:10]
             # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
-            self.output_file_path = 'TEMP-DOI-' + date  # file name
-            self.wrong_file_path = 'NO-DOI-' + date
 
-            debug.d_print('initialized')
-            csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
+            if mode == self.DOI_SEARCH_MODE:
+                self.output_file_path = 'TEMP-DOI-' + date  # file name
+                self.wrong_file_path = 'NO-DOI-' + date
+            elif mode == self.REALITY_CHECK_MODE:
+                self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
+                self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
+
+            if mode == self.DOI_SEARCH_MODE:
+                csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
+            elif mode == self.REALITY_CHECK_MODE:
+                csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
+
             index = 0
 
         while index < len(self.journal_list):
             title = self.journal_list[index].title
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
-                                                status='doi-search', index=index, title=title)
+                                                status=mode, index=index, title=title)
 
-            self.search_article(self.journal_list[index])  # DOI Search
+            if mode == self.DOI_SEARCH_MODE:
+                self.search_article(self.journal_list[index])  # DOI Search
+            elif mode == self.REALITY_CHECK_MODE:
+                self.check_reality(self.journal_list[index])  # Reality Check
 
-            csv_reader.append_doi_row(self.journal_list[index], self.output_file_path)
-            csv_reader.append_wrong_row(mode='doi-search', journal=self.journal_list[index],
+            if mode == self.DOI_SEARCH_MODE:
+                csv_reader.append_doi_row(self.journal_list[index], self.output_file_path)
+            elif mode == self.REALITY_CHECK_MODE:
+                csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
+
+            csv_reader.append_wrong_row(mode=mode, journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
             index = index + 1
 
-        self.continue_output_file_path = 'Data-Files/Output-Files/'+self.output_file_path
+        if mode == self.DOI_SEARCH_MODE:
+            self.continue_output_file_path = 'Data-Files/Output-Files/' + self.output_file_path
+
         config_utils.config.clear_progress()
         self.send_email()
         self.reset_member_variables()
 
-    @staticmethod
-    def search_article(journal):
+    def search_article(self, journal):
         """
         Fetching articles using crossref api.
         :param journal: a journal object
@@ -150,61 +174,19 @@ class MainSystem(object):
         """
         for year in journal.year_dict:
             debug.d_print(journal.title,
-                          journal.year_dict[year][0],  # start_date
-                          journal.year_dict[year][1],  # end_date
+                          journal.year_dict[year][self.BEGIN],  # start_date
+                          journal.year_dict[year][self.END],  # end_date
                           journal.print_issn, journal.online_issn)
             doi = searcher.search_journal(journal.title,
-                                          journal.year_dict[year][0],  # start_date
-                                          journal.year_dict[year][1],  # end_date
+                                          journal.year_dict[year][self.BEGIN],  # start_date
+                                          journal.year_dict[year][self.END],  # end_date
                                           journal.print_issn, journal.online_issn)
-            journal.year_dict[year][2].doi = doi
-            # journal.year_article_dict[year].doi = doi
+            journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
                 debug.d_print(doi)
             else:
                 debug.d_print('https://doi.org/' + doi)
         debug.d_print('Search article finished')
-
-    def check_reality_journal_list(self):
-        """
-        Iterates a list of journal objects and checks a reality of each article
-        :param journal_list:
-        :return:
-        """
-        config_utils.config.update_email(self.receiver)
-        index = self.current_index
-
-        # self.output_file_path = 'RESULT-JOURNALS'  # file name
-        # self.wrong_file_path = 'PROBLEM-JOURNALS'
-
-        if index == -1:
-            d = str(datetime.datetime.today())
-            date = d[5:7] + d[8:10]
-            # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]　# not used
-            self.output_file_path = 'RESULT-JOURNALS-' + date  # file name
-            self.wrong_file_path = 'PROBLEM-JOURNALS-' + date
-
-            debug.d_print('initialized')
-            csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
-            csv_reader.prepare_wrong_csv(self.wrong_file_path)
-            index = 0
-
-        while index < len(self.journal_list):
-            title = self.journal_list[index].title
-            config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
-                                                status='reality-check', index=index, title=title)
-
-            self.check_reality(self.journal_list[index])  # Reality Check
-
-            csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
-            csv_reader.append_wrong_row(mode='check-reality', journal=self.journal_list[index],
-                                        file_name=self.wrong_file_path)
-
-            index = index + 1
-
-        config_utils.config.clear_progress()
-        self.send_email()
-        self.reset_member_variables()
 
     def check_reality(self, journal):
         """
@@ -214,8 +196,7 @@ class MainSystem(object):
         """
         debug.d_print(journal.title, journal.publisher)
         for year in journal.year_dict:
-            # debug.d_print(journal.year_dict[year][2])
-            doi = journal.year_dict[year][2].doi
+            doi = journal.year_dict[year][self.ARTICLE].doi
             debug.d_print('https://doi.org/' + str(doi))
             try:
                 result = screenscraper.check_journal(doi)  # reality check
@@ -224,11 +205,17 @@ class MainSystem(object):
                 debug.d_print('|exception happened|')
                 result = result_enum.Result.OtherException
 
-            journal.year_dict[year][2].result = result  # result is stored in article
-            if result is result_enum.Result.Access or result is result_enum.Result.OpenAccess:
-                journal.year_dict[year][2].accessible = True
+            journal.year_dict[year][self.ARTICLE].result = result  # result is stored in article
+            if result is result_enum.Result.Access:
+                journal.year_dict[year][self.ARTICLE].accessible = True
+            if result is result_enum.Result.OpenAccess:
+                journal.year_dict[year][self.ARTICLE].accessible = True
+                journal.year_dict[year][self.ARTICLE].open = True
+            if result is result_enum.Result.FreeAccess:
+                journal.year_dict[year][self.ARTICLE].accessible = True
+                journal.year_dict[year][self.ARTICLE].free = True
 
-            journal.year_dict[year][2].result = self.convert_result(result)  # result is checked
+            journal.year_dict[year][self.ARTICLE].result = self.convert_result(result)  # result is checked
             debug.d_print(str(year), ':', str(result))
 
         debug.d_print(journal.wrong_years)
@@ -307,12 +294,12 @@ class MainSystem(object):
         elif code == main_ui.MainUI.SEARCH_CLICKED:
             if self.ui.is_new_receiver():
                 self.receiver = self.ui.receiver
-            self.search_articles_journal_list()
+            self.iterate_journal_list(self.DOI_SEARCH_MODE)
 
         elif code == main_ui.MainUI.REALITY_CHECK_CLICKED:
             if self.ui.is_new_receiver():
                 self.receiver = self.ui.receiver
-            self.check_reality_journal_list()
+            self.iterate_journal_list(self.REALITY_CHECK_MODE)
 
 
 def main():

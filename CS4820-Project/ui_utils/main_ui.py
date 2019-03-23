@@ -23,7 +23,7 @@ class MainUI(tk.Frame):
     NEW_EMAIL = 1
 
     DOI_CSV_HEADER = ['Title', 'Year', 'DOI', 'DOI-URL', 'Accessible', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
-                      'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears',
+                      'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AccessToAll', 'ProblemYears',
                       'FreeYears']
 
     TEMP_CSV_HEADER = ['Title', 'Year', 'DOI', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
@@ -209,7 +209,9 @@ class MainUI(tk.Frame):
 
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")
-            self.search_article()
+
+            self.search_article()  # the lines below are not executed if interrupted
+
             self.warn_var.set('DOI Search FINISHED')
             self.output_file_path = self.main_system.continue_output_file_path
             print(self.output_file_path)
@@ -220,7 +222,9 @@ class MainUI(tk.Frame):
 
         elif self.mode == self.REALITY_CHECK_MODE:
             self.start_button.config(state="disabled")
-            self.check_reality()
+
+            self.check_reality()  # the lines below are not executed if interrupted
+
             self.warn_var.set('Reality Check FINISHED')
 
     def email_entered(self, event=None):
