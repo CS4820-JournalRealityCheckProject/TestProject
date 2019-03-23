@@ -23,7 +23,7 @@ class MainUI(tk.Frame):
     NEW_EMAIL = 1
 
     DOI_CSV_HEADER = ['Title', 'Year', 'DOI', 'DOI-URL', 'Accessible', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
-                      'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AsExpected', 'ProblemYears',
+                      'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'AccessToAll', 'ProblemYears',
                       'FreeYears']
 
     TEMP_CSV_HEADER = ['Title', 'Year', 'DOI', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
