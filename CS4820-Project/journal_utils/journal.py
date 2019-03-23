@@ -25,8 +25,8 @@ class Journal(object):
         self.publisher = publisher
         self.print_issn = print_issn
         self.online_issn = online_issn
-        self.expected_subscription_begin = self.format_date(expected_subscript_begin)
-        self.expected_subscription_end = self.format_date(expected_subscript_end)
+        self.expected_subscription_begin = self.format_date(expected_subscript_begin, self.BEGIN)
+        self.expected_subscription_end = self.format_date(expected_subscript_end, self.END)
 
         print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)  # Test print
 
@@ -171,27 +171,51 @@ class Journal(object):
             self.free_years = 'No-Free-Years'
 
     @staticmethod
-    def format_date(date):
+    def format_date(date, begin_or_end):
+        BEGIN = 0
+        END = 1
+
         if date == 'Present':
             return date
 
-        date1 = re.fullmatch('[0-9]{4}-[0-9]{2}-[0-9]{2}', date)  # xxxx-xx-xx
+        if date == '':  # when ending date is empty, then consider it as 'Present'
+            return 'Present'
+
+        date0 = re.fullmatch('[0-9]{4}', date)  # yyyy
+        if date0 is not None:
+            if begin_or_end == BEGIN:
+                return date + '-01-01'
+            elif begin_or_end == END:
+                return date + '-12-31'
+
+        date0 = re.fullmatch('[0-9]{4}-[0-9]{2}', date)  # yyyy-mm
+        if date0 is not None:
+            if begin_or_end == BEGIN:
+                return date + '-01'
+            elif begin_or_end == END:
+                return date + '-31'
+
+        date1 = re.fullmatch('[0-9]{4}-[0-9]{2}-[0-9]{2}', date)  # yyyy-mm-dd
         if date1 is not None:
             return date
 
-        date1 = re.fullmatch('[0-9]{4}-[0-9]-[0-9]', date)  # xxxx-x-x
+        date1 = re.fullmatch('[0-9]{4}-[0-9]-[0-9]', date)  # yyyy-m-d
         if date1 is not None:
             return date[0:4] + '-0' + date[5:6] + '-0' + date[7:8]
 
-        date1 = re.fullmatch('[0-9]{4}-[0-9][0-9]-[0-9]', date)  # xxxx-xx-x
+        date1 = re.fullmatch('[0-9]{4}-[0-9][0-9]-[0-9]', date)  # yyyy-mm-d
         if date1 is not None:
             return date[0:4] + '-' + date[5:7] + '-0' + date[8:9]
 
-        date1 = re.fullmatch('[0-9]{4}-[0-9]-[0-9][0-9]', date)  # xxxx-xx-x
+        date1 = re.fullmatch('[0-9]{4}-[0-9]-[0-9][0-9]', date)  # yyyy-m-dd
         if date1 is not None:
             return date[0:4] + '-0' + date[5:6] + '-' + date[7:9]
 
-        date2 = re.fullmatch('[0-9]{2}/[0-9]{2}/[0-9]{4}', date)  # xx/xx/xxxx
+        date2 = re.fullmatch('[0-9]{2}/[0-9]{2}/[0-9]{4}', date)  # mm/dd/yyyy
+        if date2 is not None:
+            return date[6:10] + '-' + date[0:2] + '-' + date[3:5]
+
+        date2 = re.fullmatch('[0-9]{2}/[0-9]{2}/[0-9]{4}', date)  # dd/mm/yyyy
         if date2 is not None:
             return date[6:10] + '-' + date[3:5] + '-' + date[0:2]
 
@@ -200,12 +224,20 @@ class Journal(object):
 
 if __name__ == '__main__':
     print('matcher')
-    m = re.match('[0-9]{4}-[0-9]{2}-[0-9]{2}', '2000-3-21')
-    n = re.match('[0-9]{2}/[0-9]{2}/[0-9]{4}', '33/43/3333')
-    print(m)
-    print(n)
-    print(Journal.format_date('1991-12-12'))
-    print(Journal.format_date('1991-1-12'))
-    print(Journal.format_date('1991-12-2'))
-    print(Journal.format_date('1991-1-3'))
-    print(Journal.format_date('01/05/1993'))
+    # m = re.match('[0-9]{4}-[0-9]{2}-[0-9]{2}', '2000-3-21')
+    # n = re.match('[0-9]{2}/[0-9]{2}/[0-9]{4}', '33/43/3333')
+    # print(m)
+    # print(n)
+    b = 0
+    e = 1
+    # print(Journal.format_date('1991-12-12'))
+    # print(Journal.format_date('1991-1-12'))
+    # print(Journal.format_date('1991-12-2'))
+    # print(Journal.format_date('1991-1-3'))
+    print(Journal.format_date('01/05/1993', b))
+
+    print(Journal.format_date('1991-12', b))
+    print(Journal.format_date('1933-03', e))
+    print(Journal.format_date('2091', b))
+    print(Journal.format_date('2001', e))
+    print(Journal.format_date('', e))
