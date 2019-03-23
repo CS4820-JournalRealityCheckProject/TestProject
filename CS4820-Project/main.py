@@ -42,6 +42,7 @@ class MainSystem(object):
             self.complete = self.config['progress']['complete']
             debug.d_print('new progress.ini created')
 
+        # Config for progress
         self.status = self.config['progress']['status']
         self.current_index = int(self.config['progress']['current-index'])
         self.input_file_path = self.config['progress']['input-file-path']
@@ -190,7 +191,6 @@ class MainSystem(object):
         """
         debug.d_print(journal.title, journal.publisher)
         for year in journal.year_dict:
-            # debug.d_print(journal.year_dict[year][2])
             doi = journal.year_dict[year][2].doi
             debug.d_print('https://doi.org/' + str(doi))
             try:

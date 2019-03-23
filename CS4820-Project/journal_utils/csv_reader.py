@@ -99,7 +99,7 @@ def prepare_result_csv(result_file='result-journals'):
                       'OnlineISSN',
                       'ManagedCoverageBegin',
                       'ManagedCoverageEnd',
-                      'AsExpected',
+                      'AccessToAll',
                       'ProblemYears',
                       'FreeYears'
                       ]
