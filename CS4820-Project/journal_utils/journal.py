@@ -1,4 +1,6 @@
 import datetime
+import re
+
 import journal_utils.article as article
 
 
@@ -19,13 +21,13 @@ class Journal(object):
         self.publisher = publisher
         self.print_issn = print_issn
         self.online_issn = online_issn
-        self.expected_subscription_begin = expected_subscript_begin
-        self.expected_subscription_end = expected_subscript_end
+        self.expected_subscription_begin = self.format_date(expected_subscript_begin)
+        self.expected_subscription_end = self.format_date(expected_subscript_end)
 
-        print(title, package)  # Test print
+        print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)  # Test print
 
-        self.begin_date = self.create_date(expected_subscript_begin)  # datetime object
-        self.end_date = self.create_date(expected_subscript_end)  # datetime object
+        self.begin_date = self.create_date(self.expected_subscription_begin)  # datetime object
+        self.end_date = self.create_date(self.expected_subscription_end)  # datetime object
         self.year_dict = {}  # year: (start_date, end_date, Article)
         self.year_article_dict = {}  # year: Article
 
@@ -33,7 +35,8 @@ class Journal(object):
 
         self.result_as_expected = True
         self.wrong_years = ''
-        self.record_wrong_years()
+        self.free_years = ''
+        # self.record_wrong_years()
 
     def __str__(self):
         s = ', '
@@ -138,30 +141,61 @@ class Journal(object):
         a.date = date
 
     def record_wrong_years(self):
-
         for year in self.year_dict:
-            if not self.year_dict[year][2].accessible:
-                self.wrong_years = self.wrong_years + str(year) + '/'
-                self.result_as_expected = False
+            if not self.year_dict[year][2].accessible:  # article is accessible
+                if self.year_dict[year][2].result != 'Open-Access' and \
+                        self.year_dict[year][2].result != 'Free-Access':
+                    self.wrong_years = self.wrong_years + str(year) + '/'
+                    self.result_as_expected = False
         if self.result_as_expected:
-            self.wrong_years = 'no wrong years'
+            self.wrong_years = 'No-Wrong-Years'
+
+    def record_free_years(self):
+        for year in self.year_dict:
+            if not self.year_dict[year][2].accessible:  # article is accessible
+                if self.year_dict[year][2].result == 'Open-Access' or \
+                        self.year_dict[year][2].result == 'Free-Access':
+                    self.free_years = self.free_years + str(year) + '/'
+                    self.result_as_expected = False
+        if self.result_as_expected:
+            self.free_years = 'No-Free-Years'
+
+    @staticmethod
+    def format_date(date):
+        if date == 'Present':
+            return date
+
+        date1 = re.fullmatch('[0-9]{4}-[0-9]{2}-[0-9]{2}', date)  # xxxx-xx-xx
+        if date1 is not None:
+            return date
+
+        date1 = re.fullmatch('[0-9]{4}-[0-9]-[0-9]', date)  # xxxx-x-x
+        if date1 is not None:
+            return date[0:4] + '-0' + date[5:6] + '-0' + date[7:8]
+
+        date1 = re.fullmatch('[0-9]{4}-[0-9][0-9]-[0-9]', date)  # xxxx-xx-x
+        if date1 is not None:
+            return date[0:4] + '-' + date[5:7] + '-0' + date[8:9]
+
+        date1 = re.fullmatch('[0-9]{4}-[0-9]-[0-9][0-9]', date)  # xxxx-xx-x
+        if date1 is not None:
+            return date[0:4] + '-0' + date[5:6] + '-' + date[7:9]
+
+        date2 = re.fullmatch('[0-9]{2}/[0-9]{2}/[0-9]{4}', date)  # xx/xx/xxxx
+        if date2 is not None:
+            return date[6:10] + '-' + date[3:5] + '-' + date[0:2]
+
+        return '0000-00-00'
 
 
 if __name__ == '__main__':
-    j1 = Journal(expected_subscript_begin='2009-04-01',
-                 expected_subscript_end='2013-10-31')
-
-    j2 = Journal(expected_subscript_begin='2015-03-01',
-                 expected_subscript_end='Present')
-
-    for key in j1.year_dict:
-        print(key, ':', j1.year_dict[key])
-
-    print('\n')
-
-    for key in j2.year_dict:
-        print(key, ':', j2.year_dict[key])
-
-    print('\n')
-    print(j1)
-    print(j2)
+    print('matcher')
+    m = re.match('[0-9]{4}-[0-9]{2}-[0-9]{2}', '2000-3-21')
+    n = re.match('[0-9]{2}/[0-9]{2}/[0-9]{4}', '33/43/3333')
+    print(m)
+    print(n)
+    print(Journal.format_date('1991-12-12'))
+    print(Journal.format_date('1991-1-12'))
+    print(Journal.format_date('1991-12-2'))
+    print(Journal.format_date('1991-1-3'))
+    print(Journal.format_date('01/05/1993'))

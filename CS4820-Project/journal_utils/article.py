@@ -1,5 +1,3 @@
-import datetime
-
 
 class Article(object):
     """This class models an article"""
@@ -9,6 +7,7 @@ class Article(object):
         self.doi = doi
         self.date = date
         self.accessible = False
+        self.result = None
         self.reason_of_false = 'no issues'
 
     def __str__(self):

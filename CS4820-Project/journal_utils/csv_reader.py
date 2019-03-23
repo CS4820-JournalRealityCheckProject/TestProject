@@ -39,10 +39,11 @@ def reconstruct_journal_list_from(articles_csv):
         j = None
         for row in reader:
             y = int(row['Year'])
-            if row['Accessible'] == 'TRUE':
-                access = True
-            else:
-                access = False
+            # if row['Accessible'] == 'TRUE':
+            #     access = True
+            # else:
+            #     access = False
+
             if current_title != row['Title'] or current_platform != row['PackageName']:
                 current_title = row['Title']
                 current_platform = row['PackageName']
@@ -57,24 +58,22 @@ def reconstruct_journal_list_from(articles_csv):
                             row['ManagedCoverageEnd']
                             )
                 j.year_dict[y][2].doi = row['DOI']
-                j.year_dict[y][2].accessible = access
                 journal_obj_list.append(j)
+                # j.year_dict[y][2].accessible = access
             else:
                 j.year_dict[y][2].doi = row['DOI']
-                j.year_dict[y][2].accessible = access
+                # j.year_dict[y][2].accessible = access
 
     print('size' + str(len(journal_obj_list)))
     return journal_obj_list
 
 
 def prepare_temp_csv(temp_file='doi-articles'):
-    with open(path + temp_file + '.csv', 'w', encoding='utf8') as csv_file:
+    with open(path + temp_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
         fieldnames = ['Title',
 
                       'Year',
                       'DOI',
-                      'DOI-URL',
-                      'Accessible',
 
                       'PackageName',
                       'URL',
@@ -83,9 +82,6 @@ def prepare_temp_csv(temp_file='doi-articles'):
                       'OnlineISSN',
                       'ManagedCoverageBegin',
                       'ManagedCoverageEnd',
-                      'AsExpected',
-                      'ProblemYears',
-                      'FreeYears'
                       ]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
@@ -94,9 +90,8 @@ def prepare_temp_csv(temp_file='doi-articles'):
 
 def prepare_result_csv(result_file='result-journals'):
     print("result file")
-    with open(path + result_file + '.csv', 'w', encoding='utf8') as csv_file:
+    with open(path + result_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
         fieldnames = ['Title',
-
                       'PackageName',
                       'URL',
                       'Publisher',
@@ -113,14 +108,12 @@ def prepare_result_csv(result_file='result-journals'):
 
 
 def prepare_wrong_csv(wrong_file='wrong-list'):
-    with open(path + wrong_file + '.csv', 'w', encoding='utf8') as csv_file:
+    with open(path + wrong_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
         fieldnames = ['Title',
-
                       'Year',
+                      'Result',
                       'DOI',
                       'DOI-URL',
-                      'Accessible',
-
                       'PackageName',
                       'URL',
                       'Publisher',
@@ -130,17 +123,13 @@ def prepare_wrong_csv(wrong_file='wrong-list'):
 
 
 def append_doi_row(journal, file_name='doi-articles'):
-    with open(path + file_name + '.csv', 'a', encoding='utf8') as file:
+    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
         j = journal
         for y in j.year_dict:
             writer.writerow([j.title,
-
                              y,
                              j.year_dict[y][2].doi,
-                             'http://doi.org/' + str(j.year_dict[y][2].doi),
-                             j.year_dict[y][2].accessible,
-
                              j.package,
                              j.url,
                              j.publisher,
@@ -148,18 +137,14 @@ def append_doi_row(journal, file_name='doi-articles'):
                              j.online_issn,
                              j.expected_subscription_begin,
                              j.expected_subscription_end,
-                             j.result_as_expected,
-                             j.wrong_years,
-                             'NoYears'
                              ])
 
 
 def append_journal_row(journal, file_name='result-journals'):
-    with open(path + file_name + '.csv', 'a', encoding='utf8') as file:
+    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
         j = journal
         writer.writerow([j.title,
-
                          j.package,
                          j.url,
                          j.publisher,
@@ -169,7 +154,7 @@ def append_journal_row(journal, file_name='result-journals'):
                          j.expected_subscription_end,
                          j.result_as_expected,
                          j.wrong_years,
-                         'NoYears'
+                         j.free_years
                          ])
 
 
@@ -181,19 +166,27 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
     :param file_name:
     :return:
     """
-    with open(path + file_name + '.csv', 'a', encoding='utf8') as file:
+    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
         j = journal
         for y in j.year_dict:
-            if (mode == 'doi-search' and j.year_dict[y][2].doi is None) or \
-                    (mode == 'check-reality' and not j.year_dict[y][2].accessible):
+            if mode == 'doi-search' and j.year_dict[y][2].doi is None:
                 writer.writerow([j.title,
-
                                  y,
+                                 j.year_dict[y][2].result,
+                                 'no-doi',
+                                 '',
+                                 j.package,
+                                 j.url,
+                                 j.publisher,
+                                 ])
+
+            if mode == 'check-reality' and not j.year_dict[y][2].accessible:
+                writer.writerow([j.title,
+                                 y,
+                                 j.year_dict[y][2].result,
                                  j.year_dict[y][2].doi,
                                  'http://doi.org/' + str(j.year_dict[y][2].doi),
-                                 j.year_dict[y][2].accessible,
-
                                  j.package,
                                  j.url,
                                  j.publisher,
