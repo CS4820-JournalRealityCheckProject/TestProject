@@ -33,6 +33,13 @@ class MainUI(tk.Frame):
     JOURNAL_RESULT_CSV_HEADER = ['Title', 'PackageName', 'URL', 'Publisher', 'PrintISSN', 'OnlineISSN',
                                  'ManagedCoverageBegin',
                                  'ManagedCoverageEnd', 'AccessToAll', 'ProblemYears', 'FreeYears']
+    OXFORD_HEADER = ['Title', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'PrintISSN', 'OnlineISSN', 'KBID',
+                     'AlternateTitle', 'PackageName', 'URL', 'Publisher', 'Edition', 'Author', 'Editor', 'Illustrator',
+                     'PrintISBN', 'OnlineISBN', 'DOI', 'PeerReviewed', 'CustomCoverageBegin', 'CustomCoverageEnd',
+                     'CoverageStatement', 'Embargo', 'CustomEmbargo', 'Description', 'Subject', 'ResourceType',
+                     'PackageContentType', 'CreateCustom', 'HideOnPublicationFinder', 'Delete', 'OrderedThroughEBSCO',
+                     'IsCustom', 'UserDefinedField1', 'UserDefinedField2', 'UserDefinedField3', 'UserDefinedField4',
+                     'UserDefinedField5', 'PackageType', 'AllowEbscoToAddNewTitles']
     STANDARD_HEADER = ['publication_title', 'print_identifier', 'online_identifier', 'date_first_issue_online',
                        'num_first_vol_online', 'num_first_issue_online', 'date_last_issue_online',
                        'num_last_vol_online',
@@ -42,13 +49,6 @@ class MainUI(tk.Frame):
                        'date_monograph_published_online', 'monograph_volume', 'monograph_edition', 'first_editor',
                        'parent_publication_title_id', 'preceding_publication_title_id', 'access_type', 'Subject(s)',
                        'Collection(s)', 'Year Started at OUP', 'MARC Control Number', 'Title History']
-    OXFORD_HEADER = ['Title', 'ManagedCoverageBegin', 'ManagedCoverageEnd', 'PrintISSN', 'OnlineISSN', 'KBID',
-                     'AlternateTitle', 'PackageName', 'URL', 'Publisher', 'Edition', 'Author', 'Editor', 'Illustrator',
-                     'PrintISBN', 'OnlineISBN', 'DOI', 'PeerReviewed', 'CustomCoverageBegin', 'CustomCoverageEnd',
-                     'CoverageStatement', 'Embargo', 'CustomEmbargo', 'Description', 'Subject', 'ResourceType',
-                     'PackageContentType', 'CreateCustom', 'HideOnPublicationFinder', 'Delete', 'OrderedThroughEBSCO',
-                     'IsCustom', 'UserDefinedField1', 'UserDefinedField2', 'UserDefinedField3', 'UserDefinedField4',
-                     'UserDefinedField5', 'PackageType', 'AllowEbscoToAddNewTitles']
 
     # colors for email Entry
     COLOR_SAVED_EMAIL = 'lightcyan4'
@@ -186,11 +186,12 @@ class MainUI(tk.Frame):
                 self.mode = self.MODE_NOT_SET
                 debug.d_print('*This is the standard format')
 
-            elif header == self.OXFORD_HEADER:
-                self.mode = self.MODE_NOT_SET
-                debug.d_print('*This is the oxford format')
+            # elif header == self.OXFORD_HEADER:
+            #     self.mode = self.MODE_NOT_SET
+            #     debug.d_print('*This is the oxford format')
 
-            elif header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER:
+            elif header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER \
+                    or header == self.OXFORD_HEADER:
                 self.mode = self.DOI_SEARCH_MODE
                 self.is_ready = True
                 self.start_button.config(state="normal")
