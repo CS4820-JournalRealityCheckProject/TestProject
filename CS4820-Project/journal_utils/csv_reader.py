@@ -3,6 +3,7 @@ import csv
 from journal_utils.journal import Journal
 
 path = 'Data-Files/Output-Files/'
+ARTICLE = 2
 
 
 def construct_journal_list_from(journals_csv):
@@ -57,12 +58,12 @@ def reconstruct_journal_list_from(articles_csv):
                             row['ManagedCoverageBegin'],
                             row['ManagedCoverageEnd']
                             )
-                j.year_dict[y][2].doi = row['DOI']
+                j.year_dict[y][ARTICLE].doi = row['DOI']
                 journal_obj_list.append(j)
-                # j.year_dict[y][2].accessible = access
+                # j.year_dict[y][ARTICLE].accessible = access
             else:
-                j.year_dict[y][2].doi = row['DOI']
-                # j.year_dict[y][2].accessible = access
+                j.year_dict[y][ARTICLE].doi = row['DOI']
+                # j.year_dict[y][ARTICLE].accessible = access
 
     print('size' + str(len(journal_obj_list)))
     return journal_obj_list
@@ -99,7 +100,7 @@ def prepare_result_csv(result_file='result-journals'):
                       'OnlineISSN',
                       'ManagedCoverageBegin',
                       'ManagedCoverageEnd',
-                      'AsExpected',
+                      'AccessToAll',
                       'ProblemYears',
                       'FreeYears'
                       ]
@@ -129,7 +130,7 @@ def append_doi_row(journal, file_name='doi-articles'):
         for y in j.year_dict:
             writer.writerow([j.title,
                              y,
-                             j.year_dict[y][2].doi,
+                             j.year_dict[y][ARTICLE].doi,
                              j.package,
                              j.url,
                              j.publisher,
@@ -152,7 +153,7 @@ def append_journal_row(journal, file_name='result-journals'):
                          j.online_issn,
                          j.expected_subscription_begin,
                          j.expected_subscription_end,
-                         j.result_as_expected,
+                         j.access_to_all,
                          j.wrong_years,
                          j.free_years
                          ])
@@ -169,11 +170,13 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
     with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
         j = journal
+
         for y in j.year_dict:
-            if mode == 'doi-search' and j.year_dict[y][2].doi is None:
+
+            if mode == 'doi-search' and j.year_dict[y][ARTICLE].doi is None:
                 writer.writerow([j.title,
                                  y,
-                                 j.year_dict[y][2].result,
+                                 j.year_dict[y][ARTICLE].result,
                                  'no-doi',
                                  '',
                                  j.package,
@@ -181,12 +184,12 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
                                  j.publisher,
                                  ])
 
-            if mode == 'check-reality' and not j.year_dict[y][2].accessible:
+            if mode == 'reality-check' and not j.year_dict[y][ARTICLE].accessible:
                 writer.writerow([j.title,
                                  y,
-                                 j.year_dict[y][2].result,
-                                 j.year_dict[y][2].doi,
-                                 'http://doi.org/' + str(j.year_dict[y][2].doi),
+                                 j.year_dict[y][ARTICLE].result,
+                                 j.year_dict[y][ARTICLE].doi,
+                                 'http://doi.org/' + str(j.year_dict[y][ARTICLE].doi),
                                  j.package,
                                  j.url,
                                  j.publisher,
