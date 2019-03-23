@@ -215,9 +215,21 @@ class Journal(object):
         if date2 is not None:
             return date[6:10] + '-' + date[0:2] + '-' + date[3:5]
 
-        date2 = re.fullmatch('[0-9]{2}/[0-9]{2}/[0-9]{4}', date)  # dd/mm/yyyy
+        date2 = re.fullmatch('[0-9]/[0-9]{2}/[0-9]{4}', date)  # m/dd/yyyy
         if date2 is not None:
-            return date[6:10] + '-' + date[3:5] + '-' + date[0:2]
+            return date[5:9] + '-0' + date[0:1] + '-' + date[2:4]
+
+        date2 = re.fullmatch('[0-9]{2}/[0-9]/[0-9]{4}', date)  # mm/d/yyyy
+        if date2 is not None:
+            return date[5:9] + '-' + date[0:2] + '-0' + date[3:4]
+
+        date2 = re.fullmatch('[0-9]/[0-9]/[0-9]{4}', date)  # m/d/yyyy
+        if date2 is not None:
+            return date[4:8] + '-0' + date[0:1] + '-0' + date[2:3]
+
+        # date2 = re.fullmatch('[0-9]{2}/[0-9]{2}/[0-9]{4}', date)  # dd/mm/yyyy
+        # if date2 is not None:
+        #     return date[6:10] + '-' + date[3:5] + '-' + date[0:2]
 
         return '0000-00-00'
 
@@ -234,10 +246,13 @@ if __name__ == '__main__':
     # print(Journal.format_date('1991-1-12'))
     # print(Journal.format_date('1991-12-2'))
     # print(Journal.format_date('1991-1-3'))
-    print(Journal.format_date('01/05/1993', b))
+    print(Journal.format_date('11/31/1993', b))
+    print(Journal.format_date('1/31/1993', b))
+    print(Journal.format_date('11/1/1993', b))
+    print(Journal.format_date('1/1/1993', b))
 
-    print(Journal.format_date('1991-12', b))
-    print(Journal.format_date('1933-03', e))
-    print(Journal.format_date('2091', b))
-    print(Journal.format_date('2001', e))
-    print(Journal.format_date('', e))
+    # print(Journal.format_date('1991-12', b))
+    # print(Journal.format_date('1933-03', e))
+    # print(Journal.format_date('2091', b))
+    # print(Journal.format_date('2001', e))
+    # print(Journal.format_date('', e))
