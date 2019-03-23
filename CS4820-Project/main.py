@@ -97,10 +97,6 @@ class MainSystem(object):
         self.current_index = -1
 
     def create_journal_list(self):
-        """
-        Creates a list of journals with a given file path
-        :return: a list of journal objects
-        """
         self.journal_list = csv_reader.construct_journal_list_from(self.input_file_path)
 
     def recreate_journal_list(self):
