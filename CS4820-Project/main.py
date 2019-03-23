@@ -70,7 +70,7 @@ class MainSystem(object):
 
         if self.complete == 'False':
             choice = input('Do you want to continue what interrupted last time?(y/n)')
-            if choice == 'y':
+            if choice == 'y' or choice == 'Y':
                 self.restore_progress()
             else:
                 config_utils.config.clear_progress()
@@ -116,6 +116,10 @@ class MainSystem(object):
         :param mode: 'doi-search' or 'reality-check'
         :return:
         """
+        if mode == self.DOI_SEARCH_MODE:
+            debug.d_print('===============DOI-SEARCH=================')
+        if mode == self.REALITY_CHECK_MODE:
+            debug.d_print('==============REALITY-CHECK===============')
 
         config_utils.config.update_email(self.receiver)
         index = self.current_index
@@ -140,7 +144,11 @@ class MainSystem(object):
 
             index = 0
 
-        while index < len(self.journal_list):
+        debug.d_print2(self.journal_list[index])
+
+        #  Iterates a list of journals using index
+        list_size = len(self.journal_list)
+        while index < list_size:
             title = self.journal_list[index].title
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
                                                 status=mode, index=index, title=title)
@@ -158,6 +166,7 @@ class MainSystem(object):
             csv_reader.append_wrong_row(mode=mode, journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
             index = index + 1
+            debug.d_print(index, '/', list_size + 1, 'finished\n')  # prints progress
 
         if mode == self.DOI_SEARCH_MODE:
             self.continue_output_file_path = 'Data-Files/Output-Files/' + self.output_file_path
@@ -186,7 +195,7 @@ class MainSystem(object):
                 debug.d_print(doi)
             else:
                 debug.d_print('https://doi.org/' + doi)
-        debug.d_print('Search article finished')
+        debug.d_print('One Journal Finished')
 
     def check_reality(self, journal):
         """
@@ -197,7 +206,7 @@ class MainSystem(object):
         debug.d_print(journal.title, journal.publisher)
         for year in journal.year_dict:
             doi = journal.year_dict[year][self.ARTICLE].doi
-            debug.d_print('https://doi.org/' + str(doi))
+            # debug.d_print('https://doi.org/' + str(doi))
             try:
                 result = screenscraper.check_journal(doi)  # reality check
             except Exception:
@@ -216,13 +225,12 @@ class MainSystem(object):
                 journal.year_dict[year][self.ARTICLE].free = True
 
             journal.year_dict[year][self.ARTICLE].result = self.convert_result(result)  # result is checked
-            debug.d_print(str(year), ':', str(result))
+            debug.d_print(str(year), ':', str(result), '=', 'https://doi.org/' + str(doi))
 
-        debug.d_print(journal.wrong_years)
         journal.record_wrong_years()  # wrong years are updated
         journal.record_free_years()  # free years are updated
 
-        debug.d_print('Reality check finished')
+        debug.d_print('One Journal Finished')
 
     @staticmethod
     def convert_result(result):

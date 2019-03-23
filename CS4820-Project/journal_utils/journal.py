@@ -48,14 +48,14 @@ class Journal(object):
         s = ', '
         q = "'"
         cq = s + q
-        line = ("\"" + self.title + "\" / " + self.package + s +
-                # self.url + s +
-                # self.publisher + s +
-                self.wrap_quote(self.title) + s +
+        line = (self.wrap_quote(self.title) + s +
+                self.wrap_quote(self.package) + s +
+                # self.wrap_quote(self.url) + s +
+                # self.wrap_quote(self.publisher) + s +
                 self.wrap_quote(self.expected_subscription_begin) + s +
                 self.wrap_quote(self.expected_subscription_end) + s +
                 self.wrap_quote(self.print_issn) + s +
-                self.wrap_quote(self.online_issn) + s
+                self.wrap_quote(self.online_issn)
                 # str(self.begin_date) + s +
                 # str(self.end_date) + s
                 )
