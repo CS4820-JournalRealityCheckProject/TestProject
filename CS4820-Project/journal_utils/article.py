@@ -7,6 +7,8 @@ class Article(object):
         self.doi = doi
         self.date = date
         self.accessible = False
+        self.free = False
+        self.open = False
         self.result = None
         self.reason_of_false = 'no issues'
 

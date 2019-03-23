@@ -20,8 +20,15 @@ class MainSystem(object):
     This class is instantiated at turning on the system.
     """
 
+    # two modes
     DOI_SEARCH_MODE = 'doi-search'
     REALITY_CHECK_MODE = 'reality-check'
+
+    # indexes used for year_dict[year][index] for Journal
+    # year_dict = {year: (begin_date, end_date, Article)}
+    BEGIN = 0
+    END = 1
+    ARTICLE = 2
 
     def __init__(self):
 
@@ -159,8 +166,7 @@ class MainSystem(object):
         self.send_email()
         self.reset_member_variables()
 
-    @staticmethod
-    def search_article(journal):
+    def search_article(self, journal):
         """
         Fetching articles using crossref api.
         :param journal: a journal object
@@ -168,15 +174,14 @@ class MainSystem(object):
         """
         for year in journal.year_dict:
             debug.d_print(journal.title,
-                          journal.year_dict[year][0],  # start_date
-                          journal.year_dict[year][1],  # end_date
+                          journal.year_dict[year][self.BEGIN],  # start_date
+                          journal.year_dict[year][self.END],  # end_date
                           journal.print_issn, journal.online_issn)
             doi = searcher.search_journal(journal.title,
-                                          journal.year_dict[year][0],  # start_date
-                                          journal.year_dict[year][1],  # end_date
+                                          journal.year_dict[year][self.BEGIN],  # start_date
+                                          journal.year_dict[year][self.END],  # end_date
                                           journal.print_issn, journal.online_issn)
-            journal.year_dict[year][2].doi = doi
-            # journal.year_article_dict[year].doi = doi
+            journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
                 debug.d_print(doi)
             else:
@@ -191,7 +196,7 @@ class MainSystem(object):
         """
         debug.d_print(journal.title, journal.publisher)
         for year in journal.year_dict:
-            doi = journal.year_dict[year][2].doi
+            doi = journal.year_dict[year][self.ARTICLE].doi
             debug.d_print('https://doi.org/' + str(doi))
             try:
                 result = screenscraper.check_journal(doi)  # reality check
@@ -200,11 +205,17 @@ class MainSystem(object):
                 debug.d_print('|exception happened|')
                 result = result_enum.Result.OtherException
 
-            journal.year_dict[year][2].result = result  # result is stored in article
-            if result is result_enum.Result.Access or result is result_enum.Result.OpenAccess:
-                journal.year_dict[year][2].accessible = True
+            journal.year_dict[year][self.ARTICLE].result = result  # result is stored in article
+            if result is result_enum.Result.Access:
+                journal.year_dict[year][self.ARTICLE].accessible = True
+            if result is result_enum.Result.OpenAccess:
+                journal.year_dict[year][self.ARTICLE].accessible = True
+                journal.year_dict[year][self.ARTICLE].open = True
+            if result is result_enum.Result.FreeAccess:
+                journal.year_dict[year][self.ARTICLE].accessible = True
+                journal.year_dict[year][self.ARTICLE].free = True
 
-            journal.year_dict[year][2].result = self.convert_result(result)  # result is checked
+            journal.year_dict[year][self.ARTICLE].result = self.convert_result(result)  # result is checked
             debug.d_print(str(year), ':', str(result))
 
         debug.d_print(journal.wrong_years)

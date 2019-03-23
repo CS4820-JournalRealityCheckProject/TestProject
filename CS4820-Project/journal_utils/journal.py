@@ -7,6 +7,10 @@ import journal_utils.article as article
 class Journal(object):
     """This class models a journal"""
 
+    BEGIN = 0
+    END = 1
+    ARTICLE = 2
+
     def __init__(self,
                  title='None', package='None',
                  url='None', publisher='None',
@@ -34,6 +38,8 @@ class Journal(object):
         self.create_year_dict()
 
         self.result_as_expected = True
+        self.access_to_all = True
+        self.has_free_years = False
         self.wrong_years = ''
         self.free_years = ''
         # self.record_wrong_years()
@@ -142,22 +148,24 @@ class Journal(object):
 
     def record_wrong_years(self):
         for year in self.year_dict:
-            if not self.year_dict[year][2].accessible:  # article is accessible
-                if self.year_dict[year][2].result != 'Open-Access' and \
-                        self.year_dict[year][2].result != 'Free-Access':
+            if not self.year_dict[year][self.ARTICLE].accessible:  # article is accessible
+                if self.year_dict[year][self.ARTICLE].result != 'Open-Access' and \
+                        self.year_dict[year][self.ARTICLE].result != 'Free-Access':
                     self.wrong_years = self.wrong_years + str(year) + '/'
                     self.result_as_expected = False
-        if self.result_as_expected:
-            self.wrong_years = 'No-Wrong-Years'
+                    self.access_to_all = False
+        if self.access_to_all:
+            self.wrong_years = 'No-Problem-Years'
 
     def record_free_years(self):
         for year in self.year_dict:
-            if not self.year_dict[year][2].accessible:  # article is accessible
-                if self.year_dict[year][2].result == 'Open-Access' or \
-                        self.year_dict[year][2].result == 'Free-Access':
+            if self.year_dict[year][self.ARTICLE].accessible:  # article is accessible
+                if self.year_dict[year][self.ARTICLE].result == 'Open-Access' or \
+                        self.year_dict[year][self.ARTICLE].result == 'Free-Access':
                     self.free_years = self.free_years + str(year) + '/'
                     self.result_as_expected = False
-        if self.result_as_expected:
+                    self.has_free_years = True
+        if not self.has_free_years:
             self.free_years = 'No-Free-Years'
 
     @staticmethod
