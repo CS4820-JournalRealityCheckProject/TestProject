@@ -1,8 +1,10 @@
 import csv
+import os
 
 from journal_utils.journal import Journal
 
-path = 'Data-Files/Output-Files/'
+BASE_PATH = os.path.dirname(os.path.dirname(__file__))
+path = BASE_PATH+'/Data-Files/Output-Files/'
 ARTICLE = 2
 
 
