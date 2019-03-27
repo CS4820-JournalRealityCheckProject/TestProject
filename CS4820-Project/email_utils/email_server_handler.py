@@ -8,20 +8,29 @@ from email.mime.multipart import MIMEMultipart
 class EmailHandler:
     port = 25
     smtp_server = "internal-smtp.upei.ca"
+    sender = "UPEI REALITY CHECK SYSTEM"
     receiver = ""
+    subject = "Reality check program finished"
+    body = "Reality Check System finished. There are two files attached\n\n"
 
     def set_receiver(self, receiver):
         self.receiver = receiver
+
+    def set_subject(self, subject):
+        self.subject = subject
+
+    def set_body(self, body):
+        self.body = body
 
     def send(self, file_array):
         if self.receiver == "":
             print("There is no specified receiver")
             return
         msg = MIMEMultipart()
-        msg['Subject'] = "Results"
-        msg['From'] = "UPEI REALITY CHECK SYSTEM"
+        msg['Subject'] = self.subject
+        msg['From'] = self.sender
         msg['To'] = self.receiver
-        body = "Reality Check System finished. There are two files attached\n\n"
+        body = self.body
         msg.attach(MIMEText(body, "plain"))
         # Read the supplied file
         for file_path in file_array:
