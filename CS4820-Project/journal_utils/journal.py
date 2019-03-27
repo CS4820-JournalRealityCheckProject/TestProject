@@ -1,15 +1,23 @@
 import datetime
 import re
+import logging
 
 import journal_utils.article as article
+
+# logging.basicConfig(level=logging.DEBUG, format='journal.py: %(message)s')
 
 
 class Journal(object):
     """This class models a journal"""
 
+    # indexes for year_dict
     BEGIN = 0
     END = 1
     ARTICLE = 2
+
+    # problems that can occur
+    YEAR_FORMAT_PROBLEM = 'DATES-WRONG-FORMAT'
+    EMPTY_COLUMN_PROBLEM = 'HAS-EMPTY-COLUMN'
 
     def __init__(self,
                  title='None', package='None',
@@ -19,46 +27,76 @@ class Journal(object):
                  expected_subscript_end='None'
                  ):
 
+        # member variables 1 for problems
+        self.has_problem = False
+        self.problem_detail = ''
+
+        # member variables 2
+        self.result_as_expected = True
+        self.access_to_all = True
+        self.has_free_years = False
+        self.wrong_years = ''
+        self.free_years = ''
+
+        # member variables 3
         self.title = title
         self.package = package
         self.url = url
         self.publisher = publisher
         self.print_issn = print_issn
         self.online_issn = online_issn
-        self.expected_subscription_begin = self.format_date(expected_subscript_begin, self.BEGIN)
-        self.expected_subscription_end = self.format_date(expected_subscript_end, self.END)
 
-        print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)  # Test print
+        # if self.print_issn == '':
+            # self.print_issn = 'no-print-issn'
+        # if self.online_issn == '':
+            # self.online_issn = 'no-online-issn'
 
-        self.begin_date = self.create_date(self.expected_subscription_begin)  # datetime object
-        self.end_date = self.create_date(self.expected_subscription_end)  # datetime object
-        self.year_dict = {}  # year: (start_date, end_date, Article)
-        self.year_article_dict = {}  # year: Article
+        try:
+            self.expected_subscription_begin = self.format_date(expected_subscript_begin, self.BEGIN)
+            self.expected_subscription_end = self.format_date(expected_subscript_end, self.END)
+        except ValueError as ex:
+            self.has_problem = True
+            self.problem_detail = self.YEAR_FORMAT_PROBLEM
+            self.expected_subscription_begin = 'wrong-start-date'
+            self.expected_subscription_end = 'wrong-end-date'
+            logging.debug(ex)
+            logging.debug('format_date')
+            logging.debug(self.title)
+            logging.debug(__class__)
+            print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
+            return  # the value is incorrect, you will not create a journal
 
-        self.create_year_dict()
+        print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
 
-        self.result_as_expected = True
-        self.access_to_all = True
-        self.has_free_years = False
-        self.wrong_years = ''
-        self.free_years = ''
-        # self.record_wrong_years()
+        try:
+            self.begin_date = self.create_date(self.expected_subscription_begin)  # datetime object
+            self.end_date = self.create_date(self.expected_subscription_end)  # datetime object
+            self.year_dict = {}  # year: (start_date, end_date, Article)
+            self.create_year_dict()
+        except ValueError as ex:
+            self.has_problem = True
+            self.problem_detail = self.YEAR_FORMAT_PROBLEM
+            logging.debug(ex)
+            logging.debug(__class__)
 
     def __str__(self):
         s = ', '
         q = "'"
         cq = s + q
-        line = (self.wrap_quote(self.title) + s +
-                self.wrap_quote(self.package) + s +
+        line = (self.wrap_quote(self.title) + ' ' +
+                self.wrap_quote(self.expected_subscription_begin) + ' ' +
+                self.wrap_quote(self.expected_subscription_end) + ' ' +
+                self.wrap_quote(self.print_issn) + ' ' +
+                self.wrap_quote(self.online_issn) + ' ' +
+                self.wrap_quote(self.package)
                 # self.wrap_quote(self.url) + s +
                 # self.wrap_quote(self.publisher) + s +
-                self.wrap_quote(self.expected_subscription_begin) + s +
-                self.wrap_quote(self.expected_subscription_end) + s +
-                self.wrap_quote(self.print_issn) + s +
-                self.wrap_quote(self.online_issn)
                 # str(self.begin_date) + s +
                 # str(self.end_date) + s
                 )
+        # line = (self.title + ', ' + self.expected_subscription_begin + ', ' + self.expected_subscription_end + ', ' +
+        #         self.print_issn + ', ' + self.online_issn + ', ' + self.package)
+
         return line
 
     @staticmethod
@@ -68,7 +106,7 @@ class Journal(object):
         :param s: string
         :return: a string wapped with single quotes.
         """
-        return "'" + s + "'"
+        return '[' + s + ']'
 
     @staticmethod
     def create_date(date):
@@ -178,7 +216,7 @@ class Journal(object):
         if date == 'Present':
             return date
 
-        if date == '':  # when ending date is empty, then consider it as 'Present'
+        if date == '' and begin_or_end == END:  # when ending date is empty, then consider it as 'Present'
             return 'Present'
 
         date0 = re.fullmatch('[0-9]{4}', date)  # yyyy
@@ -231,7 +269,8 @@ class Journal(object):
         # if date2 is not None:
         #     return date[6:10] + '-' + date[3:5] + '-' + date[0:2]
 
-        return '0000-00-00'
+        # date format is not expected
+        raise ValueError
 
 
 if __name__ == '__main__':

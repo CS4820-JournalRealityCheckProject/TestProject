@@ -68,6 +68,12 @@ class MainSystem(object):
         debug.d_print(self.input_file_path)
         debug.d_print(self.status)
 
+        # Prepare UI
+        self.ui = None
+        self.root = tk.Tk()
+        self.root.title("Journal Reality Checking System")
+        self.root.geometry("500x400")
+
         if self.complete == 'False':
             choice = input('Do you want to continue what interrupted last time?(y/n)')
             if choice == 'y' or choice == 'Y':
@@ -76,13 +82,7 @@ class MainSystem(object):
                 config_utils.config.clear_progress()
                 self.reset_member_variables()
 
-        # Prepare UI
-        self.ui = None
-        self.root = tk.Tk()
-        self.root.title("Journal Reality Checking System")
-        self.root.geometry("500x400")
-
-        # Starts UI
+        # Instantiate MainUI class object
         self.ui = main_ui.MainUI(master=self.root, main_system=self)
         self.ui.mainloop()  # starts UI
 
@@ -144,29 +144,38 @@ class MainSystem(object):
 
             index = 0
 
-        debug.d_print2(self.journal_list[index])
-
         #  Iterates a list of journals using index
         list_size = len(self.journal_list)
         while index < list_size:
+            debug.d_print(index + 1, ":", self.journal_list[index])
             title = self.journal_list[index].title
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
                                                 status=mode, index=index, title=title)
 
-            if mode == self.DOI_SEARCH_MODE:
-                self.search_article(self.journal_list[index])  # DOI Search
-            elif mode == self.REALITY_CHECK_MODE:
-                self.check_reality(self.journal_list[index])  # Reality Check
+            if not self.journal_list[index].has_problem:
+                if mode == self.DOI_SEARCH_MODE:
+                    self.search_article(self.journal_list[index])  # DOI Search
+                elif mode == self.REALITY_CHECK_MODE:
+                    self.check_reality(self.journal_list[index])  # Reality Check
 
-            if mode == self.DOI_SEARCH_MODE:
-                csv_reader.append_doi_row(self.journal_list[index], self.output_file_path)
-            elif mode == self.REALITY_CHECK_MODE:
-                csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
+            if not self.journal_list[index].has_problem:
+                if mode == self.DOI_SEARCH_MODE:
+                    csv_reader.append_doi_row(self.journal_list[index], self.output_file_path)
+                elif mode == self.REALITY_CHECK_MODE:
+                    csv_reader.append_journal_row(self.journal_list[index], self.output_file_path)
 
             csv_reader.append_wrong_row(mode=mode, journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
+
+            if not self.journal_list[index].has_problem:
+                debug.d_print(index+1, '/', list_size, 'finished\n')  # prints progress
+            else:
+                debug.d_print(index+1, '/', list_size, 'skipped\n')  # prints progress
+
+            if self.ui is not None:
+                self.ui.notify_progress(index+1, list_size)
+
             index = index + 1
-            debug.d_print(index, '/', list_size + 1, 'finished\n')  # prints progress
 
         if mode == self.DOI_SEARCH_MODE:
             self.continue_output_file_path = 'Data-Files/Output-Files/' + self.output_file_path
@@ -182,10 +191,9 @@ class MainSystem(object):
         :return:
         """
         for year in journal.year_dict:
-            debug.d_print(journal.title,
-                          journal.year_dict[year][self.BEGIN],  # start_date
+            debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
                           journal.year_dict[year][self.END],  # end_date
-                          journal.print_issn, journal.online_issn)
+                          )
             doi = searcher.search_journal(journal.title,
                                           journal.year_dict[year][self.BEGIN],  # start_date
                                           journal.year_dict[year][self.END],  # end_date
@@ -195,7 +203,6 @@ class MainSystem(object):
                 debug.d_print(doi)
             else:
                 debug.d_print('https://doi.org/' + doi)
-        debug.d_print('One Journal Finished')
 
     def check_reality(self, journal):
         """
@@ -203,7 +210,6 @@ class MainSystem(object):
         :param journal: a journal object
         :return:
         """
-        debug.d_print(journal.title, journal.publisher)
         for year in journal.year_dict:
             doi = journal.year_dict[year][self.ARTICLE].doi
             # debug.d_print('https://doi.org/' + str(doi))
@@ -229,8 +235,6 @@ class MainSystem(object):
 
         journal.record_wrong_years()  # wrong years are updated
         journal.record_free_years()  # free years are updated
-
-        debug.d_print('One Journal Finished')
 
     @staticmethod
     def convert_result(result):

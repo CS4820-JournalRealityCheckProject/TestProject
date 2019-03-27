@@ -1,9 +1,15 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import csv
+import logging
+import threading
+
 from tkinter import filedialog
-import journal_utils.csv_reader as csv_reader
+
 import debug_utils.debug as debug
+
+
+# logging.basicConfig(level=logging.DEBUG, format='%(threadName)s: %(message)s')
 
 
 class MainUI(tk.Frame):
@@ -60,6 +66,10 @@ class MainUI(tk.Frame):
         # master root
         self.master = master
         self.pack()
+
+        # threads
+        self.doi_search_thread = None
+        self.reality_check_thread = None
 
         # member variables
         self.main_system = main_system
@@ -125,6 +135,7 @@ class MainUI(tk.Frame):
         self.email_textfield.grid(row=4, column=2)
         self.email_textfield.insert(tk.END, self.receiver)
         self.email_textfield.bind("<FocusIn>", self.email_entered)
+        self.email_textfield.config(state='disabled')
 
         # warning message label
         self.warn_var = tk.StringVar()
@@ -145,13 +156,16 @@ class MainUI(tk.Frame):
         self.radio_var.set(self.PREVIOUS_EMAIL)
 
         # radio buttons
-        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Saved Email',
-                                   command=self.radio_button_changed)
-        self.rdo1.grid(row=7, column=2)
+        self.previous_email_radio_btn = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var,
+                                                       text='Use Saved Email',
+                                                       command=self.saved_email_clicked)
+        self.previous_email_radio_btn.grid(row=7, column=2)
 
-        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Update Email',
-                                   command=self.radio_button_changed)
-        self.rdo2.grid(row=8, column=2)
+        self.new_email_radio_btn = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var,
+                                                  text='Update Email',
+                                                  command=self.new_email_clicked)
+        self.new_email_radio_btn.grid(row=8, column=2)
+        self.disable_email_widgets()  # disable radio buttons
 
         # continue button
         self.continue_msg = 'Continue with '
@@ -176,6 +190,8 @@ class MainUI(tk.Frame):
         self.file_var.set(f_name)
         self.file_name = f_name
 
+        self.continue_button.configure(state='disabled')  # continue button disabled
+
         # checks if the uploaded file is valid
         with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
             reader = csv.reader(csv_file)
@@ -186,10 +202,6 @@ class MainUI(tk.Frame):
                 self.mode = self.MODE_NOT_SET
                 debug.d_print('*This is the standard format')
 
-            # elif header == self.OXFORD_HEADER:
-            #     self.mode = self.MODE_NOT_SET
-            #     debug.d_print('*This is the oxford format')
-
             elif header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER \
                     or header == self.OXFORD_HEADER:
                 self.mode = self.DOI_SEARCH_MODE
@@ -198,6 +210,7 @@ class MainUI(tk.Frame):
                 self.top_message_var.set('DOI-SEARCH')
                 self.warn_var.set('')
                 debug.d_print('for journal')
+                self.enable_email_widgets()
 
             elif header == self.TEMP_CSV_HEADER:
                 self.mode = self.REALITY_CHECK_MODE
@@ -206,6 +219,7 @@ class MainUI(tk.Frame):
                 self.top_message_var.set('REALITY CHECK')
                 self.warn_var.set('')
                 debug.d_print('for doi')
+                self.enable_email_widgets()
 
             else:
                 self.mode = self.MODE_NOT_SET
@@ -233,37 +247,37 @@ class MainUI(tk.Frame):
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")
 
-            self.search_article()  # the lines below are not executed if interrupted
-
-            self.warn_var.set('DOI Search FINISHED')
-            self.output_file_path = self.main_system.continue_output_file_path
-            print(self.output_file_path)
-            self.top_message_var.set('REALITY CHECK READY')
-            self.warn_var.set(self.output_file_path)
-            self.continue_button.config(state="normal")
-            self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
+            # starts a thread
+            self.doi_search_thread = threading.Thread(name='doi-search-worker', target=self.doi_search_worker)
+            self.doi_search_thread.start()
+            self.disable_all_buttons()
+            self.warn_var.set('Started')
 
         elif self.mode == self.REALITY_CHECK_MODE:
             self.start_button.config(state="disabled")
 
-            self.check_reality()  # the lines below are not executed if interrupted
-
-            self.warn_var.set('Reality Check FINISHED')
+            # starts a thread
+            self.reality_check_thread = threading.Thread(name='reality-check-worker', target=self.reality_check_worker)
+            self.reality_check_thread.start()
+            self.disable_all_buttons()
+            self.warn_var.set('Started')
 
     def email_entered(self, event=None):
         self.email_textfield.delete(0, tk.END)
         self.radio_var.set(self.NEW_EMAIL)
 
-    def radio_button_changed(self, event=None):
-        if self.radio_var.get() == self.PREVIOUS_EMAIL:
-            self.temp_receiver = self.email_textfield.get()
-            self.email_textfield.delete(0, tk.END)
-            self.email_textfield.insert(tk.END, self.receiver)
-            self.email_textfield.configure(fg=self.COLOR_SAVED_EMAIL)
-        elif self.radio_var.get() == self.NEW_EMAIL:
-            self.email_textfield.delete(0, tk.END)
-            self.email_textfield.insert(tk.END, self.temp_receiver)
-            self.email_textfield.configure(fg=self.COLOR_NEW_EMAIL)
+    def saved_email_clicked(self):
+        self.temp_receiver = self.email_textfield.get()
+        self.email_textfield.delete(0, tk.END)
+        self.email_textfield.insert(tk.END, self.receiver)
+        self.email_textfield.configure(fg=self.COLOR_SAVED_EMAIL)
+        self.email_textfield.config(state='disabled')
+
+    def new_email_clicked(self):
+        self.email_textfield.delete(0, tk.END)
+        self.email_textfield.insert(tk.END, self.temp_receiver)
+        self.email_textfield.configure(fg=self.COLOR_NEW_EMAIL)
+        self.email_textfield.config(state='normal')
 
     def is_new_receiver(self):
         if self.radio_var.get() == self.NEW_EMAIL:
@@ -275,8 +289,53 @@ class MainUI(tk.Frame):
         self.input_file_path = self.output_file_path
         self.start()
 
+    def doi_search_worker(self):
+        logging.debug('doi-search thread started')
+        self.search_article()
+
+        self.warn_var.set('DOI Search FINISHED')
+        self.output_file_path = self.main_system.continue_output_file_path
+        print(self.output_file_path)
+        self.top_message_var.set('REALITY CHECK READY')
+        self.warn_var.set('RESULT:' + self.output_file_path)
+        self.continue_button.config(state="normal")
+        self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
+        self.enable_initial_buttons()
+
+    def reality_check_worker(self):
+        logging.debug('reality-check thread started')
+        self.check_reality()
+
+        self.warn_var.set('Reality Check FINISHED')
+        self.enable_initial_buttons()
+
+    def notify_progress(self, numerator, denominator):
+        self.warn_var.set('Progress: ' + str(numerator) + ' / ' + str(denominator))
+
+    def disable_all_buttons(self):
+        self.start_button.configure(state='disabled')
+        self.upload_button.configure(state='disabled')
+        self.exit_button.configure(state='disabled')
+        self.continue_button.configure(state='disabled')
+        self.previous_email_radio_btn.configure(state='disabled')
+        self.new_email_radio_btn.configure(state='disabled')
+
+    def enable_initial_buttons(self):
+        self.upload_button.configure(state='normal')
+        self.exit_button.configure(state='normal')
+        self.previous_email_radio_btn.configure(state='normal')
+        self.new_email_radio_btn.configure(state='normal')
+
+    def disable_email_widgets(self):
+        self.email_textfield.config(state='disabled')
+        self.previous_email_radio_btn.configure(state='disabled')
+        self.new_email_radio_btn.configure(state='disabled')
+
+    def enable_email_widgets(self):
+        self.email_textfield.config(state='normal')
+        self.previous_email_radio_btn.configure(state='normal')
+        self.new_email_radio_btn.configure(state='normal')
+
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    app = MainUI(master=root)
-    app.mainloop()
+    print('ui')
