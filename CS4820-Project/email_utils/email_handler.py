@@ -11,6 +11,8 @@ class EmailHandler:
     sender = ""
     password = ""
     receiver = ""
+    subject = "Reality Check Finished"
+    body = "Reality Check System finished. There are two files attached\n\n"
     valid_sender = False
 
     def set_sender(self, sender, password):
@@ -27,6 +29,12 @@ class EmailHandler:
     def set_receiver(self, receiver):
         self.receiver = receiver
 
+    def set_subject(self, subject):
+        self.subject = subject
+
+    def set_body(self, body):
+        self.body = body
+
     def is_valid_sender(self):
         return self.valid_sender
 
@@ -38,10 +46,10 @@ class EmailHandler:
             print("There is no specified receiver")
             return
         msg = MIMEMultipart()
-        msg['Subject'] = "Reality Check Finished"
+        msg['Subject'] = self.subject
         msg['From'] = 'UPEI REALITY CHECK SYSTEM'
         msg['To'] = self.receiver
-        body = "Reality Check System finished. There are two files attached\n\n"
+        body = self.body
         msg.attach(MIMEText(body, "plain"))
         # Read the supplied file
         for file_path in file_array:

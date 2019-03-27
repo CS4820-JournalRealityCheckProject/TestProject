@@ -181,7 +181,7 @@ class MainSystem(object):
             self.continue_output_file_path = 'Data-Files/Output-Files/' + self.output_file_path
 
         config_utils.config.clear_progress()
-        self.send_email()
+        self.send_email(mode)
         self.reset_member_variables()
 
     def search_article(self, journal):
@@ -261,17 +261,21 @@ class MainSystem(object):
         else:
             return 'No-Result-Obtained'
 
-    def send_email(self):
+    def send_email(self, mode):
         """
         Send the result file to a specified email address.
         :return:
         """
-        emailer = email_handler.EmailHandler()
-        emailer.set_sender(sender=self.sender, password=self.password)
+        #  Sender is personal address
+        # emailer = email_handler.EmailHandler()
+        # emailer.set_sender(sender=self.sender, password=self.password)
 
-        # emailer = email_handler_s.EmailHandler()  # using a server name to send
+        #  Sender is a server
+        emailer = email_handler_s.EmailHandler()  # using a server name to send
 
         emailer.set_receiver(receiver=self.receiver)
+        emailer.set_subject(subject=mode + ' finished')
+        emailer.set_body(body='The ' + mode + ' has been finished. Two are files attached.\n\n')
 
         f1 = csv_reader.path + self.output_file_path + '.csv'
         f2 = csv_reader.path + self.wrong_file_path + '.csv'
