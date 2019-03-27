@@ -63,9 +63,10 @@ class Journal(object):
             logging.debug('format_date')
             logging.debug(self.title)
             logging.debug(__class__)
+            print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
             return  # the value is incorrect, you will not create a journal
 
-        # print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
+        print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
 
         try:
             self.begin_date = self.create_date(self.expected_subscription_begin)  # datetime object

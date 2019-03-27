@@ -37,9 +37,9 @@ def reconstruct_journal_list_from(articles_csv):
 
     with open(articles_csv, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
-        j = None
+        journal = None
         for row in reader:
-            y = int(row['Year'])
+            year = int(row['Year'])
             # if row['Accessible'] == 'TRUE':
             #     access = True
             # else:
@@ -49,21 +49,19 @@ def reconstruct_journal_list_from(articles_csv):
                 current_title = row['Title']
                 current_platform = row['PackageName']
 
-                j = Journal(row['Title'],
-                            row['PackageName'],
-                            row['URL'],
-                            row['Publisher'],
-                            row['PrintISSN'],
-                            row['OnlineISSN'],
-                            row['ManagedCoverageBegin'],
-                            row['ManagedCoverageEnd']
-                            )
-                j.year_dict[y][ARTICLE].doi = row['DOI']
-                journal_obj_list.append(j)
-                # j.year_dict[y][ARTICLE].accessible = access
+                journal = Journal(row['Title'],
+                                  row['PackageName'],
+                                  row['URL'],
+                                  row['Publisher'],
+                                  row['PrintISSN'],
+                                  row['OnlineISSN'],
+                                  row['ManagedCoverageBegin'],
+                                  row['ManagedCoverageEnd']
+                                  )
+                journal.year_dict[year][ARTICLE].doi = row['DOI']
+                journal_obj_list.append(journal)
             else:
-                j.year_dict[y][ARTICLE].doi = row['DOI']
-                # j.year_dict[y][ARTICLE].accessible = access
+                journal.year_dict[year][ARTICLE].doi = row['DOI']
 
     print('size' + str(len(journal_obj_list)))
     return journal_obj_list
