@@ -68,6 +68,12 @@ class MainSystem(object):
         debug.d_print(self.input_file_path)
         debug.d_print(self.status)
 
+        # Prepare UI
+        self.ui = None
+        self.root = tk.Tk()
+        self.root.title("Journal Reality Checking System")
+        self.root.geometry("500x400")
+
         if self.complete == 'False':
             choice = input('Do you want to continue what interrupted last time?(y/n)')
             if choice == 'y' or choice == 'Y':
@@ -76,13 +82,7 @@ class MainSystem(object):
                 config_utils.config.clear_progress()
                 self.reset_member_variables()
 
-        # Prepare UI
-        self.ui = None
-        self.root = tk.Tk()
-        self.root.title("Journal Reality Checking System")
-        self.root.geometry("500x400")
-
-        # Starts UI
+        # Instantiate MainUI class object
         self.ui = main_ui.MainUI(master=self.root, main_system=self)
         self.ui.mainloop()  # starts UI
 
@@ -172,10 +172,13 @@ class MainSystem(object):
             else:
                 debug.d_print(index+1, '/', list_size, 'skipped\n')  # prints progress
 
+            if self.ui is not None:
+                self.ui.notify_progress(index+1, list_size)
+
             index = index + 1
 
         if mode == self.DOI_SEARCH_MODE:
-            self.continue_output_file_path = 'Data-Files/Output-Files/' + self.output_file_path
+            self.continue_output_file_path = 'RESULT:' + 'Data-Files/Output-Files/' + self.output_file_path
 
         config_utils.config.clear_progress()
         self.send_email()
