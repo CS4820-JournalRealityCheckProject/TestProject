@@ -46,10 +46,10 @@ class Journal(object):
         self.print_issn = print_issn
         self.online_issn = online_issn
 
-        if self.print_issn == '':
-            self.print_issn = 'no-print-issn'
-        if self.online_issn == '':
-            self.online_issn = 'no-online-issn'
+        # if self.print_issn == '':
+            # self.print_issn = 'no-print-issn'
+        # if self.online_issn == '':
+            # self.online_issn = 'no-online-issn'
 
         try:
             self.expected_subscription_begin = self.format_date(expected_subscript_begin, self.BEGIN)
