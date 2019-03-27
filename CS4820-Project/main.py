@@ -276,7 +276,7 @@ class MainSystem(object):
         Send the result file to a specified email address.
         :return:
         """
-        use_server = True
+        use_server = False
 
         if use_server:
             #  Sender is a server
