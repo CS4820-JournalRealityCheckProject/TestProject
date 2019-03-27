@@ -185,6 +185,8 @@ class MainUI(tk.Frame):
         self.file_var.set(f_name)
         self.file_name = f_name
 
+        self.continue_button.configure(state='disabled')  # continue button disabled
+
         # checks if the uploaded file is valid
         with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
             reader = csv.reader(csv_file)
@@ -244,26 +246,18 @@ class MainUI(tk.Frame):
 
             # starts a thread
             self.doi_search_thread = threading.Thread(name='doi-search-worker', target=self.doi_search_worker)
-            # self.doi_search_thread.start()
-            self.search_article()  # the lines below are not executed if interrupted
-
-            self.warn_var.set('DOI Search FINISHED')
-            self.output_file_path = self.main_system.continue_output_file_path
-            print(self.output_file_path)
-            self.top_message_var.set('REALITY CHECK READY')
-            self.warn_var.set(self.output_file_path)
-            self.continue_button.config(state="normal")
-            self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
+            self.doi_search_thread.start()
+            self.disable_all_buttons()
+            self.warn_var.set('Started')
 
         elif self.mode == self.REALITY_CHECK_MODE:
             self.start_button.config(state="disabled")
 
             # starts a thread
             self.reality_check_thread = threading.Thread(name='reality-check-worker', target=self.reality_check_worker)
-            # self.reality_check_thread.start()
-            self.check_reality()  # the lines below are not executed if interrupted
-
-            self.warn_var.set('Reality Check FINISHED')
+            self.reality_check_thread.start()
+            self.disable_all_buttons()
+            self.warn_var.set('Started')
 
     def email_entered(self, event=None):
         self.email_textfield.delete(0, tk.END)
@@ -292,14 +286,41 @@ class MainUI(tk.Frame):
 
     def doi_search_worker(self):
         logging.debug('doi-search thread started')
-        self.search_article()  # the lines below are not executed if interrupted
+        self.search_article()
+
+        self.warn_var.set('DOI Search FINISHED')
+        self.output_file_path = self.main_system.continue_output_file_path
+        print(self.output_file_path)
+        self.top_message_var.set('REALITY CHECK READY')
+        self.warn_var.set(self.output_file_path)
+        self.continue_button.config(state="normal")
+        self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
+        self.enable_initial_buttons()
 
     def reality_check_worker(self):
         logging.debug('reality-check thread started')
-        self.check_reality()  # the lines below are not executed if interrupted
+        self.check_reality()
+
+        self.warn_var.set('Reality Check FINISHED')
+        self.enable_initial_buttons()
+
+    def notify_progress(self, numerator, denominator):
+        self.warn_var.set('Progress: ' + str(numerator) + ' / ' + str(denominator))
+
+    def disable_all_buttons(self):
+        self.start_button.configure(state='disabled')
+        self.upload_button.configure(state='disabled')
+        self.exit_button.configure(state='disabled')
+        self.continue_button.configure(state='disabled')
+        self.rdo1.configure(state='disabled')
+        self.rdo2.configure(state='disabled')
+
+    def enable_initial_buttons(self):
+        self.upload_button.configure(state='normal')
+        self.exit_button.configure(state='normal')
+        self.rdo1.configure(state='normal')
+        self.rdo2.configure(state='normal')
 
 
 if __name__ == '__main__':
     print('ui')
-
-
