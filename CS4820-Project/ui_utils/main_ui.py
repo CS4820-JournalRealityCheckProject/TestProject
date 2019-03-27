@@ -292,7 +292,7 @@ class MainUI(tk.Frame):
         self.output_file_path = self.main_system.continue_output_file_path
         print(self.output_file_path)
         self.top_message_var.set('REALITY CHECK READY')
-        self.warn_var.set(self.output_file_path)
+        self.warn_var.set('RESULT:' + self.output_file_path)
         self.continue_button.config(state="normal")
         self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
         self.enable_initial_buttons()
