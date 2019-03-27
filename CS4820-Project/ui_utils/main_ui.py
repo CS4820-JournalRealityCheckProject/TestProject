@@ -156,13 +156,15 @@ class MainUI(tk.Frame):
         self.radio_var.set(self.PREVIOUS_EMAIL)
 
         # radio buttons
-        self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Saved Email',
-                                   command=self.saved_email_clicked)
-        self.rdo1.grid(row=7, column=2)
+        self.previous_email_radio_btn = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var,
+                                                       text='Use Saved Email',
+                                                       command=self.saved_email_clicked)
+        self.previous_email_radio_btn.grid(row=7, column=2)
 
-        self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Update Email',
-                                   command=self.new_email_clicked)
-        self.rdo2.grid(row=8, column=2)
+        self.new_email_radio_btn = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var,
+                                                  text='Update Email',
+                                                  command=self.new_email_clicked)
+        self.new_email_radio_btn.grid(row=8, column=2)
         self.disable_email_widgets()  # disable radio buttons
 
         # continue button
@@ -315,24 +317,24 @@ class MainUI(tk.Frame):
         self.upload_button.configure(state='disabled')
         self.exit_button.configure(state='disabled')
         self.continue_button.configure(state='disabled')
-        self.rdo1.configure(state='disabled')
-        self.rdo2.configure(state='disabled')
+        self.previous_email_radio_btn.configure(state='disabled')
+        self.new_email_radio_btn.configure(state='disabled')
 
     def enable_initial_buttons(self):
         self.upload_button.configure(state='normal')
         self.exit_button.configure(state='normal')
-        self.rdo1.configure(state='normal')
-        self.rdo2.configure(state='normal')
+        self.previous_email_radio_btn.configure(state='normal')
+        self.new_email_radio_btn.configure(state='normal')
 
     def disable_email_widgets(self):
         self.email_textfield.config(state='disabled')
-        self.rdo1.configure(state='disabled')
-        self.rdo2.configure(state='disabled')
+        self.previous_email_radio_btn.configure(state='disabled')
+        self.new_email_radio_btn.configure(state='disabled')
 
     def enable_email_widgets(self):
         self.email_textfield.config(state='normal')
-        self.rdo1.configure(state='normal')
-        self.rdo2.configure(state='normal')
+        self.previous_email_radio_btn.configure(state='normal')
+        self.new_email_radio_btn.configure(state='normal')
 
 
 if __name__ == '__main__':
