@@ -2,9 +2,11 @@ import configparser
 import tkinter as tk
 import datetime
 import smtplib
+import threading
 
 import config_utils.config
 import ui_utils.main_ui as main_ui
+import ui_utils.popup as popup
 import journal_utils.csv_reader as csv_reader
 import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
@@ -75,8 +77,10 @@ class MainSystem(object):
         self.root.geometry("500x400")
 
         if self.complete == 'False':
-            choice = input('Do you want to continue what interrupted last time?(y/n)')
-            if choice == 'y' or choice == 'Y':
+            title = self.status
+            msg = 'Do you want to recover the progress last time?'
+            yes = popup.resume_yesno(title, msg)
+            if yes:
                 self.restore_progress()
             else:
                 config_utils.config.clear_progress()
@@ -91,10 +95,16 @@ class MainSystem(object):
 
         if self.status == 'doi-search':
             self.create_journal_list()
-            self.iterate_journal_list(self.DOI_SEARCH_MODE)
+            # self.iterate_journal_list(self.DOI_SEARCH_MODE)
+            doi_search_thread = threading.Thread(name='doi-search-worker',
+                                                 target=self.iterate_journal_list, args=(self.status,))
+            doi_search_thread.start()
         elif self.status == 'reality-check':
             self.recreate_journal_list()
-            self.iterate_journal_list(self.REALITY_CHECK_MODE)
+            # self.iterate_journal_list(self.REALITY_CHECK_MODE)
+            doi_search_thread = threading.Thread(name='doi-search-worker',
+                                                 target=self.iterate_journal_list, args=(self.status,))
+            doi_search_thread.start()
 
     def reset_member_variables(self):
         self.complete = 'True'
@@ -267,7 +277,7 @@ class MainSystem(object):
         :return:
         """
         use_server = True
-        
+
         if use_server:
             #  Sender is a server
             emailer = email_server.EmailHandler()  # using a server name to send
