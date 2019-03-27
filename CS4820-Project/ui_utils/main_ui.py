@@ -1,9 +1,14 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import csv
+import logging
+import threading
+
 from tkinter import filedialog
-import journal_utils.csv_reader as csv_reader
+
 import debug_utils.debug as debug
+
+# logging.basicConfig(level=logging.DEBUG, format='%(threadName)s: %(message)s')
 
 
 class MainUI(tk.Frame):
@@ -60,6 +65,10 @@ class MainUI(tk.Frame):
         # master root
         self.master = master
         self.pack()
+
+        # threads
+        self.doi_search_thread = None
+        self.reality_check_thread = None
 
         # member variables
         self.main_system = main_system
@@ -233,6 +242,9 @@ class MainUI(tk.Frame):
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")
 
+            # starts a thread
+            self.doi_search_thread = threading.Thread(name='doi-search-worker', target=self.doi_search_worker)
+            # self.doi_search_thread.start()
             self.search_article()  # the lines below are not executed if interrupted
 
             self.warn_var.set('DOI Search FINISHED')
@@ -246,6 +258,9 @@ class MainUI(tk.Frame):
         elif self.mode == self.REALITY_CHECK_MODE:
             self.start_button.config(state="disabled")
 
+            # starts a thread
+            self.reality_check_thread = threading.Thread(name='reality-check-worker', target=self.reality_check_worker)
+            # self.reality_check_thread.start()
             self.check_reality()  # the lines below are not executed if interrupted
 
             self.warn_var.set('Reality Check FINISHED')
@@ -275,8 +290,16 @@ class MainUI(tk.Frame):
         self.input_file_path = self.output_file_path
         self.start()
 
+    def doi_search_worker(self):
+        logging.debug('doi-search thread started')
+        self.search_article()  # the lines below are not executed if interrupted
+
+    def reality_check_worker(self):
+        logging.debug('reality-check thread started')
+        self.check_reality()  # the lines below are not executed if interrupted
+
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    app = MainUI(master=root)
-    app.mainloop()
+    print('ui')
+
+

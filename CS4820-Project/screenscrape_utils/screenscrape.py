@@ -36,7 +36,7 @@ def check_journal(doi):
     if doi is None or doi == "":
         return Result.NoArticle
     publisher = doi_to_journal(doi)
-    print(publisher)
+    # print(publisher)
     try:
         if publisher == "Royal Society of Chemistry (RSC)":
             return chem_gold(doi)

@@ -126,36 +126,34 @@ def prepare_wrong_csv(wrong_file='wrong-list'):
 def append_doi_row(journal, file_name='doi-articles'):
     with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
-        j = journal
-        for y in j.year_dict:
-            writer.writerow([j.title,
-                             y,
-                             j.year_dict[y][ARTICLE].doi,
-                             j.package,
-                             j.url,
-                             j.publisher,
-                             j.print_issn,
-                             j.online_issn,
-                             j.expected_subscription_begin,
-                             j.expected_subscription_end,
+        for year in journal.year_dict:
+            writer.writerow([journal.title,
+                             year,
+                             journal.year_dict[year][ARTICLE].doi,
+                             journal.package,
+                             journal.url,
+                             journal.publisher,
+                             journal.print_issn,
+                             journal.online_issn,
+                             journal.expected_subscription_begin,
+                             journal.expected_subscription_end,
                              ])
 
 
 def append_journal_row(journal, file_name='result-journals'):
     with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
-        j = journal
-        writer.writerow([j.title,
-                         j.package,
-                         j.url,
-                         j.publisher,
-                         j.print_issn,
-                         j.online_issn,
-                         j.expected_subscription_begin,
-                         j.expected_subscription_end,
-                         j.access_to_all,
-                         j.wrong_years,
-                         j.free_years
+        writer.writerow([journal.title,
+                         journal.package,
+                         journal.url,
+                         journal.publisher,
+                         journal.print_issn,
+                         journal.online_issn,
+                         journal.expected_subscription_begin,
+                         journal.expected_subscription_end,
+                         journal.access_to_all,
+                         journal.wrong_years,
+                         journal.free_years
                          ])
 
 
@@ -169,30 +167,42 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
     """
     with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
-        j = journal
 
-        for y in j.year_dict:
+        if journal.has_problem:
+            if mode == 'doi-search':
+                writer.writerow([journal.title,
+                                 'failed',
+                                 journal.problem_detail,
+                                 '',
+                                 '',
+                                 journal.package,
+                                 journal.url,
+                                 journal.publisher,
+                                 ])
+            return
 
-            if mode == 'doi-search' and j.year_dict[y][ARTICLE].doi is None:
-                writer.writerow([j.title,
-                                 y,
-                                 j.year_dict[y][ARTICLE].result,
+        for year in journal.year_dict:
+
+            if mode == 'doi-search' and journal.year_dict[year][ARTICLE].doi is None:
+                writer.writerow([journal.title,
+                                 year,
+                                 journal.year_dict[year][ARTICLE].result,
                                  'no-doi',
                                  '',
-                                 j.package,
-                                 j.url,
-                                 j.publisher,
+                                 journal.package,
+                                 journal.url,
+                                 journal.publisher,
                                  ])
 
-            if mode == 'reality-check' and not j.year_dict[y][ARTICLE].accessible:
-                writer.writerow([j.title,
-                                 y,
-                                 j.year_dict[y][ARTICLE].result,
-                                 j.year_dict[y][ARTICLE].doi,
-                                 'http://doi.org/' + str(j.year_dict[y][ARTICLE].doi),
-                                 j.package,
-                                 j.url,
-                                 j.publisher,
+            if mode == 'reality-check' and not journal.year_dict[year][ARTICLE].accessible:
+                writer.writerow([journal.title,
+                                 year,
+                                 journal.year_dict[year][ARTICLE].result,
+                                 journal.year_dict[year][ARTICLE].doi,
+                                 'http://doi.org/' + str(journal.year_dict[year][ARTICLE].doi),
+                                 journal.package,
+                                 journal.url,
+                                 journal.publisher,
                                  ])
 
 
