@@ -10,7 +10,7 @@ import crossrefapi_utils.journal_search as searcher
 import screenscrape_utils.screenscrape as screenscraper
 import screenscrape_utils.result_enum as result_enum
 import email_utils.email_handler as email_handler
-import email_utils.email_server_handler as email_handler_s
+import email_utils.email_server_handler as email_server
 import debug_utils.debug as debug
 
 
@@ -168,12 +168,12 @@ class MainSystem(object):
                                         file_name=self.wrong_file_path)
 
             if not self.journal_list[index].has_problem:
-                debug.d_print(index+1, '/', list_size, 'finished\n')  # prints progress
+                debug.d_print(index + 1, '/', list_size, 'finished\n')  # prints progress
             else:
-                debug.d_print(index+1, '/', list_size, 'skipped\n')  # prints progress
+                debug.d_print(index + 1, '/', list_size, 'skipped\n')  # prints progress
 
             if self.ui is not None:
-                self.ui.notify_progress(index+1, list_size)
+                self.ui.notify_progress(index + 1, list_size)
 
             index = index + 1
 
@@ -266,12 +266,15 @@ class MainSystem(object):
         Send the result file to a specified email address.
         :return:
         """
-        #  Sender is personal address
-        # emailer = email_handler.EmailHandler()
-        # emailer.set_sender(sender=self.sender, password=self.password)
-
-        #  Sender is a server
-        emailer = email_handler_s.EmailHandler()  # using a server name to send
+        use_server = True
+        
+        if use_server:
+            #  Sender is a server
+            emailer = email_server.EmailHandler()  # using a server name to send
+        else:
+            #  Sender is personal address
+            emailer = email_handler.EmailHandler()
+            emailer.set_sender(sender=self.sender, password=self.password)
 
         emailer.set_receiver(receiver=self.receiver)
         emailer.set_subject(subject=mode + ' finished')
