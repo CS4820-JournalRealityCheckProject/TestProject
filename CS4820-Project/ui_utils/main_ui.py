@@ -8,6 +8,7 @@ from tkinter import filedialog
 
 import debug_utils.debug as debug
 
+
 # logging.basicConfig(level=logging.DEBUG, format='%(threadName)s: %(message)s')
 
 
@@ -134,6 +135,7 @@ class MainUI(tk.Frame):
         self.email_textfield.grid(row=4, column=2)
         self.email_textfield.insert(tk.END, self.receiver)
         self.email_textfield.bind("<FocusIn>", self.email_entered)
+        self.email_textfield.config(state='disabled')
 
         # warning message label
         self.warn_var = tk.StringVar()
@@ -155,12 +157,13 @@ class MainUI(tk.Frame):
 
         # radio buttons
         self.rdo1 = tk.Radiobutton(tab1, value=self.PREVIOUS_EMAIL, variable=self.radio_var, text='Use Saved Email',
-                                   command=self.radio_button_changed)
+                                   command=self.saved_email_clicked)
         self.rdo1.grid(row=7, column=2)
 
         self.rdo2 = tk.Radiobutton(tab1, value=self.NEW_EMAIL, variable=self.radio_var, text='Update Email',
-                                   command=self.radio_button_changed)
+                                   command=self.new_email_clicked)
         self.rdo2.grid(row=8, column=2)
+        self.disable_email_widgets()  # disable radio buttons
 
         # continue button
         self.continue_msg = 'Continue with '
@@ -197,10 +200,6 @@ class MainUI(tk.Frame):
                 self.mode = self.MODE_NOT_SET
                 debug.d_print('*This is the standard format')
 
-            # elif header == self.OXFORD_HEADER:
-            #     self.mode = self.MODE_NOT_SET
-            #     debug.d_print('*This is the oxford format')
-
             elif header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER \
                     or header == self.OXFORD_HEADER:
                 self.mode = self.DOI_SEARCH_MODE
@@ -209,6 +208,7 @@ class MainUI(tk.Frame):
                 self.top_message_var.set('DOI-SEARCH')
                 self.warn_var.set('')
                 debug.d_print('for journal')
+                self.enable_email_widgets()
 
             elif header == self.TEMP_CSV_HEADER:
                 self.mode = self.REALITY_CHECK_MODE
@@ -217,6 +217,7 @@ class MainUI(tk.Frame):
                 self.top_message_var.set('REALITY CHECK')
                 self.warn_var.set('')
                 debug.d_print('for doi')
+                self.enable_email_widgets()
 
             else:
                 self.mode = self.MODE_NOT_SET
@@ -263,16 +264,18 @@ class MainUI(tk.Frame):
         self.email_textfield.delete(0, tk.END)
         self.radio_var.set(self.NEW_EMAIL)
 
-    def radio_button_changed(self, event=None):
-        if self.radio_var.get() == self.PREVIOUS_EMAIL:
-            self.temp_receiver = self.email_textfield.get()
-            self.email_textfield.delete(0, tk.END)
-            self.email_textfield.insert(tk.END, self.receiver)
-            self.email_textfield.configure(fg=self.COLOR_SAVED_EMAIL)
-        elif self.radio_var.get() == self.NEW_EMAIL:
-            self.email_textfield.delete(0, tk.END)
-            self.email_textfield.insert(tk.END, self.temp_receiver)
-            self.email_textfield.configure(fg=self.COLOR_NEW_EMAIL)
+    def saved_email_clicked(self):
+        self.temp_receiver = self.email_textfield.get()
+        self.email_textfield.delete(0, tk.END)
+        self.email_textfield.insert(tk.END, self.receiver)
+        self.email_textfield.configure(fg=self.COLOR_SAVED_EMAIL)
+        self.email_textfield.config(state='disabled')
+
+    def new_email_clicked(self):
+        self.email_textfield.delete(0, tk.END)
+        self.email_textfield.insert(tk.END, self.temp_receiver)
+        self.email_textfield.configure(fg=self.COLOR_NEW_EMAIL)
+        self.email_textfield.config(state='normal')
 
     def is_new_receiver(self):
         if self.radio_var.get() == self.NEW_EMAIL:
@@ -318,6 +321,16 @@ class MainUI(tk.Frame):
     def enable_initial_buttons(self):
         self.upload_button.configure(state='normal')
         self.exit_button.configure(state='normal')
+        self.rdo1.configure(state='normal')
+        self.rdo2.configure(state='normal')
+
+    def disable_email_widgets(self):
+        self.email_textfield.config(state='disabled')
+        self.rdo1.configure(state='disabled')
+        self.rdo2.configure(state='disabled')
+
+    def enable_email_widgets(self):
+        self.email_textfield.config(state='normal')
         self.rdo1.configure(state='normal')
         self.rdo2.configure(state='normal')
 
