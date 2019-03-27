@@ -1,7 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 import re
-from enum import Enum
+import os
 from bs4 import BeautifulSoup
 if __name__ == '__main__':
     from result_enum import Result
@@ -36,7 +36,7 @@ def check_journal(doi):
     if doi is None or doi == "":
         return Result.NoArticle
     publisher = doi_to_journal(doi)
-    print(publisher)
+    # print(publisher)
     try:
         if publisher == "Royal Society of Chemistry (RSC)":
             return chem_gold(doi)
@@ -86,10 +86,8 @@ def science_direct(doi):
 
 
 def science_direct_api(self, doi):
-    if __name__ == '__main__':
-        key_sd = open("ScienceDirectAPI.txt").read()
-    else:
-        key_sd = open("screenscrape_utils/ScienceDirectAPI.txt").read()
+    path_base = os.path.dirname(__file__)
+    key_sd = open(path_base+"/ScienceDirectAPI.txt").read()
     parameters = {"APIKey": key_sd}
     r = requests.get("https://api.elsevier.com/content/article/doi/" + doi, params=parameters)
 
