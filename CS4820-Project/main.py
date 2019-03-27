@@ -178,7 +178,7 @@ class MainSystem(object):
             index = index + 1
 
         if mode == self.DOI_SEARCH_MODE:
-            self.continue_output_file_path = 'RESULT:' + 'Data-Files/Output-Files/' + self.output_file_path
+            self.continue_output_file_path = 'Data-Files/Output-Files/' + self.output_file_path
 
         config_utils.config.clear_progress()
         self.send_email()
