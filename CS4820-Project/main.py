@@ -267,11 +267,10 @@ class MainSystem(object):
         :return:
         """
         use_server = True
-
+        
         if use_server:
             #  Sender is a server
             emailer = email_server.EmailHandler()  # using a server name to send
-
         else:
             #  Sender is personal address
             emailer = email_handler.EmailHandler()
