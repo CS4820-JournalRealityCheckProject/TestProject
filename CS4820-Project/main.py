@@ -166,7 +166,7 @@ class MainSystem(object):
             csv_reader.append_wrong_row(mode=mode, journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
             index = index + 1
-            debug.d_print(index, '/', list_size + 1, 'finished\n')  # prints progress
+            debug.d_print(index, '/', list_size, 'finished\n')  # prints progress
 
         if mode == self.DOI_SEARCH_MODE:
             self.continue_output_file_path = 'Data-Files/Output-Files/' + self.output_file_path
