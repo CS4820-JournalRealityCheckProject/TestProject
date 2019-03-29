@@ -4,6 +4,7 @@ import logging
 
 import journal_utils.article as article
 
+
 # logging.basicConfig(level=logging.DEBUG, format='journal.py: %(message)s')
 
 
@@ -16,8 +17,9 @@ class Journal(object):
     ARTICLE = 2
 
     # problems that can occur
-    YEAR_FORMAT_PROBLEM = 'DATES-WRONG-FORMAT'
-    EMPTY_COLUMN_PROBLEM = 'HAS-EMPTY-COLUMN'
+    YEAR_FORMAT_PROBLEM = 'Date-Format-Wrong'
+    BOTH_BEGIN_END_EMPTY = 'Both-Dates-Empty'
+    EMPTY_COLUMN_PROBLEM = 'Has-Empty-Column'
 
     def __init__(self,
                  title='None', package='None',
@@ -47,9 +49,18 @@ class Journal(object):
         self.online_issn = online_issn
 
         # if self.print_issn == '':
-            # self.print_issn = 'no-print-issn'
+        # self.print_issn = 'no-print-issn'
         # if self.online_issn == '':
-            # self.online_issn = 'no-online-issn'
+        # self.online_issn = 'no-online-issn'
+
+        # if both years are empty
+        if expected_subscript_begin == '':
+            self.has_problem = True
+            self.problem_detail = self.BOTH_BEGIN_END_EMPTY
+            self.expected_subscription_begin = expected_subscript_begin
+            self.expected_subscription_end = expected_subscript_end
+            print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
+            return
 
         try:
             self.expected_subscription_begin = self.format_date(expected_subscript_begin, self.BEGIN)
@@ -57,8 +68,8 @@ class Journal(object):
         except ValueError as ex:
             self.has_problem = True
             self.problem_detail = self.YEAR_FORMAT_PROBLEM
-            self.expected_subscription_begin = 'wrong-start-date'
-            self.expected_subscription_end = 'wrong-end-date'
+            self.expected_subscription_begin = expected_subscript_begin
+            self.expected_subscription_end = expected_subscript_end
             logging.debug(ex)
             logging.debug('format_date')
             logging.debug(self.title)
@@ -69,8 +80,8 @@ class Journal(object):
         print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
 
         try:
-            self.begin_date = self.create_date(self.expected_subscription_begin)  # datetime object
-            self.end_date = self.create_date(self.expected_subscription_end)  # datetime object
+            self.begin_datetime = self.create_date(self.expected_subscription_begin)  # datetime object
+            self.end_datetime = self.create_date(self.expected_subscription_end)  # datetime object
             self.year_dict = {}  # year: (start_date, end_date, Article)
             self.create_year_dict()
         except ValueError as ex:
@@ -78,6 +89,19 @@ class Journal(object):
             self.problem_detail = self.YEAR_FORMAT_PROBLEM
             logging.debug(ex)
             logging.debug(__class__)
+            return
+
+        # checks if begin_datetime is later than end_datetime
+        if self.begin_datetime > self.end_datetime:
+            self.has_problem = True
+            self.problem_detail = 'Begin-Later-Than-End-Year'
+            return
+
+        # checks if begin_datetime and end_date are same
+        if self.begin_datetime == self.end_datetime:
+            self.has_problem = True
+            self.problem_detail = 'Begin-End-Year-Same'
+            return
 
     def __str__(self):
         s = ', '
@@ -91,8 +115,8 @@ class Journal(object):
                 self.wrap_quote(self.package)
                 # self.wrap_quote(self.url) + s +
                 # self.wrap_quote(self.publisher) + s +
-                # str(self.begin_date) + s +
-                # str(self.end_date) + s
+                # str(self.begin_datetime) + s +
+                # str(self.end_datetime) + s
                 )
         # line = (self.title + ', ' + self.expected_subscription_begin + ', ' + self.expected_subscription_end + ', ' +
         #         self.print_issn + ', ' + self.online_issn + ', ' + self.package)
@@ -134,13 +158,13 @@ class Journal(object):
             year_dict{year: (start_year, end_year, article)}
         :return:
         """
-        self.year_dict[self.begin_date.year] = (self.expected_subscription_begin,
-                                                str(self.begin_date.year) + '-12-31',
-                                                article.Article(date=self.begin_date))
-        # self.year_article_dict[self.begin_date.year] = article.Article(date=self.begin_date)
+        self.year_dict[self.begin_datetime.year] = (self.expected_subscription_begin,
+                                                    str(self.begin_datetime.year) + '-12-31',
+                                                    article.Article(date=self.begin_datetime))
+        # self.year_article_dict[self.begin_datetime.year] = article.Article(date=self.begin_datetime)
 
-        year = self.begin_date.year + 1
-        while year < self.end_date.year:
+        year = self.begin_datetime.year + 1
+        while year < self.end_datetime.year:
             self.year_dict[year] = (
                 str(year) + '-01-01',
                 str(year) + '-12-31',
@@ -148,10 +172,10 @@ class Journal(object):
             # self.year_article_dict = article.Article(date=datetime.datetime(year, 1, 1))
             year = year + 1
 
-        self.year_dict[self.end_date.year] = (str(self.end_date.year) + '-01-01',
-                                              self.str_date(self.end_date),
-                                              article.Article(date=self.end_date))
-        # self.year_article_dict[self.end_date.year] = article.Article(date=self.end_date)
+        self.year_dict[self.end_datetime.year] = (str(self.end_datetime.year) + '-01-01',
+                                                  self.str_date(self.end_datetime),
+                                                  article.Article(date=self.end_datetime))
+        # self.year_article_dict[self.end_datetime.year] = article.Article(date=self.end_datetime)
 
     @staticmethod
     def str_date(date):
@@ -207,6 +231,10 @@ class Journal(object):
                     self.has_free_years = True
         if not self.has_free_years:
             self.free_years = 'No-Free-Years'
+
+    def set_problem(self, problem_detail='csv-wrong-row'):
+        self.has_problem = True
+        self.problem_detail = problem_detail
 
     @staticmethod
     def format_date(date, begin_or_end):

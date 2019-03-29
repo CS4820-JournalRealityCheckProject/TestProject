@@ -13,4 +13,6 @@ class Result(Enum):
     UnsupportedWebsite = 4
     NetworkError = 5
     PublisherNotFound = 6
-    OtherException = 7
+    OnUnexpectedPlatform = 7
+    NoAccessAndUnexpectedPlatform = 8
+    OtherException = 9

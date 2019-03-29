@@ -3,13 +3,14 @@ import tkinter.ttk as ttk
 import csv
 import logging
 import threading
+import os
 
 from tkinter import filedialog
 
 import debug_utils.debug as debug
 
-
 # logging.basicConfig(level=logging.DEBUG, format='%(threadName)s: %(message)s')
+BASE_PATH = os.path.dirname(os.path.dirname(__file__))
 
 
 class MainUI(tk.Frame):
@@ -31,6 +32,10 @@ class MainUI(tk.Frame):
     PREVIOUS_EMAIL = 0
     NEW_EMAIL = 1
 
+    # strings
+    NO_DOI_MSG = '!Caution! Check NO-DOI file.'
+    no_doi_file_warning = False
+
     # header column's format
     TEMP_CSV_HEADER = ['Title', 'Year', 'DOI', 'PackageName', 'URL', 'Publisher', 'PrintISSN',
                        'OnlineISSN', 'ManagedCoverageBegin', 'ManagedCoverageEnd']
@@ -46,15 +51,15 @@ class MainUI(tk.Frame):
                      'PackageContentType', 'CreateCustom', 'HideOnPublicationFinder', 'Delete', 'OrderedThroughEBSCO',
                      'IsCustom', 'UserDefinedField1', 'UserDefinedField2', 'UserDefinedField3', 'UserDefinedField4',
                      'UserDefinedField5', 'PackageType', 'AllowEbscoToAddNewTitles']
-    STANDARD_HEADER = ['publication_title', 'print_identifier', 'online_identifier', 'date_first_issue_online',
-                       'num_first_vol_online', 'num_first_issue_online', 'date_last_issue_online',
-                       'num_last_vol_online',
-                       'num_last_issue_online', 'title_url', 'first_author', 'title_id', 'embargo_info',
-                       'coverage_depth',
-                       'notes', 'publisher_name', 'publication_type', 'date_monograph_published_print',
-                       'date_monograph_published_online', 'monograph_volume', 'monograph_edition', 'first_editor',
-                       'parent_publication_title_id', 'preceding_publication_title_id', 'access_type', 'Subject(s)',
-                       'Collection(s)', 'Year Started at OUP', 'MARC Control Number', 'Title History']
+    KBART_HEADER = ['publication_title', 'print_identifier', 'online_identifier', 'date_first_issue_online',
+                    'num_first_vol_online', 'num_first_issue_online', 'date_last_issue_online',
+                    'num_last_vol_online',
+                    'num_last_issue_online', 'title_url', 'first_author', 'title_id', 'embargo_info',
+                    'coverage_depth',
+                    'notes', 'publisher_name', 'publication_type', 'date_monograph_published_print',
+                    'date_monograph_published_online', 'monograph_volume', 'monograph_edition', 'first_editor',
+                    'parent_publication_title_id', 'preceding_publication_title_id', 'access_type', 'Subject(s)',
+                    'Collection(s)', 'Year Started at OUP', 'MARC Control Number', 'Title History']
 
     # colors for email Entry
     COLOR_SAVED_EMAIL = 'lightcyan4'
@@ -183,6 +188,12 @@ class MainUI(tk.Frame):
         self.input_file_path = filedialog.askopenfilename(initialdir="currdir", title="Select File",
                                                           filetypes=(("csv files", "*.csv"),
                                                                      ("all files", "*.*")))
+        if self.input_file_path == '':
+            print('File select canceled.')
+            self.disable_start_button()
+            self.disable_email_widgets()
+            self.file_var.set('no file')
+            return
 
         f_name = self.input_file_path.split('/')[-1]  # get only the name.csv
         debug.d_print(self.input_file_path)
@@ -198,7 +209,7 @@ class MainUI(tk.Frame):
             header = next(reader)  # only for python 3
             debug.d_print('Columns:', header)
 
-            if header == self.STANDARD_HEADER:
+            if header == self.KBART_HEADER:
                 self.mode = self.MODE_NOT_SET
                 debug.d_print('*This is the standard format')
 
@@ -228,12 +239,6 @@ class MainUI(tk.Frame):
 
         self.main_system.update(MainUI.FILE_UPLOADED)
 
-    def search_article(self):
-        self.main_system.update(MainUI.SEARCH_CLICKED)
-
-    def check_reality(self):
-        self.main_system.update(MainUI.REALITY_CHECK_CLICKED)
-
     def start(self):
 
         if self.email_textfield.get() == '' and \
@@ -249,6 +254,7 @@ class MainUI(tk.Frame):
 
             # starts a thread
             self.doi_search_thread = threading.Thread(name='doi-search-worker', target=self.doi_search_worker)
+            # self.doi_search_thread.setDaemon(True)
             self.doi_search_thread.start()
             self.disable_all_buttons()
             self.warn_var.set('Started')
@@ -258,6 +264,7 @@ class MainUI(tk.Frame):
 
             # starts a thread
             self.reality_check_thread = threading.Thread(name='reality-check-worker', target=self.reality_check_worker)
+            # self.reality_check_thread.setDaemon(True)
             self.reality_check_thread.start()
             self.disable_all_buttons()
             self.warn_var.set('Started')
@@ -286,18 +293,25 @@ class MainUI(tk.Frame):
 
     def continue_reality_check(self):
         self.mode = self.REALITY_CHECK_MODE
-        self.input_file_path = self.output_file_path
+        self.input_file_path = BASE_PATH + '/' + self.output_file_path + '.csv'
+        self.main_system.input_file_path = self.input_file_path
+        self.main_system.update(MainUI.FILE_UPLOADED)  # Reload the created file
         self.start()
 
     def doi_search_worker(self):
         logging.debug('doi-search thread started')
         self.search_article()
 
+        # after doi search is done
         self.warn_var.set('DOI Search FINISHED')
         self.output_file_path = self.main_system.continue_output_file_path
         print(self.output_file_path)
         self.top_message_var.set('REALITY CHECK READY')
-        self.warn_var.set('RESULT:' + self.output_file_path)
+        if self.no_doi_file_warning:
+            self.warn_var.set(self.NO_DOI_MSG + '\n' +
+                              'RESULT:' + self.output_file_path)
+        else:
+            self.warn_var.set('RESULT:' + self.output_file_path)
         self.continue_button.config(state="normal")
         self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
         self.enable_initial_buttons()
@@ -306,8 +320,16 @@ class MainUI(tk.Frame):
         logging.debug('reality-check thread started')
         self.check_reality()
 
+        # after reality check is done
         self.warn_var.set('Reality Check FINISHED')
         self.enable_initial_buttons()
+        self.disable_email_widgets()
+
+    def search_article(self):
+        self.main_system.update(MainUI.SEARCH_CLICKED)
+
+    def check_reality(self):
+        self.main_system.update(MainUI.REALITY_CHECK_CLICKED)
 
     def notify_progress(self, numerator, denominator):
         self.warn_var.set('Progress: ' + str(numerator) + ' / ' + str(denominator))
@@ -335,6 +357,41 @@ class MainUI(tk.Frame):
         self.email_textfield.config(state='normal')
         self.previous_email_radio_btn.configure(state='normal')
         self.new_email_radio_btn.configure(state='normal')
+
+    def disable_start_button(self):
+        self.start_button.config(state='disabled')
+
+    def restore_ui(self, status):
+        self.disable_all_buttons()
+
+        # restore member variables
+        self.input_file_path = self.main_system.input_file_path
+        self.output_file_path = self.main_system.output_file_path
+        self.file_name = self.output_file_path.split('/')[-1] + '.csv'
+        if status == self.main_system.DOI_SEARCH_MODE:
+            self.mode = self.DOI_SEARCH_MODE
+        if status == self.main_system.REALITY_CHECK_MODE:
+            self.mode = self.REALITY_CHECK_MODE
+        self.is_ready = False
+        self.receiver = self.main_system.receiver
+        self.temp_receiver = ''
+
+    def reset_member_variables(self):
+        # threads
+        self.doi_search_thread = None
+        self.reality_check_thread = None
+
+        # member variables
+        self.input_file_path = None
+        self.output_file_path = None
+        self.file_name = None
+        self.mode = self.MODE_NOT_SET
+        self.is_ready = False
+        # self.receiver = self.main_system.receiver
+        self.temp_receiver = ''
+
+    def set_no_doi_file_warning(self):
+        self.no_doi_file_warning = True
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from email.mime.multipart import MIMEMultipart
 class EmailHandler:
     port = 25
     smtp_server = "internal-smtp.upei.ca"
-    sender = "UPEI REALITY CHECK SYSTEM"
+    sender = "no-reply@upei.ca"
     receiver = ""
     subject = "Reality check program finished"
     body = "Reality Check System finished. There are two files attached\n\n"

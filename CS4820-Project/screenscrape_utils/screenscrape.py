@@ -13,6 +13,13 @@ USER_AGENT = {
 }
 
 
+dict = {"Royal Society of Chemistry (RSC)":  "Royal Society of Chemistry Gold (CRKN)",
+        "American Chemical Society (ACS)": "ACS (CRKN)" or "ACS Legacy Archives",
+        "Oxford University Press (OUP)": "Oxford Journals (CRKN)",
+        "Elsevier BV": "ScienceDirect (CRKN)",
+        "Springer Nature": "SpringerLINK (CRKN)" or "SpringerLINK Archive (CRKN)"}
+
+
 def doi_to_url(doi):
     url = "http://dx.doi.org/" + doi
     r = requests.get(url, allow_redirects=False)
@@ -32,11 +39,18 @@ def doi_to_journal(doi):
             line = re.sub('[{},]', '', line)
             return line
 
-def check_journal(doi):
+
+def check_journal(doi, journal):
     if doi is None or doi == "":
         return Result.NoArticle
     publisher = doi_to_journal(doi)
-    # print(publisher)
+
+    print("Publisher: "+publisher)
+    print("From dictionary: "+dict[publisher])
+    print("Package Name: "+journal)
+    if journal != dict[publisher]:
+        return Result.OnUnexpectedPlatform
+
     try:
         if publisher == "Royal Society of Chemistry (RSC)":
             return chem_gold(doi)
@@ -52,8 +66,11 @@ def check_journal(doi):
             return Result.PublisherNotFound
         else:
             return Result.UnsupportedWebsite
+
     except requests.exceptions.ConnectionError:
         return Result.NetworkError
+
+
 
 
 def science_direct(doi):
@@ -197,6 +214,21 @@ def chem_gold(doi):
     return Result.NoAccess
 
 
+def springer_url(doi):
+    url = 'https://link.springer.com/article/' + doi
+    return url
+
+
+def acs_url(doi):
+    url = 'https://pubs.acs.org/doi/' + doi
+    return url
+
+
+def default_url(doi):
+    url = 'https://doi.org/' + doi
+    return url
+
+
 def wiley(soup):
     """
     Currently just a filler,
@@ -207,8 +239,8 @@ def wiley(soup):
 
 if __name__ == '__main__':
 
-    article_list = [ '10.1093/molehr/3.2.149' ]
+    article_list = [ '10.1093/molehr/3.2.149', "Royal Society of Chemistry (RSC)" ]
 
     for article in article_list:
-        result = check_journal(article)
+        result = check_journal(article, article_list[1])
         print(str(result) + ": " + str(article))
