@@ -3,21 +3,15 @@ import xml.etree.ElementTree as ET
 import re
 import os
 from bs4 import BeautifulSoup
+
 if __name__ == '__main__':
     from result_enum import Result
 else:
     from screenscrape_utils.result_enum import Result
 
 USER_AGENT = {
-        'User-Agent': 'Mozilla/5.0'
+    'User-Agent': 'Mozilla/5.0'
 }
-
-
-dict = {"Royal Society of Chemistry (RSC)":  "Royal Society of Chemistry Gold (CRKN)",
-        "American Chemical Society (ACS)": "ACS (CRKN)" or "ACS Legacy Archives",
-        "Oxford University Press (OUP)": "Oxford Journals (CRKN)",
-        "Elsevier BV": "ScienceDirect (CRKN)",
-        "Springer Nature": "SpringerLINK (CRKN)" or "SpringerLINK Archive (CRKN)"}
 
 
 def doi_to_url(doi):
@@ -40,28 +34,35 @@ def doi_to_journal(doi):
             return line
 
 
-def check_journal(doi, journal):
+def check_journal(doi, listed_platform):
     if doi is None or doi == "":
         return Result.NoArticle
     publisher = doi_to_journal(doi)
 
-    # print("Publisher: "+publisher)
-    # print("From dictionary: "+dict[publisher])
-    # print("Package Name: "+journal)
-    if journal != dict[publisher]:
-        return Result.OnUnexpectedPlatform
+    # print("Publisher: " + publisher)
+    # print("Listed Platform: " + listed_platform)
 
     try:
         if publisher == "Royal Society of Chemistry (RSC)":
-            return chem_gold(doi)
+            temp_result = chem_gold(doi)
+            return check_platform(listed_platform, publisher, temp_result)
+
         elif publisher == "American Chemical Society (ACS)":
-            return acs(doi)
+            temp_result = acs(doi)
+            return check_platform(listed_platform, publisher, temp_result)
+
         elif publisher == "Oxford University Press (OUP)":
-            return oxford(doi)
+            temp_result = oxford(doi)
+            return check_platform(listed_platform, publisher, temp_result)
+
         elif publisher == "Elsevier BV":
-            return science_direct(doi)
+            temp_result = science_direct(doi)
+            return check_platform(listed_platform, publisher, temp_result)
+
         elif publisher == "Springer Nature":
-            return springer(doi)
+            temp_result = springer(doi)
+            return check_platform(listed_platform, publisher, temp_result)
+
         elif publisher is None:
             return Result.PublisherNotFound
         else:
@@ -71,6 +72,28 @@ def check_journal(doi, journal):
         return Result.NetworkError
 
 
+def check_platform(listed_platform, publisher, temp_result):
+    if publisher == "Royal Society of Chemistry (RSC)":
+        if listed_platform == "Royal Society of Chemistry Gold (CRKN)":
+            return temp_result
+    if publisher == "American Chemical Society (ACS)":
+        if listed_platform == "ACS Legacy Archives" or listed_platform == "ACS (CRKN)":
+            return temp_result
+    if publisher == "Oxford University Press (OUP)":
+        if listed_platform == "Oxford Journals (CRKN)":
+            return temp_result
+    if publisher == "Elsevier BV":
+        if listed_platform == "ScienceDirect (CRKN)":
+            return temp_result
+    if publisher == "Springer Nature":
+        if listed_platform == "SpringerLINK (CRKN)" or listed_platform == "SpringerLINK Archive (CRKN)":
+            return temp_result
+
+    # listed platform is different
+    if temp_result is Result.Access:
+        return Result.OnUnexpectedPlatform
+    else:
+        return Result.NoAccessAndUnexpectedPlatform
 
 
 def science_direct(doi):
@@ -104,7 +127,7 @@ def science_direct(doi):
 
 def science_direct_api(self, doi):
     path_base = os.path.dirname(__file__)
-    key_sd = open(path_base+"/ScienceDirectAPI.txt").read()
+    key_sd = open(path_base + "/ScienceDirectAPI.txt").read()
     parameters = {"APIKey": key_sd}
     r = requests.get("https://api.elsevier.com/content/article/doi/" + doi, params=parameters)
 
@@ -151,7 +174,7 @@ def oxford(doi):
     soup = BeautifulSoup(r.text, 'html.parser')
 
     # Check for Wiley
-    if soup.find('a', {'title':'Wiley Online Library'}):
+    if soup.find('a', {'title': 'Wiley Online Library'}):
         return wiley(soup)
 
     if not soup.find('div', {"class": "oup-header"}):
@@ -239,8 +262,8 @@ def wiley(soup):
 
 if __name__ == '__main__':
 
-    article_list = [ '10.1093/molehr/3.2.149', "Royal Society of Chemistry (RSC)" ]
+    article_list = ['10.1093/molehr/3.2.149', "Royal Society of Chemistry (RSC)"]
 
-    for article in article_list:
-        result = check_journal(article, article_list[1])
-        print(str(result) + ": " + str(article))
+    for article1 in article_list:
+        result1 = check_journal(article1, article_list[1])
+        print(str(result1) + ": " + str(article1))
