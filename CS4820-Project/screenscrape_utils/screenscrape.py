@@ -45,9 +45,9 @@ def check_journal(doi, journal):
         return Result.NoArticle
     publisher = doi_to_journal(doi)
 
-    print("Publisher: "+publisher)
-    print("From dictionary: "+dict[publisher])
-    print("Package Name: "+journal)
+    # print("Publisher: "+publisher)
+    # print("From dictionary: "+dict[publisher])
+    # print("Package Name: "+journal)
     if journal != dict[publisher]:
         return Result.OnUnexpectedPlatform
 
