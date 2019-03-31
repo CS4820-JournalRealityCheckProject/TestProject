@@ -194,7 +194,11 @@ class MainSystem(object):
             #  doi-search or reality-check will be called
             if not self.journal_list[index].has_problem:
                 if mode == self.DOI_SEARCH_MODE:
-                    self.search_article(self.journal_list[index])  # DOI Search
+                    try:
+                        self.search_article(self.journal_list[index])  # DOI Search
+                    except KeyError:
+                        self.journal_list[index].has_problem = True
+                        self.journal_list[index].problem_detail = 'Unknown-DOI-Search-Error'
                 elif mode == self.REALITY_CHECK_MODE:
                     self.check_reality(self.journal_list[index])  # Reality Check
 
