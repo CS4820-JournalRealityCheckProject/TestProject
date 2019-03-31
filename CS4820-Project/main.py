@@ -185,6 +185,9 @@ class MainSystem(object):
         #  Iterates a list of journals using index
         list_size = len(self.journal_list)
         while index < list_size:
+            if self.ui is not None:
+                self.ui.notify_progress(index+1, list_size)
+
             debug.d_print(index + 1, ":", self.journal_list[index])
             title = self.journal_list[index].title
 
@@ -220,9 +223,6 @@ class MainSystem(object):
                 debug.d_print(index, '/', list_size, 'finished\n')  # prints progress
             else:
                 debug.d_print(index, '/', list_size, 'skipped\n')  # prints progress
-
-            if self.ui is not None:
-                self.ui.notify_progress(index, list_size)
 
         # the temp doi file is ready to be continued
         if mode == self.DOI_SEARCH_MODE:

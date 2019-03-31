@@ -300,6 +300,9 @@ class MainUI(tk.Frame):
 
     def doi_search_worker(self):
         logging.debug('doi-search thread started')
+
+        self.top_message_var.set('DOI-SEARCH')
+        self.file_var.set(self.input_file_path.split('/')[-1])
         self.search_article()
 
         # after doi search is done
@@ -318,6 +321,9 @@ class MainUI(tk.Frame):
 
     def reality_check_worker(self):
         logging.debug('reality-check thread started')
+
+        self.top_message_var.set('REALITY CHECK')
+        self.file_var.set(self.input_file_path.split('/')[-1])
         self.check_reality()
 
         # after reality check is done
