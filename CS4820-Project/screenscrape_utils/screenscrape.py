@@ -38,8 +38,9 @@ def check_journal(doi, listed_platform):
     if doi is None or doi == "":
         return Result.NoArticle
     publisher = doi_to_journal(doi)
-    print("Publisher: " + publisher)
-    print("Listed Platform: " + listed_platform)
+
+    # print("Publisher: " + publisher)
+    # print("Listed Platform: " + listed_platform)
 
     try:
         if publisher == "Royal Society of Chemistry (RSC)":
