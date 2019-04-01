@@ -149,8 +149,10 @@ class Journal(object):
             year = 0
             month = 0
             day = 0
-
-        return datetime.datetime(year, month, day)
+        if year is not None:
+            return datetime.datetime(year, month, day)
+        else:
+            return datetime.datetime(0, 0, 0)
 
     def create_year_dict(self):
         """

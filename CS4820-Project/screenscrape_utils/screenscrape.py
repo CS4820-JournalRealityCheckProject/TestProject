@@ -34,11 +34,11 @@ def doi_to_journal(doi):
             return line
 
 
+
 def check_journal(doi, listed_platform):
     if doi is None or doi == "":
         return Result.NoArticle
     publisher = doi_to_journal(doi)
-
     # print("Publisher: " + publisher)
     # print("Listed Platform: " + listed_platform)
 
@@ -70,6 +70,7 @@ def check_journal(doi, listed_platform):
 
     except requests.exceptions.ConnectionError:
         return Result.NetworkError
+
 
 
 def check_platform(listed_platform, publisher, temp_result):
