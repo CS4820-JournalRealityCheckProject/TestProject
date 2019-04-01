@@ -269,7 +269,10 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
                                  article.result,
                                  article.doi,
                                  doi_url,
-
+                                 journal.package,
+                                 journal.url,
+                                 journal.publisher,
+                                 ])
 
 def append_exception_row(journal, file_name='exception-list'):
     """
