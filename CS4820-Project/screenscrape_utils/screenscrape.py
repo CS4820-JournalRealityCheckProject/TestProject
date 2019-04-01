@@ -14,6 +14,7 @@ USER_AGENT = {
 }
 
 
+
 def doi_to_url(doi):
     url = "http://dx.doi.org/" + doi
     r = requests.get(url, allow_redirects=False)
@@ -32,6 +33,7 @@ def doi_to_journal(doi):
             # Remove commas and curly brackets
             line = re.sub('[{},]', '', line)
             return line
+
 
 
 def check_journal(doi, listed_platform):
@@ -94,6 +96,7 @@ def check_platform(listed_platform, publisher, temp_result):
         return Result.OnUnexpectedPlatform
     else:
         return Result.NoAccessAndUnexpectedPlatform
+
 
 
 def science_direct(doi):
@@ -261,7 +264,6 @@ def wiley(soup):
 
 
 if __name__ == '__main__':
-
     article_list = ['10.1093/molehr/3.2.149', "Royal Society of Chemistry (RSC)"]
 
     for article1 in article_list:
