@@ -231,6 +231,9 @@ class MainSystem(object):
         # the temp doi file is ready to be continued
         if mode == self.DOI_SEARCH_MODE:
             self.continue_output_file_path = 'Data-Files/Output-Files/' + self.output_file_path
+            if csv_reader.has_entry(self.wrong_file_path):
+                self.ui.wrong_file_path = self.wrong_file_path
+                self.ui.set_no_doi_file_warning()
 
         # work is done. clear data
         config_utils.config.clear_progress()

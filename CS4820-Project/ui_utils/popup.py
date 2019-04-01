@@ -12,7 +12,7 @@ def confirm_discard():
                                'The progress will be discarded')
 
 def pop_warn_no_doi():
-    return messagebox.showwarning('NO-DOI has entries',
+    return messagebox.showwarning('NO-DOI file has entries',
                                   'Check No-DOI file.')
 
 

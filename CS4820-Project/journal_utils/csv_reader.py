@@ -258,5 +258,15 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
                                  ])
 
 
+def has_entry(path_name):
+    new_path = path + path_name + '.csv'
+    print('check lines:', len(open(new_path).readlines()))
+
+    # has at least one entry without counting header
+    if 2 <= len(open(new_path).readlines()):
+        return True
+    return False
+
+
 if __name__ == '__main__':
     print('csv reader')
