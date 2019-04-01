@@ -6,6 +6,7 @@ import threading
 import os
 
 from tkinter import filedialog
+from tkinter import messagebox
 
 import debug_utils.debug as debug
 
@@ -33,7 +34,7 @@ class MainUI(tk.Frame):
     NEW_EMAIL = 1
 
     # strings
-    NO_DOI_MSG = '!Caution! Check NO-DOI file.'
+    NO_DOI_MSG = 'WARNING: Check NO-DOI file.'
     no_doi_file_warning = False
 
     # header column's format
@@ -80,6 +81,8 @@ class MainUI(tk.Frame):
         self.main_system = main_system
         self.input_file_path = None
         self.output_file_path = None
+        self.wrong_file_path = None
+
         self.file_name = None
         self.mode = self.MODE_NOT_SET
         self.is_ready = False
@@ -310,14 +313,20 @@ class MainUI(tk.Frame):
         self.output_file_path = self.main_system.continue_output_file_path
         print(self.output_file_path)
         self.top_message_var.set('REALITY CHECK READY')
-        if self.no_doi_file_warning:
-            self.warn_var.set(self.NO_DOI_MSG + '\n' +
-                              'RESULT:' + self.output_file_path)
-        else:
-            self.warn_var.set('RESULT:' + self.output_file_path)
+
         self.continue_button.config(state="normal")
         self.continue_button_var.set(self.continue_msg + self.output_file_path.split('/')[-1] + '.csv')
         self.enable_initial_buttons()
+
+        if self.no_doi_file_warning:
+            self.warn_var.set(self.NO_DOI_MSG + '\n' +
+                              'RESULT:' + self.output_file_path)
+            messagebox.showwarning('NO-DOI File',
+                                   'NO-DOI file has entries.'
+                                   'Check No-DOI file.')
+            self.no_doi_file_warning = False
+        else:
+            self.warn_var.set('RESULT:' + self.output_file_path)
 
     def reality_check_worker(self):
         logging.debug('reality-check thread started')
@@ -390,11 +399,13 @@ class MainUI(tk.Frame):
         # member variables
         self.input_file_path = None
         self.output_file_path = None
+        self.wrong_file_path = None
         self.file_name = None
         self.mode = self.MODE_NOT_SET
         self.is_ready = False
         # self.receiver = self.main_system.receiver
         self.temp_receiver = ''
+        self.no_doi_file_warning = False
 
     def set_no_doi_file_warning(self):
         self.no_doi_file_warning = True
