@@ -274,9 +274,9 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
                                  journal.publisher,
                                  ])
 
+
 def append_exception_row(journal, file_name='exception-list'):
     """
-
     :param journal:
     :param file_name:
     :return:
@@ -300,7 +300,6 @@ def append_exception_row(journal, file_name='exception-list'):
                                  ])
 
 
-
 def has_entry(path_name):
     new_path = path + path_name + '.csv'
     print('check lines:', len(open(new_path).readlines()))
@@ -309,7 +308,6 @@ def has_entry(path_name):
     if len(open(new_path).readlines()) > 1:
         return True
     return False
-
 
 
 if __name__ == '__main__':

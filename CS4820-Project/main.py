@@ -187,13 +187,14 @@ class MainSystem(object):
 
             index = 0
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
-                                                self.exception_file_path, status=mode, index=index, title=self.journal_list[index].title)
+                                                self.exception_file_path, status=mode, index=index,
+                                                title=self.journal_list[index].title)
 
         #  Iterates a list of journals using index
         list_size = len(self.journal_list)
         while index < list_size:
             if self.ui is not None:
-                self.ui.notify_progress(index+1, list_size)
+                self.ui.notify_progress(index + 1, list_size)
 
             debug.d_print(index + 1, ":", self.journal_list[index])
             title = self.journal_list[index].title
@@ -225,7 +226,6 @@ class MainSystem(object):
             csv_reader.append_wrong_row(mode=mode, journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
 
-
             if mode == self.REALITY_CHECK_MODE:
                 csv_reader.append_exception_row(journal=self.journal_list[index],
                                                 file_name=self.exception_file_path)
@@ -238,7 +238,6 @@ class MainSystem(object):
                 debug.d_print(index, '/', list_size, 'finished\n')  # prints progress\
             else:
                 debug.d_print(index, '/', list_size, 'skipped\n')  # prints progress
-
 
         # the temp doi file is ready to be continued
         if mode == self.DOI_SEARCH_MODE:
@@ -376,8 +375,8 @@ class MainSystem(object):
         else:
             f1 = csv_reader.path + self.output_file_path + '.csv'
             f2 = csv_reader.path + self.wrong_file_path + '.csv'
-            f3 = csv_reader.path + self.exception_file_path + '.csv'
-            files = [f1, f2, f3]
+            # f3 = csv_reader.path + self.exception_file_path + '.csv'
+            files = [f1, f2]
 
         try:
             emailer.send(files)
