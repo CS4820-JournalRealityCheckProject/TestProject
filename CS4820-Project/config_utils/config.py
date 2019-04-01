@@ -7,7 +7,7 @@ PATH_TO_PROGRESS_INI = BASE_PATH+'/Data-Files/Configurations/progress.ini'
 PATH_TO_EMAIL_INI = BASE_PATH+'/Data-Files/Configurations/email.ini'
 
 
-def update_progress(input_file, output_file, wrong_file, exception_file, status, index, title='not-specified'):
+def update_progress(input_file, output_file, wrong_file, status, index, title='not-specified'):
     config = configparser.ConfigParser()
     config['progress'] = {
         'complete': False,
@@ -15,7 +15,6 @@ def update_progress(input_file, output_file, wrong_file, exception_file, status,
         'input-file-path': input_file,
         'output-file-path': output_file,
         'wrong-file-path': wrong_file,
-        'exception-file-path': exception_file,
         'current-index': index,
         'title': title
 
@@ -33,7 +32,6 @@ def clear_progress():
         'input-file-path': 'no-path',
         'output-file-path': 'no-path',
         'wrong-file-path': 'no-path',
-        'exception-file-path': 'no-path',
         'current-index': -1
 
     }

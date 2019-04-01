@@ -2,7 +2,6 @@ import configparser
 import tkinter as tk
 import datetime
 import smtplib
-import traceback
 import threading
 
 import config_utils.config
@@ -61,7 +60,6 @@ class MainSystem(object):
         self.input_file_path = self.config['progress']['input-file-path']
         self.output_file_path = self.config['progress']['output-file-path']
         self.wrong_file_path = self.config['progress']['wrong-file-path']
-        self.exception_file_path = self.config['progress']['exception-file-path']
         self.file_name = None
         self.continue_output_file_path = None
 
@@ -126,7 +124,6 @@ class MainSystem(object):
         self.input_file_path = 'no-path'
         self.output_file_path = 'no-path'
         self.wrong_file_path = 'no-path'
-        self.exception_file_path = 'no-path'
         self.current_index = -1
 
     def create_journal_list(self):
@@ -171,30 +168,25 @@ class MainSystem(object):
             elif mode == self.REALITY_CHECK_MODE:
                 self.output_file_path = 'RESULT-JOURNALS-' + date + '_from_' + input_file_name  # file name
                 self.wrong_file_path = 'PROBLEM-JOURNALS-' + date + '_from_' + input_file_name
-                self.exception_file_path = 'EXCEPTION-JOURNALS-' + date + '_from_' + input_file_name
                 # self.output_file_path = date + '-RESULT-JOURNALS'  # file name
                 # self.wrong_file_path = date + '-PROBLEM-JOURNALS'
 
                 # creates csv files for appending
-
-            # creates csv files for appending
             if mode == self.DOI_SEARCH_MODE:
                 csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
             elif mode == self.REALITY_CHECK_MODE:
                 csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
-                csv_reader.prepare_exception_csv(self.exception_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
 
             index = 0
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
-                                                self.exception_file_path, status=mode, index=index,
-                                                title=self.journal_list[index].title)
+                                                status=mode, index=index, title=self.journal_list[index].title)
 
         #  Iterates a list of journals using index
         list_size = len(self.journal_list)
         while index < list_size:
             if self.ui is not None:
-                self.ui.notify_progress(index + 1, list_size)
+                self.ui.notify_progress(index+1, list_size)
 
             debug.d_print(index + 1, ":", self.journal_list[index])
             title = self.journal_list[index].title
@@ -226,16 +218,13 @@ class MainSystem(object):
             csv_reader.append_wrong_row(mode=mode, journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
 
-            if mode == self.REALITY_CHECK_MODE:
-                csv_reader.append_exception_row(journal=self.journal_list[index],
-                                                file_name=self.exception_file_path)
             index = index + 1
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
-                                                self.exception_file_path, status=mode, index=index, title=title)
+                                                status=mode, index=index, title=title)
 
             #  prints progresses
             if not self.journal_list[index - 1].has_problem:
-                debug.d_print(index, '/', list_size, 'finished\n')  # prints progress\
+                debug.d_print(index, '/', list_size, 'finished\n')  # prints progress
             else:
                 debug.d_print(index, '/', list_size, 'skipped\n')  # prints progress
 
@@ -292,11 +281,7 @@ class MainSystem(object):
                 return
             try:
                 result = screenscraper.check_journal(doi, journal.package)  # reality check
-            except Exception as ex:
-                template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-                message = template.format(type(ex).__name__, ex.args)
-                exception = [type(ex).__name__, ex.args, traceback.format_exc()]
-                debug.d_print(message)
+            except Exception:
                 debug.d_print(year)
                 debug.d_print('|exception happened|')
                 result = result_enum.Result.OtherException
@@ -310,9 +295,6 @@ class MainSystem(object):
             if result is result_enum.Result.FreeAccess:
                 article.accessible = True
                 article.free = True
-            if result is result_enum.Result.OtherException:
-                article.exception = True
-                article.exception_details = exception
 
             article.result = self.convert_result(result)  # result is checked
             debug.d_print(str(year), ':', str(result), '=', 'https://doi.org/' + str(doi))
@@ -354,7 +336,7 @@ class MainSystem(object):
         Send the result file to a specified email address.
         :return:
         """
-        use_server = True
+        use_server = False
 
         if use_server:
             #  Sender is a server
@@ -368,15 +350,9 @@ class MainSystem(object):
         emailer.set_subject(subject=mode + ' finished')
         emailer.set_body(body='The ' + mode + ' has been finished. Two are files attached.\n\n')
 
-        if self.exception_file_path == 'no-path':
-            f1 = csv_reader.path + self.output_file_path + '.csv'
-            f2 = csv_reader.path + self.wrong_file_path + '.csv'
-            files = [f1, f2]
-        else:
-            f1 = csv_reader.path + self.output_file_path + '.csv'
-            f2 = csv_reader.path + self.wrong_file_path + '.csv'
-            # f3 = csv_reader.path + self.exception_file_path + '.csv'
-            files = [f1, f2]
+        f1 = csv_reader.path + self.output_file_path + '.csv'
+        f2 = csv_reader.path + self.wrong_file_path + '.csv'
+        files = [f1, f2]
 
         try:
             emailer.send(files)

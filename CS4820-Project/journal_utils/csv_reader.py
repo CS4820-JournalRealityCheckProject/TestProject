@@ -135,23 +135,6 @@ def prepare_wrong_csv(wrong_file='wrong-list'):
         writer.writeheader()
 
 
-def prepare_exception_csv(exception_file='wrong-list'):
-    with open(path + exception_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
-        fieldnames = ['Title',
-                      'Year',
-                      'DOI',
-                      'DOI-URL',
-                      'PackageName',
-                      'URL',
-                      'Publisher',
-                      'exception',
-                      'exceptionArguments',
-                      'stackTrace'
-                      ]
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-
-
 def append_doi_row(journal, file_name='doi-articles'):
     with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
@@ -272,31 +255,6 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
                                  journal.package,
                                  journal.url,
                                  journal.publisher,
-                                 ])
-
-
-def append_exception_row(journal, file_name='exception-list'):
-    """
-    :param journal:
-    :param file_name:
-    :return:
-    """
-    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
-        writer = csv.writer(file)
-        for year in journal.year_dict:
-            if journal.year_dict[year][ARTICLE].exception:
-                details = journal.year_dict[year][ARTICLE].exception_details
-                writer.writerow([journal.title,
-                                 year,
-                                 journal.year_dict[year][ARTICLE].doi,
-                                 'http://doi.org/' + str(journal.year_dict[year][ARTICLE].doi),
-
-                                 journal.package,
-                                 journal.url,
-                                 journal.publisher,
-                                 details[0],
-                                 details[1],
-                                 details[2],
                                  ])
 
 

@@ -11,8 +11,6 @@ class Article(object):
         self.open = False
         self.result = None
         self.reason_of_false = 'no issues'
-        self.exception = False
-        self.exceptionDetails = None
 
     def __str__(self):
         return self.name
