@@ -263,7 +263,7 @@ def has_entry(path_name):
     print('check lines:', len(open(new_path).readlines()))
 
     # has at least one entry without counting header
-    if 2 <= len(open(new_path).readlines()):
+    if len(open(new_path).readlines()) > 1:
         return True
     return False
 
