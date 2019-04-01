@@ -4,8 +4,9 @@ import os
 from journal_utils.journal import Journal
 
 BASE_PATH = os.path.dirname(os.path.dirname(__file__))
-path = BASE_PATH+'/Data-Files/Output-Files/'
+path = BASE_PATH + '/Data-Files/Output-Files/'
 ARTICLE = 2
+FAILED = 'failed'
 
 
 def construct_journal_list_from(journals_csv):
@@ -41,11 +42,15 @@ def reconstruct_journal_list_from(articles_csv):
         reader = csv.DictReader(csv_file)
         journal = None
         for row in reader:
-            year = int(row['Year'])
-            # if row['Accessible'] == 'TRUE':
-            #     access = True
-            # else:
-            #     access = False
+            if row['Year'] == FAILED:
+                year = row['Year']
+            else:
+                year = int(row['Year'])
+
+            if row['DOI'] == '':
+                doi = None
+            else:
+                doi = row['DOI']
 
             if current_title != row['Title'] or current_platform != row['PackageName']:
                 current_title = row['Title']
@@ -60,10 +65,17 @@ def reconstruct_journal_list_from(articles_csv):
                                   row['ManagedCoverageBegin'],
                                   row['ManagedCoverageEnd']
                                   )
-                journal.year_dict[year][ARTICLE].doi = row['DOI']
-                journal_obj_list.append(journal)
+
+                # If a journal has an issue
+                if year == FAILED:  # 'failed':
+                    problem_detail = row['DOI']
+                    journal.set_problem(problem_detail)
+                    journal_obj_list.append(journal)
+                else:
+                    journal.year_dict[year][ARTICLE].doi = doi
+                    journal_obj_list.append(journal)
             else:
-                journal.year_dict[year][ARTICLE].doi = row['DOI']
+                journal.year_dict[year][ARTICLE].doi = doi
 
     print('size' + str(len(journal_obj_list)))
     return journal_obj_list
@@ -140,6 +152,22 @@ def append_doi_row(journal, file_name='doi-articles'):
                              ])
 
 
+def append_problem_doi_row(journal, file_name='doi-articles'):
+    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([journal.title,
+                         FAILED,  # 'failed'
+                         journal.problem_detail,
+                         journal.package,
+                         journal.url,
+                         journal.publisher,
+                         journal.print_issn,
+                         journal.online_issn,
+                         journal.expected_subscription_begin,
+                         journal.expected_subscription_end,
+                         ])
+
+
 def append_journal_row(journal, file_name='result-journals'):
     with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
@@ -157,6 +185,23 @@ def append_journal_row(journal, file_name='result-journals'):
                          ])
 
 
+def append_problem_journal_row(journal, file_name='result-journals'):
+    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([journal.title,
+                         journal.package,
+                         journal.url,
+                         journal.publisher,
+                         journal.print_issn,
+                         journal.online_issn,
+                         journal.expected_subscription_begin,
+                         journal.expected_subscription_end,
+                         'Failed',
+                         'Bad-Original',
+                         '???'
+                         ])
+
+
 def append_wrong_row(mode, journal, file_name='wrong-list'):
     """
 
@@ -169,7 +214,7 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
         writer = csv.writer(file)
 
         if journal.has_problem:
-            if mode == 'doi-search':
+            if mode == 'doi-search' or mode == 'reality-check':
                 writer.writerow([journal.title,
                                  'failed',
                                  journal.problem_detail,
@@ -182,28 +227,45 @@ def append_wrong_row(mode, journal, file_name='wrong-list'):
             return
 
         for year in journal.year_dict:
+            article = journal.year_dict[year][ARTICLE]
 
-            if mode == 'doi-search' and journal.year_dict[year][ARTICLE].doi is None:
+            if mode == 'doi-search' and article.doi is None:
                 writer.writerow([journal.title,
                                  year,
-                                 journal.year_dict[year][ARTICLE].result,
-                                 'no-doi',
+                                 article.result,
+                                 'No-DOI',
                                  '',
                                  journal.package,
                                  journal.url,
                                  journal.publisher,
                                  ])
 
-            if mode == 'reality-check' and not journal.year_dict[year][ARTICLE].accessible:
+            if mode == 'reality-check' and not article.accessible:
+                # doi_url = None
+                if article.doi is None:
+                    doi_url = ''
+                else:
+                    doi_url = 'http://doi.org/' + str(journal.year_dict[year][ARTICLE].doi)
+
                 writer.writerow([journal.title,
                                  year,
-                                 journal.year_dict[year][ARTICLE].result,
-                                 journal.year_dict[year][ARTICLE].doi,
-                                 'http://doi.org/' + str(journal.year_dict[year][ARTICLE].doi),
+                                 article.result,
+                                 article.doi,
+                                 doi_url,
                                  journal.package,
                                  journal.url,
                                  journal.publisher,
                                  ])
+
+
+def has_entry(path_name):
+    new_path = path + path_name + '.csv'
+    print('check lines:', len(open(new_path).readlines()))
+
+    # has at least one entry without counting header
+    if len(open(new_path).readlines()) > 1:
+        return True
+    return False
 
 
 if __name__ == '__main__':
