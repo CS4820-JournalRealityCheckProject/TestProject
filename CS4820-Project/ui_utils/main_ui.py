@@ -322,7 +322,7 @@ class MainUI(tk.Frame):
             self.warn_var.set(self.NO_DOI_MSG + '\n' +
                               'RESULT:' + self.output_file_path)
             messagebox.showwarning('NO-DOI File',
-                                   'NO-DOI file has entries.'
+                                   'NO-DOI file has entries. '
                                    'Check No-DOI file.')
             self.no_doi_file_warning = False
         else:
