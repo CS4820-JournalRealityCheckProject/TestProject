@@ -6,19 +6,16 @@ from bs4 import BeautifulSoup
 
 if __name__ == '__main__':
     from result_enum import Result
+    import platform_reader
 else:
     from screenscrape_utils.result_enum import Result
+    import screenscrape_utils.platform_reader as platform_reader
 
 USER_AGENT = {
     'User-Agent': 'Mozilla/5.0'
 }
 
-config = [['Oxford Journals (CRKN)', 'http://academic.oup.com/', 'oxford'],
-          ['ACS (CRKN)', 'https://pubs.acs.org/', 'acs'],
-          ['Royal Society of Chemistry Gold (CRKN)', 'http://xlink.rsc.org/', 'chem_gold'],
-          ['ScienceDirect (CRKN)', 'https://linkinghub.elsevier.com/', 'science_direct'],
-          ['SpringerLINK (CRKN)', 'http://link.springer.com/', 'springer']
-          ]
+config = platform_reader.read_platforms()
 
 
 def doi_to_url(doi):
@@ -39,12 +36,11 @@ def check_journal (doi, listed_platform):
         return Result.PublisherNotFound
 
     url = doi_to_url(doi)
-    base_url = "{0.scheme}://{0.netloc}/".format(urlsplit(url))
-    print(base_url)
-    if pub_data[1] != base_url:
+    base_url = "{0.netloc}".format(urlsplit(url))
+    if pub_data[2] != base_url:
         return Result.UnsupportedWebsite
 
-    method_result = globals()[pub_data[2]](url)
+    method_result = globals()[pub_data[1]](url)
     return method_result
 
 
@@ -129,7 +125,7 @@ def acs(url):
     return Result.Access
 
 
-def chem_gold(url):
+def rsc(url):
     # Pass through another redirect
     r = requests.get(url, headers=USER_AGENT)
     # change the url to get to the article
