@@ -18,6 +18,7 @@ USER_AGENT = {
 config = platform_reader.read_platforms()
 
 
+
 def doi_to_url(doi):
     url = "http://dx.doi.org/" + quote(doi)
     r = requests.get(url, allow_redirects=False)
