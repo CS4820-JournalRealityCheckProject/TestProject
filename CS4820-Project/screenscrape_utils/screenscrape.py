@@ -1,6 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
-import re
+from urllib.parse import urlsplit, quote
 import os
 from bs4 import BeautifulSoup
 
@@ -13,87 +13,39 @@ USER_AGENT = {
     'User-Agent': 'Mozilla/5.0'
 }
 
+config = [['Oxford Journals (CRKN)', 'http://academic.oup.com/', 'oxford'],
+          ['ACS (CRKN)', 'https://pubs.acs.org/', 'acs'],
+          ['Royal Society of Chemistry Gold (CRKN)', 'http://xlink.rsc.org/', 'chem_gold'],
+          ['ScienceDirect (CRKN)', 'https://linkinghub.elsevier.com/', 'science_direct'],
+          ['SpringerLINK (CRKN)', 'http://link.springer.com/', 'springer']
+          ]
+
 
 def doi_to_url(doi):
-    url = "http://dx.doi.org/" + doi
+    url = "http://dx.doi.org/" + quote(doi)
     r = requests.get(url, allow_redirects=False)
     return r.headers['Location']
 
 
-def doi_to_journal(doi):
-    url = "http://dx.doi.org/" + doi
-    headers = {"accept": "application/x-bibtex"}
-    r = requests.get(url, headers=headers)
-    # Very messy way to get the publisher
-    for line in r.text.split('\n'):
-        if 'publisher' in line:
-            # remove 'publisher ='
-            line = line[14:-1]
-            # Remove commas and curly brackets
-            line = re.sub('[{},]', '', line)
-            return line
-
-
-def check_journal(doi, listed_platform):
+def check_journal (doi, listed_platform):
     if doi is None or doi == "":
         return Result.NoArticle
-    publisher = doi_to_journal(doi)
+    # get config array
+    pub_data = None
+    for publisher in config:
+        if listed_platform == publisher[0]:
+            pub_data = publisher
+    if pub_data is None:
+        return Result.PublisherNotFound
 
-    # print("Publisher: " + publisher)
-    # print("Listed Platform: " + listed_platform)
+    url = doi_to_url(doi)
+    base_url = "{0.scheme}://{0.netloc}/".format(urlsplit(url))
+    print(base_url)
+    if pub_data[1] != base_url:
+        return Result.UnsupportedWebsite
 
-    try:
-        if publisher == "Royal Society of Chemistry (RSC)":
-            temp_result = chem_gold(doi)
-            return check_platform(listed_platform, publisher, temp_result)
-
-        elif publisher == "American Chemical Society (ACS)":
-            temp_result = acs(doi)
-            return check_platform(listed_platform, publisher, temp_result)
-
-        elif publisher == "Oxford University Press (OUP)":
-            temp_result = oxford(doi)
-            return check_platform(listed_platform, publisher, temp_result)
-
-        elif publisher == "Elsevier BV":
-            temp_result = science_direct(doi)
-            return check_platform(listed_platform, publisher, temp_result)
-
-        elif publisher == "Springer Nature":
-            temp_result = springer(doi)
-            return check_platform(listed_platform, publisher, temp_result)
-
-        elif publisher is None:
-            return Result.PublisherNotFound
-        else:
-            return Result.UnsupportedWebsite
-
-    except requests.exceptions.ConnectionError:
-        return Result.NetworkError
-
-
-def check_platform(listed_platform, publisher, temp_result):
-    if publisher == "Royal Society of Chemistry (RSC)":
-        if listed_platform == "Royal Society of Chemistry Gold (CRKN)":
-            return temp_result
-    if publisher == "American Chemical Society (ACS)":
-        if listed_platform == "ACS Legacy Archives" or listed_platform == "ACS (CRKN)":
-            return temp_result
-    if publisher == "Oxford University Press (OUP)":
-        if listed_platform == "Oxford Journals (CRKN)":
-            return temp_result
-    if publisher == "Elsevier BV":
-        if listed_platform == "ScienceDirect (CRKN)":
-            return temp_result
-    if publisher == "Springer Nature":
-        if listed_platform == "SpringerLINK (CRKN)" or listed_platform == "SpringerLINK Archive (CRKN)":
-            return temp_result
-
-    # listed platform is different
-    if temp_result is Result.Access:
-        return Result.OnUnexpectedPlatform
-    else:
-        return Result.NoAccessAndUnexpectedPlatform
+    method_result = globals()[pub_data[2]](doi)
+    return method_result
 
 
 def science_direct(doi):
@@ -173,10 +125,6 @@ def oxford(doi):
 
     soup = BeautifulSoup(r.text, 'html.parser')
 
-    # Check for Wiley
-    if soup.find('a', {'title': 'Wiley Online Library'}):
-        return wiley(soup)
-
     if not soup.find('div', {"class": "oup-header"}):
         return Result.UnsupportedWebsite
     if soup.find('i', {"class": "icon-availability_open"}):
@@ -252,18 +200,16 @@ def default_url(doi):
     return url
 
 
-def wiley(soup):
-    """
-    Currently just a filler,
-    other methods can call this if they find themselves on a Wiley library page
-    """
-    return Result.UnsupportedWebsite
-
-
 if __name__ == '__main__':
 
-    article_list = ['10.1093/molehr/3.2.149', "Royal Society of Chemistry (RSC)"]
+    article_list = [['10.1021/bc9700291', "ACS (CRKN)"],
+                    ['10.1039/a806580b', 'Royal Society of Chemistry Gold (CRKN)'],
+                    ['10.1080/10635150252899770', 'Oxford Journals (CRKN)'],
+                    ['10.1016/s1578-2190(08)70378-0', 'ScienceDirect (CRKN)'],
+                    ['10.1007/s00026-005-0237-z', 'SpringerLINK (CRKN)']
+                    ]
 
-    for article1 in article_list:
-        result1 = check_journal(article1, article_list[1])
-        print(str(result1) + ": " + str(article1))
+    for article in article_list:
+        print(article[0]+" : "+article[1])
+        result = check_journal(article[0], article[1])
+        print(result.name+"\n")
