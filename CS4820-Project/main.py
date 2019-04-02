@@ -3,6 +3,7 @@ import tkinter as tk
 import datetime
 import smtplib
 import threading
+import traceback
 
 import config_utils.config
 import ui_utils.main_ui as main_ui
@@ -60,6 +61,7 @@ class MainSystem(object):
         self.input_file_path = self.config['progress']['input-file-path']
         self.output_file_path = self.config['progress']['output-file-path']
         self.wrong_file_path = self.config['progress']['wrong-file-path']
+        self.exception_file_path = self.config['progress']['exception-file-path']
         self.file_name = None
         self.continue_output_file_path = None
 
@@ -124,6 +126,7 @@ class MainSystem(object):
         self.input_file_path = 'no-path'
         self.output_file_path = 'no-path'
         self.wrong_file_path = 'no-path'
+        self.exception_file_path = 'no-path'
         self.current_index = -1
 
     def create_journal_list(self):
@@ -168,6 +171,7 @@ class MainSystem(object):
             elif mode == self.REALITY_CHECK_MODE:
                 self.output_file_path = 'RESULT-JOURNALS-' + date + '_from_' + input_file_name  # file name
                 self.wrong_file_path = 'PROBLEM-JOURNALS-' + date + '_from_' + input_file_name
+                self.exception_file_path = 'EXCEPTION-JOURNALS-' + date + '_from_' + input_file_name
                 # self.output_file_path = date + '-RESULT-JOURNALS'  # file name
                 # self.wrong_file_path = date + '-PROBLEM-JOURNALS'
 
@@ -176,11 +180,13 @@ class MainSystem(object):
                 csv_reader.prepare_temp_csv(self.output_file_path)  # creates a csv temp file
             elif mode == self.REALITY_CHECK_MODE:
                 csv_reader.prepare_result_csv(self.output_file_path)  # creates a csv temp file
+                csv_reader.prepare_exception_csv(self.exception_file_path)  # creates a csv temp file
             csv_reader.prepare_wrong_csv(self.wrong_file_path)
 
             index = 0
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
-                                                status=mode, index=index, title=self.journal_list[index].title)
+                                                self.exception_file_path, status=mode, index=index,
+                                                title=self.journal_list[index].title)
 
         #  Iterates a list of journals using index
         list_size = len(self.journal_list)
@@ -218,9 +224,13 @@ class MainSystem(object):
             csv_reader.append_wrong_row(mode=mode, journal=self.journal_list[index],
                                         file_name=self.wrong_file_path)
 
+            # recording exceptions into csv
+            if mode == self.REALITY_CHECK_MODE:
+                csv_reader.append_exception_row(self.journal_list[index], self.exception_file_path)
+
             index = index + 1
             config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
-                                                status=mode, index=index, title=title)
+                                                self.exception_file_path, status=mode, index=index, title=title)
 
             #  prints progresses
             if not self.journal_list[index - 1].has_problem:
@@ -281,7 +291,11 @@ class MainSystem(object):
                 return
             try:
                 result = screenscraper.check_journal(doi, journal.package)  # reality check
-            except Exception:
+            except Exception as ex:
+                template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+                message = template.format(type(ex).__name__, ex.args)
+                exception = [type(ex).__name__, ex.args, traceback.format_exc()]
+                debug.d_print(message)
                 debug.d_print(year)
                 debug.d_print('|exception happened|')
                 result = result_enum.Result.OtherException
@@ -295,6 +309,9 @@ class MainSystem(object):
             if result is result_enum.Result.FreeAccess:
                 article.accessible = True
                 article.free = True
+            if result is result_enum.Result.OtherException:
+                article.exception = True
+                article.exception_details = exception
 
             article.result = self.convert_result(result)  # result is checked
             debug.d_print(str(year), ':', str(result), '=', 'https://doi.org/' + str(doi))
