@@ -5,6 +5,7 @@ from journal_utils.journal import Journal
 
 BASE_PATH = os.path.dirname(os.path.dirname(__file__))
 path = BASE_PATH + '/Data-Files/Output-Files/'
+exception_path = BASE_PATH + '/Data-Files/Exceptions/'
 ARTICLE = 2
 FAILED = 'failed'
 
@@ -136,7 +137,7 @@ def prepare_wrong_csv(wrong_file='wrong-list'):
 
 
 def prepare_exception_csv(exception_file='wrong-list'):
-    with open(path + exception_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
+    with open(exception_path + exception_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
         fieldnames = ['Title',
                       'Year',
                       'DOI',
@@ -281,7 +282,7 @@ def append_exception_row(journal, file_name='exception-list'):
     :param file_name:
     :return:
     """
-    with open(path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
+    with open(exception_path + file_name + '.csv', 'a', encoding='utf8', newline='') as file:
         writer = csv.writer(file)
         for year in journal.year_dict:
             if journal.year_dict[year][ARTICLE].exception:
