@@ -225,7 +225,7 @@ class MainSystem(object):
                                         file_name=self.wrong_file_path)
 
             # recording exceptions into csv
-            if mode == self.REALITY_CHECK_MODE:
+            if mode == self.REALITY_CHECK_MODE and not self.journal_list[index].has_problem:
                 csv_reader.append_exception_row(self.journal_list[index], self.exception_file_path)
 
             index = index + 1
