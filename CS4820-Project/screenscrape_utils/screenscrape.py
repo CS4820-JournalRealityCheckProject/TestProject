@@ -44,12 +44,11 @@ def check_journal (doi, listed_platform):
     if pub_data[1] != base_url:
         return Result.UnsupportedWebsite
 
-    method_result = globals()[pub_data[2]](doi)
+    method_result = globals()[pub_data[2]](url)
     return method_result
 
 
-def science_direct(doi):
-    url = doi_to_url(doi)
+def science_direct(url):
     r = requests.get(url)
     # There is a meta redirect to follow, use soup to follow
     soup1 = BeautifulSoup(r.text, 'html.parser')
@@ -77,27 +76,7 @@ def science_direct(doi):
     return Result.UnsupportedWebsite
 
 
-def science_direct_api(self, doi):
-    path_base = os.path.dirname(__file__)
-    key_sd = open(path_base + "/ScienceDirectAPI.txt").read()
-    parameters = {"APIKey": key_sd}
-    r = requests.get("https://api.elsevier.com/content/article/doi/" + doi, params=parameters)
-
-    if r.text == "":
-        return Result.NetworkError
-
-    root = ET.fromstring(r.text)
-    for item in root.iter():
-        if item.text == "FULL-TEXT":
-            return Result.Access
-        if item.text == "RESOURCE_NOT_FOUND":
-            return Result.ArticleNotFound
-    return Result.NoAccess
-
-
-def springer(doi):
-    url = 'https://link.springer.com/article/' + doi
-
+def springer(url):
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     free = soup.find('div', {"id": "open-choice-icon"})
@@ -118,9 +97,7 @@ def springer(doi):
     return Result.UnsupportedWebsite
 
 
-def oxford(doi):
-    url = doi_to_url(doi)
-
+def oxford(url):
     r = requests.get(url, headers=USER_AGENT)
 
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -139,41 +116,20 @@ def oxford(doi):
     return Result.Access
 
 
-def acs(doi):
-    # Looks at the headers for things that look like an article
-    # Needs a lot of testing if the current method is used
-    # So returns an array instead of a simple true or false
-    url = 'https://pubs.acs.org/doi/' + doi
-
+def acs(url):
     r = requests.get(url)
 
     soup = BeautifulSoup(r.text, 'html.parser')
 
-    results = [True, "_", "_", "_", "_", "_"]
-
-    for div in soup.find_all("h2"):
-        if div.text == "Introduction":
-            results[1] = 'I'
-        elif "Result" in div.text:
-            results[2] = 'R'
-        if div.text == "Conclusion":
-            results[3] = 'C'
-        if div.text == "Acknowledgments":
-            results[4] = 'A'
-        if div.text == "References":
-            results[5] = 'R'
-
     # Abstract appears in the third line if no access
     header = r.text.split('\n')[2]
     if 'Abstract' in header:
-        results[0] = False
         return Result.NoAccess
 
     return Result.Access
 
 
-def chem_gold(doi):
-    url = doi_to_url(doi)
+def chem_gold(url):
     # Pass through another redirect
     r = requests.get(url, headers=USER_AGENT)
     # change the url to get to the article
@@ -183,21 +139,6 @@ def chem_gold(doi):
     if "articlepdf" in r.url:
         return Result.Access
     return Result.NoAccess
-
-
-def springer_url(doi):
-    url = 'https://link.springer.com/article/' + doi
-    return url
-
-
-def acs_url(doi):
-    url = 'https://pubs.acs.org/doi/' + doi
-    return url
-
-
-def default_url(doi):
-    url = 'https://doi.org/' + doi
-    return url
 
 
 if __name__ == '__main__':
