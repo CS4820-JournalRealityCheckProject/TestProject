@@ -318,14 +318,14 @@ class MainSystem(object):
             return 'Article-Not-Found'
         elif result == result_enum.Result.UnsupportedWebsite:
             return 'Unsupported-Website'
+        elif result == result_enum.Result.WrongWebsite:
+            return 'Incorrect-Website'
+        elif result == result_enum.Result.WebsiteNotAsExpected:
+            return 'Website-Not-As-Expected'
         elif result == result_enum.Result.NetworkError:
             return 'Network-Error'
         elif result == result_enum.Result.PublisherNotFound:
             return 'Publisher-Not-Found'
-        elif result == result_enum.Result.OnUnexpectedPlatform:
-            return 'Access-Unexpected-Platform'
-        elif result == result_enum.Result.NoAccessAndUnexpectedPlatform:
-            return 'No-Access-Unexpected-Platform'
         elif result == result_enum.Result.OtherException:
             return 'Other-Exception'
         else:
