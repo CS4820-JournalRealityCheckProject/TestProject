@@ -18,7 +18,6 @@ USER_AGENT = {
 config = platform_reader.read_platforms()
 
 
-
 def doi_to_url(doi):
     url = "http://dx.doi.org/" + quote(doi)
     r = requests.get(url, allow_redirects=False)
@@ -28,7 +27,7 @@ def doi_to_url(doi):
         return None
 
 
-def check_journal (doi, listed_platform):
+def check_journal(doi, listed_platform):
     if doi is None or doi == "":
         return Result.NoArticle
     # get config array
@@ -154,7 +153,7 @@ if __name__ == '__main__':
 
     article_list = [['', 'No publisher'],
                     ['10.1021/bc9700291', 'The incorrect publisher'],
-                    ['LO.1021/bc9700291', 'ACS (CRKN)'], # Typo in DOI
+                    ['LO.1021/bc9700291', 'ACS (CRKN)'],  # Typo in DOI
                     ['10.1021/bc9700291', 'ACS (CRKN)'],
                     ['10.1039/a806580b', 'Royal Society of Chemistry Gold (CRKN)'],
                     ['10.1080/10635150252899770', 'Oxford Journals (CRKN)'],
@@ -163,6 +162,6 @@ if __name__ == '__main__':
                     ]
 
     for article in article_list:
-        print(article[0]+" : "+article[1])
+        print(article[0] + " : " + article[1])
         result = check_journal(article[0], article[1])
-        print(result.name+"\n")
+        print(result.name + "\n")
