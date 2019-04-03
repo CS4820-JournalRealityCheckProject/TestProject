@@ -22,7 +22,10 @@ config = platform_reader.read_platforms()
 def doi_to_url(doi):
     url = "http://dx.doi.org/" + quote(doi)
     r = requests.get(url, allow_redirects=False)
-    return r.headers['Location']
+    try:
+        return r.headers['Location']
+    except KeyError:
+        return None
 
 
 def check_journal (doi, listed_platform):
@@ -37,12 +40,21 @@ def check_journal (doi, listed_platform):
         return Result.PublisherNotFound
 
     url = doi_to_url(doi)
+    if url is None:
+        return Result.ArticleNotFound
     base_url = "{0.netloc}".format(urlsplit(url))
     if pub_data[2] != base_url:
+        # Check if any of the other publishers support the website
+        for publisher in config:
+            if pub_data[2] == base_url:
+                return Result.WrongWebsite
         return Result.UnsupportedWebsite
 
-    method_result = globals()[pub_data[1]](url)
-    return method_result
+    try:
+        method_result = globals()[pub_data[1]](url)
+        return method_result
+    except requests.exceptions.ConnectionError:
+        return Result.NetworkError
 
 
 def science_direct(url):
@@ -69,8 +81,8 @@ def science_direct(url):
     if 'Download' in download_text:
         return Result.Access
 
-    # Wrong site or Website changed
-    return Result.UnsupportedWebsite
+    # Website changed
+    return Result.WebsiteNotAsExpected
 
 
 def springer(url):
@@ -91,7 +103,7 @@ def springer(url):
         return Result.OpenAccess
 
     # Wrong site or Website changed
-    return Result.UnsupportedWebsite
+    return Result.WebsiteNotAsExpected
 
 
 def oxford(url):
@@ -100,7 +112,7 @@ def oxford(url):
     soup = BeautifulSoup(r.text, 'html.parser')
 
     if not soup.find('div', {"class": "oup-header"}):
-        return Result.UnsupportedWebsite
+        return Result.WebsiteNotAsExpected
     if soup.find('i', {"class": "icon-availability_open"}):
         return Result.OpenAccess
     if soup.find('i', {"class": "icon-availability_free"}):
@@ -140,7 +152,10 @@ def rsc(url):
 
 if __name__ == '__main__':
 
-    article_list = [['10.1021/bc9700291', "ACS (CRKN)"],
+    article_list = [['', 'No publisher'],
+                    ['10.1021/bc9700291', 'The incorrect publisher'],
+                    ['LO.1021/bc9700291', 'ACS (CRKN)'], # Typo in DOI
+                    ['10.1021/bc9700291', 'ACS (CRKN)'],
                     ['10.1039/a806580b', 'Royal Society of Chemistry Gold (CRKN)'],
                     ['10.1080/10635150252899770', 'Oxford Journals (CRKN)'],
                     ['10.1016/s1578-2190(08)70378-0', 'ScienceDirect (CRKN)'],
