@@ -291,10 +291,11 @@ class MainSystem(object):
                 return
             try:
                 result = screenscraper.check_journal(doi, journal.package)  # reality check
+                exception_details = ['', '', '']
             except Exception as ex:
                 template = "An exception of type {0} occurred. Arguments:\n{1!r}"
                 message = template.format(type(ex).__name__, ex.args)
-                exception = [type(ex).__name__, ex.args, traceback.format_exc()]
+                exception_details = [type(ex).__name__, ex.args, traceback.format_exc()]
                 debug.d_print(message)
                 debug.d_print(year)
                 debug.d_print('|exception happened|')
@@ -311,7 +312,7 @@ class MainSystem(object):
                 article.free = True
             if result is result_enum.Result.OtherException:
                 article.exception = True
-                article.exception_details = exception
+                article.exception_details = exception_details
 
             article.result = self.convert_result(result)  # result is checked
             debug.d_print(str(year), ':', str(result), '=', 'https://doi.org/' + str(doi))
