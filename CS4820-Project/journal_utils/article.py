@@ -12,7 +12,7 @@ class Article(object):
         self.result = None
         self.reason_of_false = 'no issues'
         self.exception = False
-        self.exceptionDetails = None
+        self.exception_details = None
 
     def __str__(self):
         return self.name
