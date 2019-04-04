@@ -258,7 +258,7 @@ class MainSystem(object):
                                           journal.year_dict[year][self.BEGIN],  # start_date
                                           journal.year_dict[year][self.END],  # end_date
                                           journal.print_issn, journal.online_issn,
-                                          journal.package)
+                                          journal.publisher)
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
                 debug.d_print(doi)
