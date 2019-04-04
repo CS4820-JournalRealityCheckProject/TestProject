@@ -17,7 +17,7 @@ def search_journal(journal_title, start_date, end_date, print_issn, online_issn,
         return 'Both ISSNs are empty'
 
     if online_issn != '':  # online ISSN exists
-        for i in works.query(journal_title, publisher_name=publisher).filter(
+        for i in works.query(journal_title).filter(
                 issn=online_issn,
                 from_pub_date=start_date,
                 until_pub_date=end_date).sample(1).select('DOI'):
@@ -25,7 +25,7 @@ def search_journal(journal_title, start_date, end_date, print_issn, online_issn,
 
     if print_issn != '':  # print ISSN exists
         if received_doi is None:
-            for j in works.query(journal_title, publisher_name=publisher).filter(
+            for j in works.query(journal_title).filter(
                     issn=print_issn,
                     from_pub_date=start_date,
                     until_pub_date=end_date).sample(1).select('DOI'):
