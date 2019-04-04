@@ -45,7 +45,7 @@ def check_journal(doi, listed_platform):
     if pub_data[2] != base_url:
         # Check if any of the other publishers support the website
         for publisher in config:
-            if pub_data[2] == base_url:
+            if publisher[2] == base_url:
                 return Result.WrongWebsite
         return Result.UnsupportedWebsite
 
