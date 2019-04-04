@@ -3,6 +3,7 @@ import tkinter as tk
 import datetime
 import smtplib
 import threading
+import json
 
 import config_utils.config
 import ui_utils.main_ui as main_ui
@@ -199,6 +200,9 @@ class MainSystem(object):
                     except KeyError:
                         self.journal_list[index].has_problem = True
                         self.journal_list[index].problem_detail = 'Unknown-DOI-Search-Error'
+                    except json.decoder.JSONDecodeError:
+                        self.journal_list[index].has_problem = True
+                        self.journal_list[index].problem_detail = 'JSON-Decode-Error-DOI-Search'
                 elif mode == self.REALITY_CHECK_MODE:
                     self.check_reality(self.journal_list[index])  # Reality Check
 
@@ -253,7 +257,8 @@ class MainSystem(object):
             doi = searcher.search_journal(journal.title,
                                           journal.year_dict[year][self.BEGIN],  # start_date
                                           journal.year_dict[year][self.END],  # end_date
-                                          journal.print_issn, journal.online_issn)
+                                          journal.print_issn, journal.online_issn,
+                                          journal.package)
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
                 debug.d_print(doi)
