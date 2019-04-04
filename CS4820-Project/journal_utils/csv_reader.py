@@ -28,6 +28,13 @@ def construct_journal_list_from(journals_csv):
     return journal_obj_list
 
 
+def is_row_empty(row):
+    if row['Title'] == row['PackageName'] == row['URL'] == row['Publisher'] == row['PrintISSN'] == \
+            row['OnlineISSN'] == row['ManagedCoverageBegin'] == row['ManagedCoverageEnd'] == '':
+        return True
+    return False
+
+
 def reconstruct_journal_list_from(articles_csv):
     """
     Reconstruct journal objects from the temporary article csv file
