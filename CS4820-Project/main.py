@@ -254,11 +254,13 @@ class MainSystem(object):
             debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
                           journal.year_dict[year][self.END],  # end_date
                           )
-            doi = searcher.search_journal(journal.title,
+            dois = searcher.search_journal(journal.title,
                                           journal.year_dict[year][self.BEGIN],  # start_date
                                           journal.year_dict[year][self.END],  # end_date
                                           journal.print_issn, journal.online_issn,
-                                          journal.publisher)
+                                          journal.publisher, 5)
+            doi = screenscraper.filter_dois(dois, journal.publisher)
+
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
                 debug.d_print(doi)
