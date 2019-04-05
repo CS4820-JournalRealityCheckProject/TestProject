@@ -149,7 +149,7 @@ class Journal(object):
             year = 0
             month = 0
             day = 0
-
+            
         return datetime.datetime(year, month, day)
 
     def create_year_dict(self):
