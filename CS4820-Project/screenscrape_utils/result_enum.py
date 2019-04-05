@@ -11,8 +11,8 @@ class Result(Enum):
     NoArticle = 2
     ArticleNotFound = 3
     UnsupportedWebsite = 4
-    NetworkError = 5
-    PublisherNotFound = 6
-    OnUnexpectedPlatform = 7
-    NoAccessAndUnexpectedPlatform = 8
+    WrongWebsite = 5
+    WebsiteNotAsExpected = 6
+    NetworkError = 7
+    PublisherNotFound = 8
     OtherException = 9

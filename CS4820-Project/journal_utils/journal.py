@@ -112,9 +112,9 @@ class Journal(object):
                 self.wrap_quote(self.expected_subscription_end) + ' ' +
                 self.wrap_quote(self.print_issn) + ' ' +
                 self.wrap_quote(self.online_issn) + ' ' +
-                self.wrap_quote(self.package)
+                self.wrap_quote(self.package) + ' ' +
+                self.wrap_quote(self.publisher)
                 # self.wrap_quote(self.url) + s +
-                # self.wrap_quote(self.publisher) + s +
                 # str(self.begin_datetime) + s +
                 # str(self.end_datetime) + s
                 )
@@ -149,7 +149,7 @@ class Journal(object):
             year = 0
             month = 0
             day = 0
-
+            
         return datetime.datetime(year, month, day)
 
     def create_year_dict(self):

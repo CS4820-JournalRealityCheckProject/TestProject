@@ -4,6 +4,7 @@ import datetime
 import smtplib
 import threading
 import traceback
+import json
 
 import config_utils.config
 import ui_utils.main_ui as main_ui
@@ -205,6 +206,9 @@ class MainSystem(object):
                     except KeyError:
                         self.journal_list[index].has_problem = True
                         self.journal_list[index].problem_detail = 'Unknown-DOI-Search-Error'
+                    except json.decoder.JSONDecodeError:
+                        self.journal_list[index].has_problem = True
+                        self.journal_list[index].problem_detail = 'JSON-Decode-Error-DOI-Search'
                 elif mode == self.REALITY_CHECK_MODE:
                     self.check_reality(self.journal_list[index])  # Reality Check
 
@@ -263,7 +267,8 @@ class MainSystem(object):
             doi = searcher.search_journal(journal.title,
                                           journal.year_dict[year][self.BEGIN],  # start_date
                                           journal.year_dict[year][self.END],  # end_date
-                                          journal.print_issn, journal.online_issn)
+                                          journal.print_issn, journal.online_issn,
+                                          journal.publisher)
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
                 debug.d_print(doi)
@@ -336,14 +341,14 @@ class MainSystem(object):
             return 'Article-Not-Found'
         elif result == result_enum.Result.UnsupportedWebsite:
             return 'Unsupported-Website'
+        elif result == result_enum.Result.WrongWebsite:
+            return 'Incorrect-Website'
+        elif result == result_enum.Result.WebsiteNotAsExpected:
+            return 'Website-Not-As-Expected'
         elif result == result_enum.Result.NetworkError:
             return 'Network-Error'
         elif result == result_enum.Result.PublisherNotFound:
             return 'Publisher-Not-Found'
-        elif result == result_enum.Result.OnUnexpectedPlatform:
-            return 'Access-Unexpected-Platform'
-        elif result == result_enum.Result.NoAccessAndUnexpectedPlatform:
-            return 'No-Access-Unexpected-Platform'
         elif result == result_enum.Result.OtherException:
             return 'Other-Exception'
         else:
