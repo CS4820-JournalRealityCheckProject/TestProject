@@ -6,13 +6,23 @@ from email.mime.multipart import MIMEMultipart
 
 
 class EmailHandler:
-    domain = "@upei.ca"
-    port = 25
-    smtp_server = "internal-smtp.upei.ca"
-    sender = "no-reply@upei.ca"
-    receiver = ""
-    subject = "Reality check program finished"
-    body = "Reality Check System finished. There are two files attached\n\n"
+    domain = ''
+    port = None
+    smtp_server = ''
+    from_name = ''
+    sender = ''
+    receiver = ''
+    subject = ''
+    body = ''
+
+    def __init__(self, smtp_server, port, from_name, sender, domain, subject, body):
+        self.smtp_server = smtp_server
+        self.port = port
+        self.from_name = from_name
+        self.sender = sender
+        self.domain = domain
+        self.subject = subject
+        self.body = body
 
     def set_sender(self, sender):
         if sender.endswith(self.domain):
@@ -38,7 +48,7 @@ class EmailHandler:
             return
         msg = MIMEMultipart()
         msg['Subject'] = self.subject
-        msg['From'] = "UPEI REALITY CHECK SYSTEM <"+self.sender+">"
+        msg['From'] = self.from_name + " <" + self.sender + ">"
         msg['To'] = self.receiver
         body = self.body
         msg.attach(MIMEText(body, "plain"))

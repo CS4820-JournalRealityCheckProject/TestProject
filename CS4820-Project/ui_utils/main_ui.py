@@ -103,7 +103,7 @@ class MainUI(tk.Frame):
         # balance of each column
         tab1.columnconfigure(1, weight=1)
         tab1.columnconfigure(2, weight=4)
-        tab1.columnconfigure(3, weight=1)
+        tab1.columnconfigure(3, weight=2)
 
         # top label left
         self.top_label = tk.Label(tab1, text='Status: ')
