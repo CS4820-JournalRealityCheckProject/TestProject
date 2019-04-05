@@ -187,7 +187,7 @@ class MainSystem(object):
         list_size = len(self.journal_list)
         while index < list_size:
             if self.ui is not None:
-                self.ui.notify_progress(index+1, list_size)
+                self.ui.notify_progress(index + 1, list_size)
 
             debug.d_print(index + 1, ":", self.journal_list[index])
             title = self.journal_list[index].title
@@ -255,10 +255,10 @@ class MainSystem(object):
                           journal.year_dict[year][self.END],  # end_date
                           )
             dois = searcher.search_journal(journal.title,
-                                          journal.year_dict[year][self.BEGIN],  # start_date
-                                          journal.year_dict[year][self.END],  # end_date
-                                          journal.print_issn, journal.online_issn,
-                                          journal.publisher, 5)
+                                           journal.year_dict[year][self.BEGIN],  # start_date
+                                           journal.year_dict[year][self.END],  # end_date
+                                           journal.print_issn, journal.online_issn,
+                                           journal.publisher, 5)
             doi = screenscraper.filter_dois(dois, journal.publisher)
 
             journal.year_dict[year][self.ARTICLE].doi = doi
