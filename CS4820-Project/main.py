@@ -193,7 +193,7 @@ class MainSystem(object):
         list_size = len(self.journal_list)
         while index < list_size:
             if self.ui is not None:
-                self.ui.notify_progress(index+1, list_size)
+                self.ui.notify_progress(index + 1, list_size)
 
             debug.d_print(index + 1, ":", self.journal_list[index])
             title = self.journal_list[index].title
@@ -359,11 +359,22 @@ class MainSystem(object):
         Send the result file to a specified email address.
         :return:
         """
-        use_server = False
+
+        use_server = True
+
+        self.config = configparser.ConfigParser()
+        self.config.read(config_utils.config.PATH_TO_SMTP_SERVER_INI)
 
         if use_server:
             #  Sender is a server
-            emailer = email_server.EmailHandler()  # using a server name to send
+            emailer = email_server.EmailHandler(smtp_server=self.config['email-info']['smtp-server'],
+                                                port=int(self.config['email-info']['port']),
+                                                from_name=self.config['email-info']['from'],
+                                                sender=self.config['email-info']['sender'],
+                                                domain=self.config['email-info']['domain'],
+                                                subject=self.config['email-info']['subject'],
+                                                body=self.config['email-info']['body']
+                                                )  # using a server name to send
         else:
             #  Sender is personal address
             emailer = email_handler.EmailHandler()
