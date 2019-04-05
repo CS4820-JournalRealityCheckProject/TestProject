@@ -26,18 +26,20 @@ def filter_dois(dois, listed_platform):
     :return: the first doi that links to the publisher site
     """
     # get config array
-    url = None
+    config_url = None  # url in config file
+
     for publisher in config:
         if listed_platform == publisher[0]:
-            url = publisher[2]
-    if url is None:
+            config_url = publisher[2]
+    if config_url is None:
         return None
 
     for doi in dois:
         url = doi_to_url(doi)
         if url is not None:
             base_url = "{0.netloc}".format(urlsplit(url))
-            if base_url == url:
+            print('config_url:', config_url, '\nbase_url  :', base_url)
+            if base_url == config_url:  # matches one of five
                 return doi
     return None
 

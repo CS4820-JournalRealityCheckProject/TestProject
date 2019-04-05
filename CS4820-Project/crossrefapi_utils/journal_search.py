@@ -29,7 +29,7 @@ def search_doi(journal_title, start_date, end_date, print_issn, online_issn, pub
                     issn=print_issn,
                     from_pub_date=start_date,
                     until_pub_date=end_date).sample(count).select('DOI'):
-                received_dois.append(i['DOI'])
+                received_dois.append(j['DOI'])
 
     return received_dois
 

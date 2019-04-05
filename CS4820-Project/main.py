@@ -265,17 +265,17 @@ class MainSystem(object):
                           journal.year_dict[year][self.END],  # end_date
                           )
             dois = searcher.search_doi(journal.title,
-                                           journal.year_dict[year][self.BEGIN],  # start_date
-                                           journal.year_dict[year][self.END],  # end_date
-                                           journal.print_issn, journal.online_issn,
-                                           journal.publisher, 5)
-            doi = screenscraper.filter_dois(dois, journal.publisher)
+                                       journal.year_dict[year][self.BEGIN],  # start_date
+                                       journal.year_dict[year][self.END],  # end_date
+                                       journal.print_issn, journal.online_issn,
+                                       journal.publisher, 5)
+            doi = screenscraper.filter_dois(dois, journal.package)
 
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
                 debug.d_print(doi)
             else:
-                debug.d_print('https://doi.org/' + doi)
+                debug.d_print('https://doi.org/' + doi + '\n')
 
     def check_reality(self, journal):
         """
