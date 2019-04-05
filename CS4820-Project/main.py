@@ -78,7 +78,7 @@ class MainSystem(object):
         self.ui = None
         self.root = tk.Tk()
         self.root.title("Journal Reality Checking System")
-        self.root.geometry("500x400")
+        self.root.geometry("600x400")
 
         if self.complete == 'False':
             title = self.status

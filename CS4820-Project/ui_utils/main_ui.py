@@ -100,6 +100,11 @@ class MainUI(tk.Frame):
 
         nb.pack(expand=1, fill='both')
 
+        # balance of each column
+        tab1.columnconfigure(1, weight=1)
+        tab1.columnconfigure(2, weight=4)
+        tab1.columnconfigure(3, weight=1)
+
         # top label left
         self.top_label = tk.Label(tab1, text='Status: ')
         self.top_label.grid(row=0, column=1)
@@ -320,13 +325,13 @@ class MainUI(tk.Frame):
 
         if self.no_doi_file_warning:
             self.warn_var.set(self.NO_DOI_MSG + '\n' +
-                              'RESULT:' + self.output_file_path)
+                              'DOI-Search finished.\nEmail has been sent.')
             messagebox.showwarning('NO-DOI File',
                                    'NO-DOI file has entries. '
                                    'Check No-DOI file.')
             self.no_doi_file_warning = False
         else:
-            self.warn_var.set('RESULT:' + self.output_file_path)
+            self.warn_var.set('DOI-Search finished.\nEmail has been sent.')
 
     def reality_check_worker(self):
         logging.debug('reality-check thread started')
@@ -336,7 +341,7 @@ class MainUI(tk.Frame):
         self.check_reality()
 
         # after reality check is done
-        self.warn_var.set('Reality Check FINISHED')
+        self.warn_var.set('Reality Check FINISHED\nEmail has been sent.')
         self.enable_initial_buttons()
         self.disable_email_widgets()
 
