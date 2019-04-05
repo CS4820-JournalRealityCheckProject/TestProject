@@ -15,17 +15,25 @@ def construct_journal_list_from(journals_csv):
     with open(journals_csv, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
-            journal_obj_list.append(
-                Journal(row['Title'],
-                        row['PackageName'],
-                        row['URL'],
-                        row['Publisher'],
-                        row['PrintISSN'],
-                        row['OnlineISSN'],
-                        row['ManagedCoverageBegin'],
-                        row['ManagedCoverageEnd']
-                        ))
+            if not empty_row(row):
+                journal_obj_list.append(
+                    Journal(row['Title'],
+                            row['PackageName'],
+                            row['URL'],
+                            row['Publisher'],
+                            row['PrintISSN'],
+                            row['OnlineISSN'],
+                            row['ManagedCoverageBegin'],
+                            row['ManagedCoverageEnd']
+                            ))
     return journal_obj_list
+
+
+def empty_row(row):
+    if row['Title'] == row['PackageName'] == row['URL'] == row['Publisher'] == row['PrintISSN'] == \
+            row['OnlineISSN'] == row['ManagedCoverageBegin'] == row['ManagedCoverageEnd'] == '':
+        return True
+    return False
 
 
 def reconstruct_journal_list_from(articles_csv):
