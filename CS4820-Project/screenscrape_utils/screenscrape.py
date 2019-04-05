@@ -17,6 +17,7 @@ USER_AGENT = {
 
 config = platform_reader.read_platforms()
 
+
 def filter_dois(dois, listed_platform):
     """
 
@@ -39,8 +40,6 @@ def filter_dois(dois, listed_platform):
             if base_url == url:
                 return doi
     return None
-
-
 
 
 def doi_to_url(doi):
