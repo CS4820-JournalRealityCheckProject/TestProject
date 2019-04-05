@@ -6,7 +6,7 @@ from crossref.restful import Works
 
 
 # function that searches an article in between given dates
-def search_journal(journal_title, start_date, end_date, print_issn, online_issn, publisher, count):
+def search_doi(journal_title, start_date, end_date, print_issn, online_issn, publisher, count):
     works = Works()
     received_dois = []
 
@@ -36,7 +36,7 @@ def search_journal(journal_title, start_date, end_date, print_issn, online_issn,
 
 if __name__ == '__main__':
     # doi = search_journal('Annals of Combinatorics', '1997-01-01', '2000-12-31', '0218-0006', '0219-3094')
-    doi = search_journal('Social work in education', '1996-01-01', '2000-07-31', '0162-7961', '', )
+    doi = search_doi('Social work in education', '1996-01-01', '2000-07-31', '0162-7961', '', )
     print(doi)
     title = 'Journal'
     w = Works()

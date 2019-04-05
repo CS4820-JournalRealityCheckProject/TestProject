@@ -264,7 +264,7 @@ class MainSystem(object):
             debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
                           journal.year_dict[year][self.END],  # end_date
                           )
-            dois = searcher.search_journal(journal.title,
+            dois = searcher.search_doi(journal.title,
                                            journal.year_dict[year][self.BEGIN],  # start_date
                                            journal.year_dict[year][self.END],  # end_date
                                            journal.print_issn, journal.online_issn,
