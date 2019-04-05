@@ -6,9 +6,9 @@ from crossref.restful import Works
 
 
 # function that searches an article in between given dates
-def search_journal(journal_title, start_date, end_date, print_issn, online_issn, publisher):
+def search_journal(journal_title, start_date, end_date, print_issn, online_issn, publisher, count):
     works = Works()
-    received_doi = None
+    received_dois = []
 
     # loop executes until all the DOI's are put into a list,
     # it is set up so if the online_issn doesn't return any DOI's then the method
@@ -20,18 +20,18 @@ def search_journal(journal_title, start_date, end_date, print_issn, online_issn,
         for i in works.query(journal_title).filter(
                 issn=online_issn,
                 from_pub_date=start_date,
-                until_pub_date=end_date).sample(1).select('DOI'):
-            received_doi = i['DOI']
+                until_pub_date=end_date).sample(count).select('DOI'):
+            received_dois.append(i['DOI'])
 
     if print_issn != '':  # print ISSN exists
-        if received_doi is None:
+        if not received_dois:
             for j in works.query(journal_title).filter(
                     issn=print_issn,
                     from_pub_date=start_date,
-                    until_pub_date=end_date).sample(1).select('DOI'):
-                received_doi = j['DOI']
+                    until_pub_date=end_date).sample(count).select('DOI'):
+                received_dois.append(i['DOI'])
 
-    return received_doi
+    return received_dois
 
 
 if __name__ == '__main__':
