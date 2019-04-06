@@ -18,6 +18,32 @@ USER_AGENT = {
 config = platform_reader.read_platforms()
 
 
+def filter_dois(dois, listed_platform):
+    """
+
+    :param dois:
+    :param listed_platform:
+    :return: the first doi that links to the publisher site
+    """
+    # get config array
+    config_url = None  # url in config file
+
+    for publisher in config:
+        if listed_platform == publisher[0]:
+            config_url = publisher[2]
+    if config_url is None:
+        return None
+
+    for doi in dois:
+        url = doi_to_url(doi)
+        if url is not None:
+            base_url = "{0.netloc}".format(urlsplit(url))
+            print('config_url:', config_url, '\nbase_url  :', base_url)
+            if base_url == config_url:  # matches one of five
+                return doi
+    return None
+
+
 def doi_to_url(doi):
     url = "http://dx.doi.org/" + quote(doi)
     r = requests.get(url, allow_redirects=False)

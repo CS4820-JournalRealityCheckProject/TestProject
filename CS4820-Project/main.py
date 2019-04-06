@@ -264,16 +264,18 @@ class MainSystem(object):
             debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
                           journal.year_dict[year][self.END],  # end_date
                           )
-            doi = searcher.search_journal(journal.title,
-                                          journal.year_dict[year][self.BEGIN],  # start_date
-                                          journal.year_dict[year][self.END],  # end_date
-                                          journal.print_issn, journal.online_issn,
-                                          journal.publisher)
+            dois = searcher.search_doi(journal.title,
+                                       journal.year_dict[year][self.BEGIN],  # start_date
+                                       journal.year_dict[year][self.END],  # end_date
+                                       journal.print_issn, journal.online_issn,
+                                       journal.publisher, 5)
+            doi = screenscraper.filter_dois(dois, journal.package)
+
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
-                debug.d_print(doi)
+                debug.d_print(str(doi)+'\n')
             else:
-                debug.d_print('https://doi.org/' + doi)
+                debug.d_print('https://doi.org/' + doi + '\n')
 
     def check_reality(self, journal):
         """
@@ -287,40 +289,39 @@ class MainSystem(object):
             article = journal.year_dict[year][self.ARTICLE]
             doi = article.doi
             print(doi)
+
             if doi is None:
-                print('nodoi is executed')
+                debug.d_print(str(year), ':', 'no-doi')
                 article.accessible = False
                 article.result = 'No-DOI'
-                journal.record_wrong_years()  # wrong years are updated
-                journal.record_free_years()  # free years are updated
-                return
-            try:
-                result = screenscraper.check_journal(doi, journal.package)  # reality check
-                exception_details = ['', '', '']
-            except Exception as ex:
-                template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-                message = template.format(type(ex).__name__, ex.args)
-                exception_details = [type(ex).__name__, ex.args, traceback.format_exc()]
-                debug.d_print(message)
-                debug.d_print(year)
-                debug.d_print('|exception happened|')
-                result = result_enum.Result.OtherException
+            else:
+                try:
+                    result = screenscraper.check_journal(doi, journal.package)  # reality check
+                    exception_details = ['', '', '']
+                except Exception as ex:
+                    template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+                    message = template.format(type(ex).__name__, ex.args)
+                    exception_details = [type(ex).__name__, ex.args, traceback.format_exc()]
+                    debug.d_print(message)
+                    debug.d_print(year)
+                    debug.d_print('|exception happened|')
+                    result = result_enum.Result.OtherException
 
-            article.result = result  # result is stored in article
-            if result is result_enum.Result.Access:
-                article.accessible = True
-            if result is result_enum.Result.OpenAccess:
-                article.accessible = True
-                article.open = True
-            if result is result_enum.Result.FreeAccess:
-                article.accessible = True
-                article.free = True
-            if result is result_enum.Result.OtherException:
-                article.exception = True
-                article.exception_details = exception_details
+                article.result = result  # result is stored in article
+                if result is result_enum.Result.Access:
+                    article.accessible = True
+                if result is result_enum.Result.OpenAccess:
+                    article.accessible = True
+                    article.open = True
+                if result is result_enum.Result.FreeAccess:
+                    article.accessible = True
+                    article.free = True
+                if result is result_enum.Result.OtherException:
+                    article.exception = True
+                    article.exception_details = exception_details
 
-            article.result = self.convert_result(result)  # result is checked
-            debug.d_print(str(year), ':', str(result), '=', 'https://doi.org/' + str(doi))
+                article.result = self.convert_result(result)  # result is checked
+                debug.d_print(str(year), ':', str(result), '=', 'https://doi.org/' + str(doi))
 
         journal.record_wrong_years()  # wrong years are updated
         journal.record_free_years()  # free years are updated
@@ -360,7 +361,7 @@ class MainSystem(object):
         :return:
         """
 
-        use_server = True
+        use_server = False
 
         self.config = configparser.ConfigParser()
         self.config.read(config_utils.config.PATH_TO_SMTP_SERVER_INI)

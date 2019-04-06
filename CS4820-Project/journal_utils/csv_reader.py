@@ -61,6 +61,7 @@ def reconstruct_journal_list_from(articles_csv):
             else:
                 doi = row['DOI']
 
+            #  When we hit a next journal
             if current_title != row['Title'] or current_platform != row['PackageName']:
                 current_title = row['Title']
                 current_platform = row['PackageName']
@@ -83,6 +84,8 @@ def reconstruct_journal_list_from(articles_csv):
                 else:
                     journal.year_dict[year][ARTICLE].doi = doi
                     journal_obj_list.append(journal)
+
+            # We are still adding an article to the journal
             else:
                 journal.year_dict[year][ARTICLE].doi = doi
 
