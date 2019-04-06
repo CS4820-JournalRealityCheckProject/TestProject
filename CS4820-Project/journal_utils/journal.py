@@ -209,6 +209,7 @@ class Journal(object):
         a.date = date
 
     def record_wrong_years(self):
+        self.wrong_years = ''
         for year in self.year_dict:
             a = self.year_dict[year][self.ARTICLE]
 
@@ -221,6 +222,7 @@ class Journal(object):
             self.wrong_years = 'No-Problem-Years'
 
     def record_free_years(self):
+        self.free_years = ''
         for year in self.year_dict:
             a = self.year_dict[year][self.ARTICLE]
 
