@@ -288,7 +288,6 @@ class MainSystem(object):
         for year in journal.year_dict:
             article = journal.year_dict[year][self.ARTICLE]
             doi = article.doi
-            print(doi)
 
             if doi is None:
                 debug.d_print(str(year), ':', 'no-doi')
