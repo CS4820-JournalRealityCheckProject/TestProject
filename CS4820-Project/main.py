@@ -273,7 +273,7 @@ class MainSystem(object):
 
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
-                debug.d_print(doi)
+                debug.d_print(str(doi)+'\n')
             else:
                 debug.d_print('https://doi.org/' + doi + '\n')
 
@@ -362,7 +362,7 @@ class MainSystem(object):
         :return:
         """
 
-        use_server = True
+        use_server = False
 
         self.config = configparser.ConfigParser()
         self.config.read(config_utils.config.PATH_TO_SMTP_SERVER_INI)
