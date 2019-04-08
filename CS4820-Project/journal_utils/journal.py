@@ -72,8 +72,6 @@ class Journal(object):
             self.expected_subscription_end = expected_subscript_end
             return  # the value is incorrect, you will not create a journal
 
-        debug.d_print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
-
         try:
             self.begin_datetime = self.create_date(self.expected_subscription_begin)  # datetime object
             self.end_datetime = self.create_date(self.expected_subscription_end)  # datetime object
