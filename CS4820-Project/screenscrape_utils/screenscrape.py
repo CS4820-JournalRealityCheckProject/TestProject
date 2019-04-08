@@ -1,15 +1,9 @@
 import requests
-import xml.etree.ElementTree as ET
 from urllib.parse import urlsplit, quote
-import os
 from bs4 import BeautifulSoup
 
-if __name__ == '__main__':
-    from result_enum import Result
-    import platform_reader
-else:
-    from screenscrape_utils.result_enum import Result
-    import screenscrape_utils.platform_reader as platform_reader
+from screenscrape_utils.result_enum import Result
+import screenscrape_utils.platform_reader as platform_reader
 
 USER_AGENT = {
     'User-Agent': 'Mozilla/5.0'
@@ -38,7 +32,6 @@ def filter_dois(dois, listed_platform):
         url = doi_to_url(doi)
         if url is not None:
             base_url = "{0.netloc}".format(urlsplit(url))
-            print('config_url:', config_url, '\nbase_url  :', base_url)
             if base_url == config_url:  # matches one of five
                 return doi
     return None
@@ -152,8 +145,6 @@ def oxford(url):
 
 def acs(url):
     r = requests.get(url)
-
-    soup = BeautifulSoup(r.text, 'html.parser')
 
     # Abstract appears in the third line if no access
     header = r.text.split('\n')[2]
