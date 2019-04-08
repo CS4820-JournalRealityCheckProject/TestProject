@@ -4,6 +4,8 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 
+import debug_utils.debug as debug
+
 
 class EmailHandler:
     domain = ''
@@ -44,7 +46,7 @@ class EmailHandler:
 
     def send(self, file_array):
         if self.receiver == "":
-            print("There is no specified receiver")
+            debug.d_print("There is no specified receiver")
             return
         msg = MIMEMultipart()
         msg['Subject'] = self.subject
@@ -64,6 +66,5 @@ class EmailHandler:
             msg.attach(attachment)
         with SMTP(self.smtp_server, self.port) as server:
             server.ehlo()
-            print("Sending message...")
+            debug.d_print("Sending message...")
             server.sendmail(self.sender, self.receiver, msg.as_string())
-            print("Message sent")

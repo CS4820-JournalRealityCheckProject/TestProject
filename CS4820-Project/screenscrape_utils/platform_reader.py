@@ -43,7 +43,7 @@ def correct_columns(file_name):
 
 
 if __name__ == '__main__':
-    print('hi')
+    print('The platforms defined in the file are:')
     platform_list1 = read_platforms()
     for p in platform_list1:
         print(p)
