@@ -90,8 +90,7 @@ def reconstruct_journal_list_from(articles_csv):
             # We are still adding an article to the journal
             else:
                 journal.year_dict[year][ARTICLE].doi = doi
-
-    debug.d_print('size' + str(len(journal_obj_list)))
+                
     return journal_obj_list
 
 
