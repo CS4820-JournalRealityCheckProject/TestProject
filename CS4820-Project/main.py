@@ -265,11 +265,11 @@ class MainSystem(object):
 
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
-                debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
+                debug.d_print_detail(journal.year_dict[year][self.BEGIN],  # start_date
                               journal.year_dict[year][self.END],  # end_date
                               ': ', str(doi))
             else:
-                debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
+                debug.d_print_detail(journal.year_dict[year][self.BEGIN],  # start_date
                               journal.year_dict[year][self.END],  # end_date
                               ': ', 'https://doi.org/' + doi)
 
@@ -314,7 +314,7 @@ class MainSystem(object):
                     article.exception_details = exception_details
 
                 article.result = self.convert_result(result)  # result is checked
-                debug.d_print(str(year), ':', str(result), '=', 'https://doi.org/' + str(doi))
+                debug.d_print_detail(str(year), ':', str(result), '=', 'https://doi.org/' + str(doi))
 
         journal.record_wrong_years()  # wrong years are updated
         journal.record_free_years()  # free years are updated
