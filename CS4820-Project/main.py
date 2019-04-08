@@ -256,9 +256,7 @@ class MainSystem(object):
         :return:
         """
         for year in journal.year_dict:
-            debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
-                          journal.year_dict[year][self.END],  # end_date
-                          )
+
             dois = searcher.search_doi(journal.title,
                                        journal.year_dict[year][self.BEGIN],  # start_date
                                        journal.year_dict[year][self.END],  # end_date
@@ -267,9 +265,13 @@ class MainSystem(object):
 
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
-                debug.d_print(str(doi))
+                debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
+                              journal.year_dict[year][self.END],  # end_date
+                              ': ', str(doi))
             else:
-                debug.d_print('https://doi.org/' + doi)
+                debug.d_print(journal.year_dict[year][self.BEGIN],  # start_date
+                              journal.year_dict[year][self.END],  # end_date
+                              ': ', 'https://doi.org/' + doi)
 
     def check_reality(self, journal):
         """
