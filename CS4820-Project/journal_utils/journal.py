@@ -60,7 +60,6 @@ class Journal(object):
             self.problem_detail = self.BOTH_BEGIN_END_EMPTY
             self.expected_subscription_begin = expected_subscript_begin
             self.expected_subscription_end = expected_subscript_end
-            debug.d_print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
             return
 
         try:
@@ -71,11 +70,6 @@ class Journal(object):
             self.problem_detail = self.YEAR_FORMAT_PROBLEM
             self.expected_subscription_begin = expected_subscript_begin
             self.expected_subscription_end = expected_subscript_end
-            logging.debug(ex)
-            logging.debug('format_date')
-            logging.debug(self.title)
-            logging.debug(__class__)
-            debug.d_print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
             return  # the value is incorrect, you will not create a journal
 
         debug.d_print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
@@ -88,8 +82,6 @@ class Journal(object):
         except ValueError as ex:
             self.has_problem = True
             self.problem_detail = self.YEAR_FORMAT_PROBLEM
-            logging.debug(ex)
-            logging.debug(__class__)
             return
 
         # checks if begin_datetime is later than end_datetime
@@ -105,9 +97,6 @@ class Journal(object):
             return
 
     def __str__(self):
-        s = ', '
-        q = "'"
-        cq = s + q
         line = (self.wrap_quote(self.title) + ' ' +
                 self.wrap_quote(self.expected_subscription_begin) + ' ' +
                 self.wrap_quote(self.expected_subscription_end) + ' ' +
@@ -115,13 +104,7 @@ class Journal(object):
                 self.wrap_quote(self.online_issn) + ' ' +
                 self.wrap_quote(self.package) + ' ' +
                 self.wrap_quote(self.publisher)
-                # self.wrap_quote(self.url) + s +
-                # str(self.begin_datetime) + s +
-                # str(self.end_datetime) + s
                 )
-        # line = (self.title + ', ' + self.expected_subscription_begin + ', ' + self.expected_subscription_end + ', ' +
-        #         self.print_issn + ', ' + self.online_issn + ', ' + self.package)
-
         return line
 
     @staticmethod
