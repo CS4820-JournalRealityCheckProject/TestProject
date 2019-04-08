@@ -387,7 +387,7 @@ class MainSystem(object):
             emailer.send(files)
         except smtplib.SMTPRecipientsRefused:
             print('Email was incorrect')
-        debug.d_print('email finished')
+        debug.d_print('Email has been sent.')
 
     def update(self, code):
         """
@@ -398,7 +398,6 @@ class MainSystem(object):
         :param code: a message from main_ui.py
         :return:
         """
-        debug.d_print('CODE:', code)
 
         if code == main_ui.MainUI.FILE_UPLOADED:
             self.input_file_path = self.ui.input_file_path
