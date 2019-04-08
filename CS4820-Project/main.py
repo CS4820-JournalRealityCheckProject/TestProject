@@ -105,7 +105,7 @@ class MainSystem(object):
     def restore_progress(self):
         debug.d_print('|progress restored|')
         self.ui.restore_ui(self.status)  # ui is recovered.
-        print(self.status)
+        debug.d_print(self.status)
 
         if self.status == 'doi-search':
             self.create_journal_list()
@@ -161,7 +161,6 @@ class MainSystem(object):
             # date = d[0:4] + d[5:7] + d[8:10] + '-' + d[11:13] + d[14:16]
 
             input_file_name = self.input_file_path.split('/')[-1][0:-4]
-            print('filename: ', input_file_name)
 
             # decides names of the result files
             if mode == self.DOI_SEARCH_MODE:
