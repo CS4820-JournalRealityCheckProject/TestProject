@@ -3,6 +3,7 @@ import re
 import logging
 
 import journal_utils.article as article
+import debug_utils.debug as debug
 
 
 # logging.basicConfig(level=logging.DEBUG, format='journal.py: %(message)s')
@@ -59,7 +60,7 @@ class Journal(object):
             self.problem_detail = self.BOTH_BEGIN_END_EMPTY
             self.expected_subscription_begin = expected_subscript_begin
             self.expected_subscription_end = expected_subscript_end
-            print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
+            debug.d_print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
             return
 
         try:
@@ -74,10 +75,10 @@ class Journal(object):
             logging.debug('format_date')
             logging.debug(self.title)
             logging.debug(__class__)
-            print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
+            debug.d_print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
             return  # the value is incorrect, you will not create a journal
 
-        print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
+        debug.d_print(title, package, '=', self.expected_subscription_begin, ':', self.expected_subscription_end)
 
         try:
             self.begin_datetime = self.create_date(self.expected_subscription_begin)  # datetime object
@@ -304,24 +305,23 @@ class Journal(object):
 
 
 if __name__ == '__main__':
-    print('matcher')
     # m = re.match('[0-9]{4}-[0-9]{2}-[0-9]{2}', '2000-3-21')
     # n = re.match('[0-9]{2}/[0-9]{2}/[0-9]{4}', '33/43/3333')
-    # print(m)
-    # print(n)
+    # debug.d_print(m)
+    # debug.d_print(n)
     b = 0
     e = 1
-    print(Journal.format_date('1991-12-12', b))
-    print(Journal.format_date('1991-1-12', e))
-    print(Journal.format_date('1991-12-2', b))
-    print(Journal.format_date('1991-1-3', e))
-    print(Journal.format_date('11/31/1993', b))
-    print(Journal.format_date('1/31/1993', b))
-    print(Journal.format_date('11/1/1993', b))
-    print(Journal.format_date('1/1/1993', b))
+    debug.d_print(Journal.format_date('1991-12-12', b))
+    debug.d_print(Journal.format_date('1991-1-12', e))
+    debug.d_print(Journal.format_date('1991-12-2', b))
+    debug.d_print(Journal.format_date('1991-1-3', e))
+    debug.d_print(Journal.format_date('11/31/1993', b))
+    debug.d_print(Journal.format_date('1/31/1993', b))
+    debug.d_print(Journal.format_date('11/1/1993', b))
+    debug.d_print(Journal.format_date('1/1/1993', b))
 
-    print(Journal.format_date('1991-12', b))
-    print(Journal.format_date('1933-03', e))
-    print(Journal.format_date('2091', b))
-    print(Journal.format_date('2001', e))
-    print(Journal.format_date('', e))
+    debug.d_print(Journal.format_date('1991-12', b))
+    debug.d_print(Journal.format_date('1933-03', e))
+    debug.d_print(Journal.format_date('2091', b))
+    debug.d_print(Journal.format_date('2001', e))
+    debug.d_print(Journal.format_date('', e))

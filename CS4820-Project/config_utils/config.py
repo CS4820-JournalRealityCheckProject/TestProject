@@ -54,7 +54,3 @@ def update_email(receiver):
     with open(BASE_PATH + '/Data-Files/Configurations/email.ini', 'w') as config_file:
         config.write(config_file)
 
-
-if __name__ == '__main__':
-    print('config')
-    # end_progress()
