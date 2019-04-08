@@ -102,7 +102,6 @@ class MainSystem(object):
     def restore_progress(self):
         debug.d_print('|progress restored|')
         self.ui.restore_ui(self.status)  # ui is recovered.
-        debug.d_print(self.status)
 
         if self.status == 'doi-search':
             self.create_journal_list()
