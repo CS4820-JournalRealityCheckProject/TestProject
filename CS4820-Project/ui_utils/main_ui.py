@@ -204,7 +204,7 @@ class MainUI(tk.Frame):
             return
 
         f_name = self.input_file_path.split('/')[-1]  # get only the name.csv
-        debug.d_print('Uploaded:', self.input_file_path)
+        debug.d_print('Uploaded:   ', self.input_file_path)
         self.file_var.set(f_name)
         self.file_name = f_name
 
@@ -214,7 +214,7 @@ class MainUI(tk.Frame):
         with open(self.input_file_path, 'r', encoding='utf8') as csv_file:
             reader = csv.reader(csv_file)
             header = next(reader)  # only for python 3
-            debug.d_print('Columns:', header)
+            debug.d_print('Columns:    ', header)
 
             if header == self.KBART_HEADER:
                 self.mode = self.MODE_NOT_SET
@@ -252,7 +252,7 @@ class MainUI(tk.Frame):
             return
         else:
             self.receiver = self.email_textfield.get()
-            debug.d_print('Receiver:', self.receiver)
+            debug.d_print('Receiver:   ', self.receiver)
 
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")

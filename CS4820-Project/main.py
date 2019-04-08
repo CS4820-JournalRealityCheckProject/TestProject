@@ -140,9 +140,9 @@ class MainSystem(object):
         """
         #  prints start messages
         if mode == self.DOI_SEARCH_MODE:
-            debug.d_print('===============DOI-SEARCH=================')
+            debug.d_print('\n===============DOI-SEARCH=================')
         if mode == self.REALITY_CHECK_MODE:
-            debug.d_print('==============REALITY-CHECK===============')
+            debug.d_print('\n==============REALITY-CHECK===============')
 
         # updates email address
         config_utils.config.update_email(self.receiver)
@@ -277,8 +277,6 @@ class MainSystem(object):
         :param journal: a journal object
         :return:
         """
-        debug.d_print(journal.title, journal.package)
-
         for year in journal.year_dict:
             article = journal.year_dict[year][self.ARTICLE]
             doi = article.doi
