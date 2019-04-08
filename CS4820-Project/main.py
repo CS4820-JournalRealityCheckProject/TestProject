@@ -267,8 +267,7 @@ class MainSystem(object):
             dois = searcher.search_doi(journal.title,
                                        journal.year_dict[year][self.BEGIN],  # start_date
                                        journal.year_dict[year][self.END],  # end_date
-                                       journal.print_issn, journal.online_issn,
-                                       journal.publisher, 5)
+                                       journal.print_issn, journal.online_issn, 5)
             doi = screenscraper.filter_dois(dois, journal.package)
 
             journal.year_dict[year][self.ARTICLE].doi = doi
