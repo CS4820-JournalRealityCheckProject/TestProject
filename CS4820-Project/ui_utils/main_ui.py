@@ -235,7 +235,6 @@ class MainUI(tk.Frame):
                 self.start_button.config(state="normal")
                 self.top_message_var.set('REALITY CHECK')
                 self.warn_var.set('')
-                debug.d_print('for doi')
                 self.enable_email_widgets()
 
             else:
@@ -253,7 +252,7 @@ class MainUI(tk.Frame):
             return
         else:
             self.receiver = self.email_textfield.get()
-            debug.d_print(self.receiver)
+            debug.d_print('Receiver:', self.receiver)
 
         if self.mode == self.DOI_SEARCH_MODE:
             self.start_button.config(state="disabled")
@@ -305,8 +304,6 @@ class MainUI(tk.Frame):
         self.start()
 
     def doi_search_worker(self):
-        logging.debug('doi-search thread started')
-
         self.top_message_var.set('DOI-SEARCH')
         self.file_var.set(self.input_file_path.split('/')[-1])
         self.search_article()
@@ -314,7 +311,7 @@ class MainUI(tk.Frame):
         # after doi search is done
         self.warn_var.set('DOI Search FINISHED')
         self.output_file_path = self.main_system.continue_output_file_path
-        debug.d_print(self.output_file_path)
+        debug.d_print('Result:', self.output_file_path)
         self.top_message_var.set('REALITY CHECK READY')
 
         self.continue_button.config(state="normal")
@@ -332,8 +329,6 @@ class MainUI(tk.Frame):
             self.warn_var.set('DOI-Search finished.\nEmail has been sent.')
 
     def reality_check_worker(self):
-        logging.debug('reality-check thread started')
-
         self.top_message_var.set('REALITY CHECK')
         self.file_var.set(self.input_file_path.split('/')[-1])
         self.check_reality()

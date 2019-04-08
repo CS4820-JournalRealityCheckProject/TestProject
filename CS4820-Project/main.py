@@ -268,9 +268,9 @@ class MainSystem(object):
 
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
-                debug.d_print(str(doi)+'\n')
+                debug.d_print(str(doi))
             else:
-                debug.d_print('https://doi.org/' + doi + '\n')
+                debug.d_print('https://doi.org/' + doi)
 
     def check_reality(self, journal):
         """
