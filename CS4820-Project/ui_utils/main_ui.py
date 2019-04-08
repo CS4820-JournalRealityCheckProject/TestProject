@@ -311,7 +311,7 @@ class MainUI(tk.Frame):
         # after doi search is done
         self.warn_var.set('DOI Search FINISHED')
         self.output_file_path = self.main_system.continue_output_file_path
-        debug.d_print('Result:', self.output_file_path)
+        debug.d_print('Result:     ', self.output_file_path)
         self.top_message_var.set('REALITY CHECK READY')
 
         self.continue_button.config(state="normal")
@@ -334,6 +334,7 @@ class MainUI(tk.Frame):
         self.check_reality()
 
         # after reality check is done
+        debug.d_print('Result:     ', 'reality check finished')
         self.warn_var.set('Reality Check FINISHED\nEmail has been sent.')
         self.enable_initial_buttons()
         self.disable_email_widgets()

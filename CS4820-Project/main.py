@@ -39,7 +39,7 @@ class MainSystem(object):
 
     def __init__(self):
 
-        debug.d_print("system turned on")
+        debug.d_print("system turned on\n")
         self.journal_list = None
 
         #  Config for the progress
