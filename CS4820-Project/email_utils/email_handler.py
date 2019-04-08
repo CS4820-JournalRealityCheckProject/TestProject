@@ -4,6 +4,8 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 
+import debug_utils.debug as debug
+
 
 class EmailHandler:
     port = 465
@@ -40,10 +42,10 @@ class EmailHandler:
 
     def send(self, file_array):
         if not self.valid_sender:
-            print("Can not send an email without a valid sender")
+            debug.d_print("Can not send an email without a valid sender")
             return
         if self.receiver == "":
-            print("There is no specified receiver")
+            debug.d_print("There is no specified receiver")
             return
         msg = MIMEMultipart()
         msg['Subject'] = self.subject
@@ -63,8 +65,6 @@ class EmailHandler:
             msg.attach(attachment)
         with smtplib.SMTP_SSL(self.smtp_server, self.port) as server:
             server.ehlo()
-            print("Logging in...")
             server.login(self.sender, self.password)
-            print("Sending message...")
+            debug.d_print("Sending message...")
             server.sendmail(self.sender, self.receiver, msg.as_string())
-        print("Message sent")
