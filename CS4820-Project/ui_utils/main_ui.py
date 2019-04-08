@@ -334,7 +334,7 @@ class MainUI(tk.Frame):
         self.check_reality()
 
         # after reality check is done
-        debug.d_print('Result:     ', 'reality check finished')
+        debug.d_print('Result:', 'Reality check has been finished.')
         self.warn_var.set('Reality Check FINISHED\nEmail has been sent.')
         self.enable_initial_buttons()
         self.disable_email_widgets()
