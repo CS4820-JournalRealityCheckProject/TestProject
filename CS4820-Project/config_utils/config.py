@@ -6,6 +6,7 @@ BASE_PATH = os.path.dirname(os.path.dirname(__file__))
 PATH_TO_PROGRESS_INI = BASE_PATH + '/Data-Files/Configurations/progress.ini'
 PATH_TO_EMAIL_INI = BASE_PATH + '/Data-Files/Configurations/email.ini'
 PATH_TO_SMTP_SERVER_INI = BASE_PATH + '/Data-Files/Configurations/smtp-server.ini'
+PATH_TO_DEBUG_INI = BASE_PATH + '/Data-Files/Configurations/debug.ini'
 
 
 def update_progress(input_file, output_file, wrong_file, exception_file, status, index, title='not-specified'):
@@ -54,7 +55,3 @@ def update_email(receiver):
     with open(BASE_PATH + '/Data-Files/Configurations/email.ini', 'w') as config_file:
         config.write(config_file)
 
-
-if __name__ == '__main__':
-    print('config')
-    # end_progress()

@@ -1,6 +1,8 @@
 import csv
 import os
 
+import debug_utils.debug as debug
+
 from journal_utils.journal import Journal
 
 BASE_PATH = os.path.dirname(os.path.dirname(__file__))
@@ -89,7 +91,7 @@ def reconstruct_journal_list_from(articles_csv):
             else:
                 journal.year_dict[year][ARTICLE].doi = doi
 
-    print('size' + str(len(journal_obj_list)))
+    debug.d_print('size' + str(len(journal_obj_list)))
     return journal_obj_list
 
 
@@ -110,11 +112,9 @@ def prepare_temp_csv(temp_file='doi-articles'):
                       ]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
-        print('write header is executed')
 
 
 def prepare_result_csv(result_file='result-journals'):
-    print("result file")
     with open(path + result_file + '.csv', 'w', encoding='utf8', newline='') as csv_file:
         fieldnames = ['Title',
                       'PackageName',

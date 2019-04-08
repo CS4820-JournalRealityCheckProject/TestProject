@@ -197,7 +197,7 @@ class MainUI(tk.Frame):
                                                           filetypes=(("csv files", "*.csv"),
                                                                      ("all files", "*.*")))
         if self.input_file_path == '':
-            print('File select canceled.')
+            debug.d_print('File select canceled.')
             self.disable_start_button()
             self.disable_email_widgets()
             self.file_var.set('no file')
@@ -316,7 +316,7 @@ class MainUI(tk.Frame):
         # after doi search is done
         self.warn_var.set('DOI Search FINISHED')
         self.output_file_path = self.main_system.continue_output_file_path
-        print(self.output_file_path)
+        debug.d_print(self.output_file_path)
         self.top_message_var.set('REALITY CHECK READY')
 
         self.continue_button.config(state="normal")
@@ -417,4 +417,4 @@ class MainUI(tk.Frame):
 
 
 if __name__ == '__main__':
-    print('ui')
+    debug.d_print('ui')
