@@ -73,9 +73,6 @@ class MainSystem(object):
         self.receiver = self.email_config['email']['receiver']
         self.password = self.email_config['email']['password']
 
-        debug.d_print(self.input_file_path)
-        debug.d_print(self.status)
-
         # Prepare UI
         self.ui = None
         self.root = tk.Tk()

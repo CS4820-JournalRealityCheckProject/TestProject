@@ -204,8 +204,7 @@ class MainUI(tk.Frame):
             return
 
         f_name = self.input_file_path.split('/')[-1]  # get only the name.csv
-        debug.d_print(self.input_file_path)
-        debug.d_print(f_name)
+        debug.d_print('Uploaded:', self.input_file_path)
         self.file_var.set(f_name)
         self.file_name = f_name
 
@@ -219,7 +218,7 @@ class MainUI(tk.Frame):
 
             if header == self.KBART_HEADER:
                 self.mode = self.MODE_NOT_SET
-                debug.d_print('*This is the standard format')
+                debug.d_print('*This is the standard format (not accepted)')
 
             elif header == self.JOURNAL_CSV_HEADER or header == self.JOURNAL_RESULT_CSV_HEADER \
                     or header == self.OXFORD_HEADER:
@@ -228,7 +227,6 @@ class MainUI(tk.Frame):
                 self.start_button.config(state="normal")
                 self.top_message_var.set('DOI-SEARCH')
                 self.warn_var.set('')
-                debug.d_print('for journal')
                 self.enable_email_widgets()
 
             elif header == self.TEMP_CSV_HEADER:
