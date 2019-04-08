@@ -313,7 +313,6 @@ def append_exception_row(journal, file_name='exception-list'):
 
 def has_entry(path_name):
     new_path = path + path_name + '.csv'
-    print('check lines:', len(open(new_path).readlines()))
 
     # has at least one entry without counting header
     if len(open(new_path).readlines()) > 1:
