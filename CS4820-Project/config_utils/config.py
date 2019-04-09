@@ -22,7 +22,7 @@ def update_progress(input_file, output_file, wrong_file, exception_file, status,
         'title': title
 
     }
-    with open(BASE_PATH + '/Data-Files/Configurations/progress.ini', 'w') as config_file:
+    with open(BASE_PATH + '/Data-Files/Configurations/progress.ini', 'w', encoding='utf8') as config_file:
         config.write(config_file)
 
 
@@ -39,19 +39,22 @@ def clear_progress():
         'current-index': -1
 
     }
-    with open(BASE_PATH + '/Data-Files/Configurations/progress.ini', 'w') as config_file:
+    with open(BASE_PATH + '/Data-Files/Configurations/progress.ini', 'w', encoding='utf8') as config_file:
         config.write(config_file)
 
     return PATH_TO_PROGRESS_INI
 
 
 def update_email(receiver):
+    email_config = configparser.ConfigParser()
+    email_config.read(PATH_TO_EMAIL_INI)
+
     config = configparser.ConfigParser()
     config['email'] = {
-        'sender': 'whimwhimxlife@gmail.com',
+        'sender': email_config['email']['sender'],
         'receiver': receiver,
-        'password': '6883594e'
+        'password': email_config['email']['password']
     }
-    with open(BASE_PATH + '/Data-Files/Configurations/email.ini', 'w') as config_file:
+    with open(BASE_PATH + '/Data-Files/Configurations/email.ini', 'w', encoding='utf8') as config_file:
         config.write(config_file)
 
