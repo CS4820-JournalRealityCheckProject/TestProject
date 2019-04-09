@@ -284,7 +284,7 @@ class MainSystem(object):
             doi = article.doi
 
             if doi is None:
-                debug.d_print(str(year), ':', 'no-doi')
+                debug.d_print_detail(str(year), ':', 'no-doi')
                 article.accessible = False
                 article.result = 'No-DOI'
             else:
