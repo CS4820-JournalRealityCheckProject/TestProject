@@ -187,11 +187,15 @@ class MainSystem(object):
         #  Iterates a list of journals using index
         list_size = len(self.journal_list)
         while index < list_size:
-            if self.ui is not None:
-                self.ui.notify_progress(index + 1, list_size)
 
             debug.d_print(index + 1, ":", self.journal_list[index])
             title = self.journal_list[index].title
+
+            config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
+                                                self.exception_file_path, status=mode, index=index, title=title)
+
+            if self.ui is not None:
+                self.ui.notify_progress(index + 1, list_size)
 
             #  doi-search or reality-check will be called
             if not self.journal_list[index].has_problem:
@@ -228,8 +232,6 @@ class MainSystem(object):
                 csv_reader.append_exception_row(self.journal_list[index], self.exception_file_path)
 
             index = index + 1
-            config_utils.config.update_progress(self.input_file_path, self.output_file_path, self.wrong_file_path,
-                                                self.exception_file_path, status=mode, index=index, title=title)
 
             #  prints progresses
             if not self.journal_list[index - 1].has_problem:
@@ -266,12 +268,12 @@ class MainSystem(object):
             journal.year_dict[year][self.ARTICLE].doi = doi
             if doi is None:
                 debug.d_print_detail(journal.year_dict[year][self.BEGIN],  # start_date
-                              journal.year_dict[year][self.END],  # end_date
-                              ': ', str(doi))
+                                     journal.year_dict[year][self.END],  # end_date
+                                     ': ', str(doi))
             else:
                 debug.d_print_detail(journal.year_dict[year][self.BEGIN],  # start_date
-                              journal.year_dict[year][self.END],  # end_date
-                              ': ', 'https://doi.org/' + doi)
+                                     journal.year_dict[year][self.END],  # end_date
+                                     ': ', 'https://doi.org/' + doi)
 
     def check_reality(self, journal):
         """
