@@ -46,11 +46,14 @@ def clear_progress():
 
 
 def update_email(receiver):
+    email_config = configparser.ConfigParser()
+    email_config.read(PATH_TO_EMAIL_INI)
+
     config = configparser.ConfigParser()
     config['email'] = {
-        'sender': 'whimwhimxlife@gmail.com',
+        'sender': email_config['email']['sender'],
         'receiver': receiver,
-        'password': '6883594e'
+        'password': email_config['email']['password']
     }
     with open(BASE_PATH + '/Data-Files/Configurations/email.ini', 'w') as config_file:
         config.write(config_file)
