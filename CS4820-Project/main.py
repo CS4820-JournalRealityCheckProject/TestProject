@@ -356,7 +356,7 @@ class MainSystem(object):
         :return:
         """
 
-        use_server = False
+        use_server = True
 
         self.config = configparser.ConfigParser()
         self.config.read(config_utils.config.PATH_TO_SMTP_SERVER_INI)
@@ -386,9 +386,9 @@ class MainSystem(object):
 
         try:
             emailer.send(files)
+            debug.d_print('Email has been sent.')
         except smtplib.SMTPRecipientsRefused:
-            print('Email was incorrect')
-        debug.d_print('Email has been sent.')
+            debug.d_print('Email was incorrect.')
 
     def update(self, code):
         """
