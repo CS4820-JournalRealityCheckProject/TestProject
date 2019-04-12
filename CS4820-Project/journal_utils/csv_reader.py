@@ -314,7 +314,7 @@ def has_entry(path_name):
     new_path = path + path_name + '.csv'
 
     # has at least one entry without counting header
-    if len(open(new_path).readlines()) > 1:
+    if len(open(new_path, encoding='utf8').readlines()) > 1:
         return True
     return False
 
